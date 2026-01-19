@@ -13,7 +13,7 @@
                     <label>Navigation</label>
                 </li>
                 <li class="nxl-item">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a href="/" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-home"></i></span>
                         <span class="nxl-mtext">Dashboards</span><span class="nxl-arrow">
                     </a>

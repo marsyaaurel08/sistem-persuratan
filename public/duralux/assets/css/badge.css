@@ -14,23 +14,23 @@
 
 /* Variasi warna pastel */
 .badge-success { 
-    background-color: #d4edda; /* hijau pastel */
-    color: #155724;            /* hijau gelap */
+    background-color: #D9FFDD; /* hijau pastel */
+    color: #31AC12;            /* hijau gelap */
 }
 
 .badge-warning { 
-    background-color: #fff3cd; /* kuning pastel */
-    color: #856404;            /* kuning gelap */
+    background-color: #FDF1AC; /* kuning pastel */
+    color: #FD8D4C;            /* kuning gelap */
 }
 
 .badge-danger { 
-    background-color: #f8d7da; /* merah pastel */
-    color: #721c24;            /* merah gelap */
+    background-color: #FED3D3; /* merah pastel */
+    color: #a20f0f;            /* merah gelap */
 }
 
 .badge-info { 
-    background-color: #d1ecf1; /* biru pastel */
-    color: #0c5460;            /* biru gelap */
+    background-color: #D8ECFF; /* biru pastel */
+    color: #597CF0;            /* biru gelap */
 }
 
 /* Opsional: hover sedikit gelap */

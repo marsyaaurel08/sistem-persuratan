@@ -26,8 +26,12 @@ Route::get('/surat_keluar', function () {
 Route::get('/', function () {
     return view('main');
 });
-
-
-// Route::get('/surat-masuk', [SuratMasukController::class, 'index'])
-//     ->name('surat-masuk.index');
-
+Route::get('/arsip', function () {
+    return view('arsip.arsip');
+});
+Route::get('/laporan', function () {
+    return view('laporan.index');
+});
+Route::get('/upload_surat', function () {
+    return view('arsip.upload_surat');
+});

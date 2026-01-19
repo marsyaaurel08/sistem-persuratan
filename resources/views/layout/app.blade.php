@@ -10,13 +10,15 @@
     <meta name="author" content="flexilecode" />
     <!--! The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags !-->
     <!--! BEGIN: Apps Title-->
-    <title>Duralux || Dashboard</title>
+    <title>Sistem Persuratan || @yield('title')</title>
+
     <!--! END:  Apps Title-->
     <!--! BEGIN: Favicon-->
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('duralux/assets/images/favicon.ico') }}" />
+    <link rel="shortcut icon" type="image/x-icon" href="https://eproc.jasatirta1.co.id/assets/images/logo-jasatirta-crop.png" />
     <!--! END: Favicon-->
     <!--! BEGIN: Bootstrap CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}" />
     <!--! END: Bootstrap CSS-->
     <!--! BEGIN: Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
@@ -27,16 +29,19 @@
     <!--! END: Vendors CSS-->
     <!--! BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/theme.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/badge.css') }}">
+
     <!--! END: Custom CSS-->
     <!--! BEGIN: Custom App CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}" />
+    
     <!--! END: Custom App CSS-->
     <!--! HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries !-->
     <!--! WARNING: Respond.js doesn't work if you view the page via file: !-->
     <!--[if lt IE 9]>
-   <script src="https:oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-   <script src="https:oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+			<script src="https:oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https:oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+    @stack('styles')
 </head>
 
 <body>
@@ -67,76 +72,7 @@
 
         <div class="nxl-content">
             <!-- [ page-header ] start -->
-            <div class="page-header">
-                <div class="page-header-left d-flex align-items-center">
-                    <div class="page-header-title">
-                        <h5 class="m-b-10">Dashboard</h5>
-                    </div>
-                </div>
-
-                <div class="page-header-right ms-auto">
-                    <div class="page-header-right-items">
-                        <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
-
-                            <!-- Dropdown Semua Divisi -->
-                            <div class="dropdown">
-                                <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between"
-                                    style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown"
-                                    data-bs-auto-close="outside">
-                                    <i class="feather-layers me-2"></i>
-                                    <span>Semua Divisi</span>
-                                    <i class="feather-chevron-down ms-2"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end p-3">
-                                    <div class="form-check mb-1">
-                                        <input class="form-check-input" type="checkbox" id="divisi1" checked>
-                                        <label class="form-check-label" for="divisi1">Divisi A</label>
-                                    </div>
-                                    <div class="form-check mb-1">
-                                        <input class="form-check-input" type="checkbox" id="divisi2" checked>
-                                        <label class="form-check-label" for="divisi2">Divisi B</label>
-                                    </div>
-                                    <div class="form-check mb-1">
-                                        <input class="form-check-input" type="checkbox" id="divisi3">
-                                        <label class="form-check-label" for="divisi3">Divisi C</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Dropdown Rentang Tanggal -->
-                            <div class="dropdown">
-                                <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between"
-                                    style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown"
-                                    data-bs-auto-close="outside">
-                                    <i class="feather-calendar me-2"></i>
-                                    <span>01 Jan 2026 - 31 Jan 2026</span>
-                                    <i class="feather-chevron-down ms-2"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end p-3">
-                                    <div class="form-check mb-1">
-                                        <input type="text" class="form-control" placeholder="Pilih tanggal awal">
-                                    </div>
-                                    <div class="form-check mb-1">
-                                        <input type="text" class="form-control" placeholder="Pilih tanggal akhir">
-                                    </div>
-                                    <div class="mt-2 d-flex justify-content-between">
-                                        <button class="btn btn-sm btn-light">Reset</button>
-                                        <button class="btn btn-sm btn-success">Terapkan</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Button Perbarui Data -->
-                            <button class="btn d-flex align-items-center"
-                                style="background-color: #000B58; color: #fff;">
-                                <i class="feather-refresh-ccw me-2"></i>
-                                <span>Perbarui Data</span>
-                            </button>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
 
             <!-- [ page-header ] end -->
@@ -145,6 +81,7 @@
             <div class="main-content">
                 <div class="row">
                     @yield('content')
+                    @stack('scripts')
                     <!-- [Invoices Awaiting Payment] start -->
                     {{-- <div class="col-xxl-3 col-md-6">
                         <div class="card stretch stretch-full">

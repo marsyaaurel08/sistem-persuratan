@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// surat masuk
+Route::get('/surat_masuk', function () {
+    return view('surat_masuk.index');
+});
+
+// surat keluar
+Route::get('/surat_keluar', function () {
+    return view('surat_keluar.index');
+});
+
 Route::get('/', function () {
     return view('main');
 });
@@ -24,10 +34,6 @@ Route::get('/laporan', function () {
 });
 Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
-});
-
-Route::get('/login', function () {
-    return view('auth.login');
 });
 Route::get('/upload_surat', function () {
     return view('arsip.upload_surat');

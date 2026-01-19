@@ -92,7 +92,8 @@
                             </button>
 
                             <!-- TAMBAH SURAT -->
-                            <button class="btn bg-secondary-subtle text-dark rounded px-3">
+                            <button class="btn bg-secondary-subtle text-dark rounded px-3"
+                                onclick="window.location='{{ url('/upload_surat') }}'">
                                 <i class="bi bi-plus-circle-fill me-1 text-dark"></i>
                                 Tambah Surat
                             </button>

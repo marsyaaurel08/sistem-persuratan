@@ -13,7 +13,7 @@
                     <label>Navigation</label>
                 </li>
                 <li class="nxl-item">
-                    <a href="{{ url('/') }}" class="nxl-link">
+                    <a href="/" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-home"></i></span>
                         <span class="nxl-mtext">Dashboards</span><span class="nxl-arrow">
                     </a>
@@ -44,7 +44,7 @@
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a href="/manajemen-pengguna" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-users"></i></span>
                         <span class="nxl-mtext">Manajemen Pengguna</span><span class="nxl-arrow">
                     </a>

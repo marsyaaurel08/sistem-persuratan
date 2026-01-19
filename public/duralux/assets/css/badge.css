@@ -1,39 +1,44 @@
 /* Badge Custom - Background Pastel, Teks Gelap */
 .badge-custom {
     display: inline-block;
-    padding: 0.25em 0.6em;   /* padding mirip badge Bootstrap */
-    font-size: 0.75rem;
-    font-weight: 700;
+    padding: 0.4em 0.8em;   /* lebih nyaman dari sebelumnya */
+    font-size: 0.8rem;      /* sedikit lebih besar */
+    font-weight: 600;
     line-height: 1;
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
-    border-radius: 0.25rem;
-    transition: all 0.3s ease; /* efek transisi saat hover */
+    border-radius: 1rem;     /* lebih bulat / pill */
+    transition: all 0.3s ease;
 }
 
-/* Variasi warna pastel */
-.badge-success { 
-    background-color: #d4edda; /* hijau pastel */
-    color: #155724;            /* hijau gelap */
-}
-
-.badge-warning { 
-    background-color: #fff3cd; /* kuning pastel */
-    color: #856404;            /* kuning gelap */
-}
-
+/* Variasi warna pastel untuk Role */
 .badge-danger { 
-    background-color: #f8d7da; /* merah pastel */
-    color: #721c24;            /* merah gelap */
+    background-color: #FED3D3; /* merah pastel */
+    color: #a20f0f;
 }
-
+.badge-success { 
+    background-color: #D9FFDD; /* hijau pastel */
+    color: #31AC12;
+}
 .badge-info { 
-    background-color: #d1ecf1; /* biru pastel */
-    color: #0c5460;            /* biru gelap */
+    background-color: #D8ECFF; /* biru pastel */
+    color: #597CF0;
+}
+.badge-warning { 
+    background-color: #FDF1AC; /* kuning pastel */
+    color: #FD8D4C;
 }
 
-/* Opsional: hover sedikit gelap */
+/* Variasi warna pastel untuk Divisi (opsional, berbeda warna) */
+
+.badge-purple { 
+    background-color: #F0EFFF; /* ungu pastel */
+    color: #6B4CC3;
+}
+
+
+/* Hover efek */
 .badge-custom:hover {
     opacity: 0.85;
     cursor: pointer;

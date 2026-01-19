@@ -22,6 +22,8 @@ Route::get('/arsip', function () {
 Route::get('/laporan', function () {
     return view('laporan.index');
 });
+Route::get('/manajemen-pengguna', function () {
+    return view('manajemen-pengguna.index');
 Route::get('/upload_surat', function () {
     return view('arsip.upload_surat');
 });

@@ -13,13 +13,13 @@
                     <label>Navigation</label>
                 </li>
                 <li class="nxl-item">
-                    <a href="/" class="nxl-link">
+                    <a href="{{ url('/') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-home"></i></span>
                         <span class="nxl-mtext">Dashboards</span><span class="nxl-arrow">
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a href="{{ url('/upload_surat') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-mail"></i></span>
                         <span class="nxl-mtext">Surat Masuk</span><span class="nxl-arrow">
                     </a>
@@ -32,7 +32,7 @@
 
                 </li>
                 <li class="nxl-item">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a href="{{ url('/arsip') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-archive"></i></span>
                         <span class="nxl-mtext">Arsip</span><span class="nxl-arrow">
                     </a>

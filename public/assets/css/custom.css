@@ -1,0 +1,51 @@
+/* ROOT SIDEBAR */
+.custom-sidebar,
+.custom-sidebar .navbar-wrapper,
+.custom-sidebar .navbar-content,
+.custom-sidebar .nxl-navbar {
+    background-color: #000B58 !important;
+}
+
+/* TEXT & ICON */
+.custom-sidebar,
+.custom-sidebar a,
+.custom-sidebar i,
+.custom-sidebar label {
+    color: #fff !important;
+}
+
+/* HOVER & ACTIVE */
+.custom-sidebar .nxl-item:hover > a,
+.custom-sidebar .nxl-item.active > a {
+    background-color: rgba(255,255,255,0.15) !important;
+
+}
+ .upload-zone {
+        border: 2px dashed #d1d5db;
+        background: #f9fafb;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .upload-zone:hover {
+        border-color: #000c4d;
+        background: #f0f2f5;
+    }
+    .form-label-custom {
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+    }
+    .user-access-item {
+        transition: background 0.2s;
+    }
+    .user-access-item:hover {
+        background-color: #f8f9fa;
+    }
+    .btn-navy {
+        background-color: #000c4d;
+        color: white;
+    }
+    .btn-navy:hover {
+        background-color: #001566;
+        color: white;
+    }

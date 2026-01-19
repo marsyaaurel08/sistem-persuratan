@@ -24,6 +24,11 @@ Route::get('/laporan', function () {
 });
 Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
+});
+
+Route::get('/login', function () {
+    return view('auth.login');
+});
 Route::get('/upload_surat', function () {
     return view('arsip.upload_surat');
 });

@@ -1,17 +1,17 @@
 @extends('layout.app')
 
 @section('content')
+    <div class="page-header rounded">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Surat Keluar</h5>
+            </div>
+        </div>
+    </div>
     <div class="container-fluid">
-
-        <!-- JUDUL -->
-        <h4 class="mb-4 fw-bold">Surat Keluar</h4>
-
-        <div class="row mb-2">
+        <div class="row mb-2 mt-4">
             <div class="card shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3 py-2">
-
-                    <!-- ICON BOX -->
-
 
                     <!-- TEXT -->
                     <div class="d-flex align-items-center gap-3">
@@ -142,4 +142,4 @@
 
 
         </div>
-    @endsection
+@endsection

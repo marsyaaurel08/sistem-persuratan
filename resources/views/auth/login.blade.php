@@ -62,6 +62,7 @@
                                     </div>
 
                                     <div class="mt-5">
+                                        <a href="{{ url('/') }}" class="nxl-link">
                                         <button type="submit" class="btn btn-lg btn-primary w-100">Login</button>
                                     </div>
                                 </form>

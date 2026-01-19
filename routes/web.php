@@ -19,3 +19,6 @@ Route::get('/', function () {
 Route::get('/laporan', function () {
     return view('laporan.index');
 });
+Route::get('/manajemen-pengguna', function () {
+    return view('manajemen-pengguna.index');
+});

@@ -17,7 +17,7 @@
 
                     <!-- Dropdown Semua Divisi -->
                     <div class="dropdown">
-                        <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between"
+                        <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between rounded-pill"
                             style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                             <i class="feather-layers me-2"></i>
                             <span>Semua Divisi</span>
@@ -41,10 +41,10 @@
 
                     <!-- Dropdown Rentang Tanggal -->
                     <div class="dropdown">
-                        <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between"
+                        <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between rounded-pill"
                             style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                             <i class="feather-calendar me-2"></i>
-                            <span>01 Jan 2026 - 31 Jan 2026</span>
+                            <span>Rentang Tanggal</span>
                             <i class="feather-chevron-down ms-2"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end p-3">
@@ -62,7 +62,7 @@
                     </div>
 
                     <!-- Button Perbarui Data -->
-                    <button class="btn d-flex align-items-center" style="background-color: #000B58; color: #fff;">
+                    <button class="btn d-flex align-items-center rounded-pill" style="background-color: #000B58; color: #fff;" >
                         <i class="feather-refresh-ccw me-2"></i>
                         <span>Perbarui Data</span>
                     </button>

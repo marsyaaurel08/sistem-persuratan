@@ -12,21 +12,24 @@
 
         <div class="page-header-right ms-auto">
             <div class="page-header-right-items">
-                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
+                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper ">
 
                     <!-- Search Divisi -->
-                    <div class="input-group" style="max-width: 250px;">
-                        <span class="input-group-text bg-white border-end-0 rounded-start">
+                    <div class="input-group" style="max-width: 250px; height: 38px;">
+                        <span
+                            class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center"
+                            style="height: 100%;">
                             <i class="feather-search"></i>
                         </span>
-                        <input type="text" id="searchLaporan" class="form-control rounded-end"
-                            placeholder="Cari laporan...">
+                        <input type="text" id="searchLaporan" class="form-control rounded-end-pill"
+                            placeholder="Cari laporan..." style="height: 100%;">
                     </div>
+
 
                     <!-- Rentang Tanggal -->
                     <div class="dropdown">
-                        <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between"
-                            style="min-width: 180px; height: 48px;" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                        <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between rounded-pill"
+                            style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                             <i class="feather-calendar me-2"></i>
                             <span>Rentang Tanggal</span>
                             <i class="feather-chevron-down ms-2"></i>
@@ -41,12 +44,14 @@
                         </div>
                     </div>
                     <!-- Tombol Export Compact -->
-                    <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 px-2 py-1" style="width: 70px; height: 48px;">
+                    <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
+                        style="width: 70px; height: 35px;">
                         <i class="feather-file-text"></i>
                         <span>PDF</span>
                     </button>
 
-                    <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 px-2 py-1"style="width: 70px; height: 48px;">
+                    <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
+                        style="width: 70px; height: 35px;">
                         <i class="feather-file"></i>
                         <span>Excel</span>
                     </button>

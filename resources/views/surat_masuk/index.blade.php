@@ -1,21 +1,24 @@
 @extends('layout.app')
 
 @section('content')
+    <div class="page-header rounded">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Surat Masuk</h5>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
-
-        <!-- JUDUL -->
-        <h4 class="mb-4 fw-bold">Surat Masuk</h4>
-
         <!-- SUMMARY CARD -->
-        <div class="row mb-4">
+        <div class="row mb-4 mt-4">
             <div class="col-md-4">
                 <div class="card shadow-sm">
                     <div class="card-body d-flex align-items-center gap-4">
                         <!-- ICON BOX -->
-                        <div
-                            class="d-flex align-items-center justify-content-center
-           bg-primary-subtle text-primary
-           rounded-3 p-3 fs-2">
+                        <div class="d-flex align-items-center justify-content-center
+               bg-primary-subtle text-primary
+               rounded-3 p-3 fs-2">
                             <i class="bi bi-envelope-fill fs-2"></i>
                         </div>
                         <!-- TEXT -->
@@ -32,10 +35,9 @@
                 <div class="card shadow-sm">
                     <div class="card-body d-flex align-items-center gap-4">
                         <!-- ICON BOX -->
-                        <div
-                            class="d-flex align-items-center justify-content-center
-                        bg-warning-subtle text-warning
-                        rounded-3 p-3 fs-2">
+                        <div class="d-flex align-items-center justify-content-center
+                            bg-warning-subtle text-warning
+                            rounded-3 p-3 fs-2">
                             <i class="bi bi-clipboard-fill fs-2"></i>
                         </div>
                         <!-- TEXT -->
@@ -52,10 +54,9 @@
                 <div class="card shadow-sm">
                     <div class="card-body d-flex align-items-center gap-4">
                         <!-- ICON BOX -->
-                        <div
-                            class="d-flex align-items-center justify-content-center
-                        bg-success-subtle text-success
-                        rounded-3 p-3 fs-2">
+                        <div class="d-flex align-items-center justify-content-center
+                            bg-success-subtle text-success
+                            rounded-3 p-3 fs-2">
                             <i class="bi bi-check-circle-fill fs-2"></i>
                         </div>
                         <!-- TEXT -->
@@ -193,4 +194,4 @@
                 </div>
             </div>
         </div>
-    @endsection
+@endsection

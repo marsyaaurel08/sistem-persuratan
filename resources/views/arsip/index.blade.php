@@ -21,18 +21,18 @@
 
                     <!-- Search Bar -->
                     <div class="input-group" style="min-width: 300px;">
-                        <span class="input-group-text bg-white border-end-0 rounded-start" id="search-icon">
+                        <span class="input-group-text bg-white border-end-0 rounded-start-pill" id="search-icon">
                             <i class="feather-search"></i>
                         </span>
-                        <input type="text" id="searchTable" class="form-control rounded-end" placeholder="Cari surat..."
+                        <input type="text" id="searchTable" class="form-control rounded-end-pill" placeholder="Cari surat..."
                             style="font-size: small">
                     </div>
 
 
                     <!-- Date Range Picker -->
                     <div class="input-group" style="min-width: 300px;">
-                        <span class="input-group-text bg-white"><i class="feather-calendar"></i></span>
-                        <input type="text" id="dateRange" class="form-control" placeholder="Pilih Rentang Tanggal" readonly
+                        <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i class="feather-calendar"></i></span>
+                        <input type="text" id="dateRange" class="form-control rounded-end-pill" placeholder="Pilih Rentang Tanggal" readonly
                             style="cursor: pointer; font-size: small;">
                         <button class="btn btn-light border" type="button" id="clearDateRange" title="Reset tanggal"
                             style="display: none;">

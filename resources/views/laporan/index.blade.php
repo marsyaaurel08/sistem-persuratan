@@ -3,63 +3,63 @@
 @section('title', 'Laporan')
 
 @section('content')
-    <div class="page-header">
-        <div class="page-header-left d-flex align-items-center">
-            <div class="page-header-title">
-                <h5 class="m-b-10">Laporan</h5>
-            </div>
+    <div class="page-header rounded">
+    <div class="page-header-left d-flex align-items-center">
+        <div class="page-header-title">
+            <h5 class="m-b-10">Laporan</h5>
         </div>
+    </div>
 
-        <div class="page-header-right ms-auto">
-            <div class="page-header-right-items">
-                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper ">
+    <div class="page-header-right ms-auto">
+        <div class="page-header-right-items">
+            <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper ">
 
-                    <!-- Search Divisi -->
-                    <div class="input-group" style="max-width: 250px; height: 38px;">
-                        <span
-                            class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center"
-                            style="height: 100%;">
-                            <i class="feather-search"></i>
-                        </span>
-                        <input type="text" id="searchLaporan" class="form-control rounded-end-pill"
-                            placeholder="Cari laporan..." style="height: 100%;">
-                    </div>
+                <!-- Search Divisi -->
+                <div class="input-group" style="max-width: 250px; height: 38px;">
+                    <span
+                        class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center"
+                        style="height: 100%;">
+                        <i class="feather-search"></i>
+                    </span>
+                    <input type="text" id="searchLaporan" class="form-control rounded-end-pill"
+                        placeholder="Cari laporan..." style="height: 100%;">
+                </div>
 
 
-                    <!-- Rentang Tanggal -->
-                    <div class="dropdown">
-                        <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between rounded-pill"
-                            style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                            <i class="feather-calendar me-2"></i>
-                            <span>Rentang Tanggal</span>
-                            <i class="feather-chevron-down ms-2"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end p-3">
-                            <input type="text" class="form-control mb-2" placeholder="Pilih tanggal awal">
-                            <input type="text" class="form-control mb-2" placeholder="Pilih tanggal akhir">
-                            <div class="d-flex justify-content-between mt-2">
-                                <button class="btn btn-sm btn-light">Reset</button>
-                                <button class="btn btn-sm btn-success">Terapkan</button>
-                            </div>
+                <!-- Rentang Tanggal -->
+                <div class="dropdown">
+                    <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between rounded-pill"
+                        style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                        <i class="feather-calendar me-2"></i>
+                        <span>Rentang Tanggal</span>
+                        <i class="feather-chevron-down ms-2"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end p-3">
+                        <input type="text" class="form-control mb-2" placeholder="Pilih tanggal awal">
+                        <input type="text" class="form-control mb-2" placeholder="Pilih tanggal akhir">
+                        <div class="d-flex justify-content-between mt-2">
+                            <button class="btn btn-sm btn-light">Reset</button>
+                            <button class="btn btn-sm btn-success">Terapkan</button>
                         </div>
                     </div>
-                    <!-- Tombol Export Compact -->
-                    <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-                        style="width: 70px; height: 35px;">
-                        <i class="feather-file-text"></i>
-                        <span>PDF</span>
-                    </button>
-
-                    <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-                        style="width: 70px; height: 35px;">
-                        <i class="feather-file"></i>
-                        <span>Excel</span>
-                    </button>
-
-
                 </div>
+                <!-- Tombol Export Compact -->
+                <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
+                    style="width: 70px; height: 35px;">
+                    <i class="feather-file-text"></i>
+                    <span>PDF</span>
+                </button>
+
+                <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
+                    style="width: 70px; height: 35px;">
+                    <i class="feather-file"></i>
+                    <span>Excel</span>
+                </button>
+
+
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Card Tabel Laporan -->

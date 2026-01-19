@@ -209,7 +209,7 @@
                                 <i class="feather-search"></i>
                             </span>
                             <input type="text" id="searchTable" class="form-control rounded-end"
-                                placeholder="Cari aktivitas...">
+                                placeholder="Cari aktivitas..." style="font-size: small">
                         </div>
                     </div>
 

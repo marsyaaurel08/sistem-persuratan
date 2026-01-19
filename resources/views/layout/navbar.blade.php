@@ -38,7 +38,7 @@
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a href="/laporan" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-bar-chart-2"></i></span>
                         <span class="nxl-mtext">Laporan</span><span class="nxl-arrow">
                     </a>

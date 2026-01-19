@@ -28,6 +28,7 @@ Route::get('/manajemen-pengguna', function () {
 
 Route::get('/login', function () {
     return view('auth.login');
+});
 Route::get('/upload_surat', function () {
     return view('arsip.upload_surat');
 });

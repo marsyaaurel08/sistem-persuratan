@@ -4,12 +4,12 @@
 
 @section('content')
     <!-- Row 4 Card Dashboard -->
-    <div class="page-header">
-        <div class="page-header-left d-flex align-items-center">
-            <div class="page-header-title">
-                <h5 class="m-b-10">Dashboard</h5>
-            </div>
-        </div>
+    <div class="page-header rounded">
+                <div class="page-header-left d-flex align-items-center">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">Dashboard</h5>
+                    </div>
+                </div>
 
         <div class="page-header-right ms-auto">
             <div class="page-header-right-items">

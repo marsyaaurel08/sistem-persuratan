@@ -16,9 +16,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('main');
 });
+Route::get('/arsip', function () {
+    return view('arsip.arsip');
+});
 Route::get('/laporan', function () {
     return view('laporan.index');
 });
 Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
+Route::get('/upload_surat', function () {
+    return view('arsip.upload_surat');
 });

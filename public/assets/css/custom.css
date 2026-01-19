@@ -1,0 +1,22 @@
+/* ROOT SIDEBAR */
+.custom-sidebar,
+.custom-sidebar .navbar-wrapper,
+.custom-sidebar .navbar-content,
+.custom-sidebar .nxl-navbar {
+    background-color: #000B58 !important;
+}
+
+/* TEXT & ICON */
+.custom-sidebar,
+.custom-sidebar a,
+.custom-sidebar i,
+.custom-sidebar label {
+    color: #fff !important;
+}
+
+/* HOVER & ACTIVE */
+.custom-sidebar .nxl-item:hover > a,
+.custom-sidebar .nxl-item.active > a {
+    background-color: rgba(255,255,255,0.15) !important;
+
+}

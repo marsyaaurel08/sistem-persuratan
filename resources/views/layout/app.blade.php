@@ -25,6 +25,9 @@
     <!--! BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/theme.min.css') }}" />
     <!--! END: Custom CSS-->
+    <!--! BEGIN: Custom App CSS-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}" />
+    <!--! END: Custom App CSS-->
     <!--! HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries !-->
     <!--! WARNING: Respond.js doesn't work if you view the page via file: !-->
     <!--[if lt IE 9]>

@@ -1,0 +1,25 @@
+/* Custom sidebar background and logo width */
+.custom-sidebar {
+	background: #14213d !important; /* Navy dark */
+}
+.custom-sidebar .navbar-wrapper,
+.custom-sidebar .navbar-content,
+.custom-sidebar .nxl-navbar {
+	background: transparent !important;
+}
+.custom-sidebar .logo-pjt {
+	width: 140px !important; /* Atur sesuai kebutuhan */
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0 auto 16px auto;
+}
+.custom-sidebar .nxl-item > a,
+.custom-sidebar .nxl-mtext,
+.custom-sidebar label {
+	color: #fff !important;
+}
+.custom-sidebar .nxl-item.nxl-hasmenu > a:hover,
+.custom-sidebar .nxl-item.nxl-hasmenu.active > a {
+	background: #22305a !important;
+}

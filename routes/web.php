@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SuratMasukController;
+use App\Http\Controllers\SuratKeluarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,14 +16,28 @@ use Illuminate\Support\Facades\Route;
 */
 
 // surat masuk
-Route::get('/surat_masuk', function () {
-    return view('surat_masuk.index');
-});
+Route::get('/surat_masuk', [SuratMasukController::class, 'index'])
+->name('surat_masuk.index');
+
+Route::get('/surat-masuk/search', [SuratMasukController::class, 'search'])
+    ->name('surat_masuk.search');
+
+// Route::resource('surat_masuk', SuratMasukController::class);
+// Route::get('/surat_masuk', function () {
+//     return view('surat_masuk.index');
+// });
 
 // surat keluar
-Route::get('/surat_keluar', function () {
-    return view('surat_keluar.index');
-});
+Route::get('/surat_keluar', [SuratKeluarController::class, 'index'])
+    ->name('surat_keluar.index');
+
+Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
+    ->name('surat_keluar.search');
+// Route::get('/surat_keluar', [SuratKeluarController::class, 'index']);
+// Route::resource('surat_keluar', SuratKeluarController::class);
+// Route::get('/surat_keluar', function () {
+//     return view('surat_keluar.index');
+// });
 
 Route::get('/', function () {
     return view('main');

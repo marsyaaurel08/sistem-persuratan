@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LaporanController;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -28,9 +32,11 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/arsip', function () {
     return view('arsip.index');
 });
-Route::get('/laporan', function () {
-    return view('laporan.index');
-});
+
+
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
+
 Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
 });

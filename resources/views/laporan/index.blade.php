@@ -3,50 +3,64 @@
 @section('title', 'Laporan')
 
 @section('content')
+
     <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
     <script src="{{ asset('duralux/assets/vendors/js/moment.min.js') }}"></script>
     <script src="{{ asset('duralux/assets/vendors/js/daterangepicker.min.js') }}"></script>
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
-    <div class="page-header-left">
-        <div class="page-header-title">
-            <h5 class="m-b-10">Laporan</h5>
+        <div class="page-header-left">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Laporan</h5>
+            </div>
+        </div>
+
+        <div class="page-header-right ms-auto">
+            <div class="page-header-right-items">
+                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
+
+                    <div class="input-group" style="max-width: 250px; height: 38px;">
+                        <span
+                            class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
+                            <i class="feather-search"></i>
+                        </span>
+                        <input type="text" id="searchLaporan" class="form-control border-start-0 rounded-end-pill"
+                            placeholder="Cari laporan..." style="height: 100%;">
+                    </div>
+
+                    <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                        style="width: 220px; height: 38px; overflow: hidden; font-size: small;">
+                        <span
+                            class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
+                            <i class="feather-calendar"></i>
+                        </span>
+                        <input type="text" id="dateRange" class="form-control border-0 px-2 h-100 d-flex align-items-center"
+                            placeholder="Pilih Tanggal" readonly
+                            style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
+                        <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
+                            type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
+                            <i class="feather-x"></i>
+                        </button>
+                    </div>
+
+                    <button
+                        class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                        style="width: 70px; height: 35px;">
+                        <i class="feather-file-text"></i>
+                        <span>PDF</span>
+                    </button>
+
+                    <button
+                        class="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                        style="width: 70px; height: 35px;">
+                        <i class="feather-file"></i>
+                        <span>Excel</span>
+                    </button>
+
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="page-header-right ms-auto">
-        <div class="page-header-right-items">
-            <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
-
-                <div class="input-group" style="max-width: 250px; height: 38px;">
-                    <span class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
-                        <i class="feather-search"></i>
-                    </span>
-                    <input type="text" id="searchLaporan" class="form-control border-start-0 rounded-end-pill" 
-                           placeholder="Cari laporan..." style="height: 100%;">
-                </div>
-
-                <div class="input-group" style="max-width: 200px; height: 38px;">
-                    <span class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
-                        <i class="feather-calendar"></i>
-                    </span>
-                    <input type="text" id="dateRange" class="form-control border-start-0 rounded-end-pill shadow-none bg-white py-0" 
-                           placeholder="Rentang Tanggal" readonly style="cursor: pointer; font-size: small; height: 100%;">
-                </div>
-
-                <button class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
-                        style="width: 70px; height: 35px;">
-                    <i class="feather-file-text"></i>
-                    <span>PDF</span>
-                </button>
-
-                <button class="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
-                        style="width: 70px; height: 35px;">
-                    <i class="feather-file"></i>
-                    <span>Excel</span>
-                </button>
-
-            </div> </div> </div> </div>
-    
 
 
 
@@ -58,11 +72,8 @@
                 <div class="card-body">
                     <h5 class="fs-14 fw-semibold mb-3">Data Laporan</h5>
 
-                    <!-- Search Input untuk tabel -->
-                    {{-- <div class="mb-3 d-flex justify-content-end">
-                        <input type="text" id="searchTableLaporan" class="form-control w-auto rounded-pill"
-                            placeholder="Cari data laporan...">
-                    </div> --}}
+
+
 
                     <div class="table-responsive">
                         <table class="table table-hover table-sm align-middle" id="laporanTable">
@@ -76,80 +87,67 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>001/LAP/2026</td>
-                                    <td>Laporan Keuangan</td>
-                                    <td>Divisi A</td>
-                                    <td>19 Jan 2026</td>
-                                    <td><span class="badge-custom badge-success">Selesai</span></td>
-                                </tr>
-                                <tr>
-                                    <td>002/LAP/2026</td>
-                                    <td>Laporan Stok</td>
-                                    <td>Divisi B</td>
-                                    <td>18 Jan 2026</td>
-                                    <td><span class="badge-custom badge-warning">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td>003/LAP/2026</td>
-                                    <td>Laporan Marketing</td>
-                                    <td>Divisi C</td>
-                                    <td>17 Jan 2026</td>
-                                    <td><span class="badge-custom badge-danger">Ditolak</span></td>
-                                </tr>
-                                <tr>
-                                    <td>004/LAP/2026</td>
-                                    <td>Laporan HR</td>
-                                    <td>Divisi A</td>
-                                    <td>16 Jan 2026</td>
-                                    <td><span class="badge-custom badge-info">Proses</span></td>
-                                </tr>
-                                <tr>
-                                    <td>001/LAP/2026</td>
-                                    <td>Laporan Keuangan</td>
-                                    <td>Divisi A</td>
-                                    <td>19 Jan 2026</td>
-                                    <td><span class="badge-custom badge-success">Selesai</span></td>
-                                </tr>
-                                <tr>
-                                    <td>002/LAP/2026</td>
-                                    <td>Laporan Stok</td>
-                                    <td>Divisi B</td>
-                                    <td>18 Jan 2026</td>
-                                    <td><span class="badge-custom badge-warning">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td>003/LAP/2026</td>
-                                    <td>Laporan Marketing</td>
-                                    <td>Divisi C</td>
-                                    <td>17 Jan 2026</td>
-                                    <td><span class="badge-custom badge-danger">Ditolak</span></td>
-                                </tr>
-                                <tr>
-                                    <td>004/LAP/2026</td>
-                                    <td>Laporan HR</td>
-                                    <td>Divisi A</td>
-                                    <td>16 Jan 2026</td>
-                                    <td><span class="badge-custom badge-info">Proses</span></td>
-                                </tr>
+                                @foreach($laporans as $laporan)
+                                    <tr
+                                        data-date="{{ $laporan->tanggal ? \Carbon\Carbon::parse($laporan->tanggal)->format('Y-m-d') : '' }}">
+                                        <td>{{ $laporan->no_surat }}</td>
+                                        <td>{{ $laporan->perihal }}</td>
+                                        <td>{{ $laporan->divisi }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($laporan->tanggal)->format('d M Y') }}</td>
+                                        <td>
+                                            <span
+                                                class="badge-custom 
+                                                                                                                                                        @if($laporan->status == 'Selesai') badge-success
+                                                                                                                                                        @elseif($laporan->status == 'Pending') badge-warning
+                                                                                                                                                        @elseif($laporan->status == 'Ditolak') badge-danger
+                                                                                                                                                        @else badge-info @endif">
+                                                {{ $laporan->status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
+                        <div class="mt-2 d-flex justify-content-center">
+                            {{ $laporans->links() }}
+                        </div>
                     </div>
 
                 </div>
             </div>
         </div>
     </div>
+    @push('styles')
+        <style>
+            .pagination {
+                color: #000 !important;
+                /* teks hitam */
+            }
 
+            .pagination .page-item .page-link {
+                color: #000;
+                /* teks link hitam */
+                border: 1px solid #dee2e6;
+                /* optional: border standar */
+            }
+
+            .pagination .page-item.active .page-link {
+                background-color: #f8f9fa;
+                /* latar active page */
+                border-color: #dee2e6;
+                color: #000;
+            }
+        </style>
+    @endpush
     @push('scripts')
+        <!-- Date Range Picker with Filtering -->
         <script>
             $(function () {
                 const $dateInput = $('#dateRange');
                 const $clearBtn = $('#clearDateRange');
-                const $searchInput = $('#searchLaporan');
                 const $tableRows = $('#laporanTable tbody tr');
 
-                // 1. Inisialisasi Date Range Picker (Persis seperti di Arsip)
+                // Date Range Picker
                 $dateInput.daterangepicker({
                     autoUpdateInput: false,
                     locale: {
@@ -157,62 +155,58 @@
                         applyLabel: 'Terapkan',
                         cancelLabel: 'Batal',
                         daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                        monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+                        monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
                     },
                     opens: 'left'
                 });
 
-                // 2. Fungsi Filter Gabungan
-                function applyAllFilters() {
-                    const searchText = $searchInput.val().toLowerCase();
+                // Fungsi filter
+                function filterByDateRange() {
+                    const dateStr = $dateInput.val();
+                    if (!dateStr) {
+                        $tableRows.show();
+                        return;
+                    }
                     const picker = $dateInput.data('daterangepicker');
-                    const isDateActive = $dateInput.val() !== '';
+                    const startDate = picker.startDate;
+                    const endDate = picker.endDate;
 
                     $tableRows.each(function () {
-                        const $row = $(this);
-                        const rowContent = $row.text().toLowerCase();
-                        const rowDateRaw = $row.attr('data-date'); // Pastikan ada atribut data-date="YYYY-MM-DD"
-
-                        // Cek Teks
-                        const matchesText = rowContent.includes(searchText);
-
-                        // Cek Tanggal
-                        let matchesDate = true;
-                        if (isDateActive && rowDateRaw) {
-                            const targetDate = moment(rowDateRaw, 'YYYY-MM-DD');
-                            matchesDate = targetDate.isSameOrAfter(picker.startDate, 'day') &&
-                                targetDate.isSameOrBefore(picker.endDate, 'day');
-                        }
-
-                        $row.toggle(matchesText && matchesDate);
+                        const rowDateStr = $(this).attr('data-date');
+                        const rowDate = rowDateStr ? moment(rowDateStr, 'YYYY-MM-DD') : null;
+                        $(this).toggle(rowDate && rowDate.isSameOrAfter(startDate, 'day') && rowDate.isSameOrBefore(endDate, 'day'));
                     });
                 }
 
-                // 3. Event Handlers
                 $dateInput.on('apply.daterangepicker', function (ev, picker) {
                     $(this).val(picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY'));
                     $clearBtn.show();
-                    applyAllFilters();
+                    filterByDateRange();
                 });
 
                 $dateInput.on('cancel.daterangepicker', function () {
                     $(this).val('');
                     $clearBtn.hide();
-                    applyAllFilters();
+                    filterByDateRange();
                 });
 
                 $clearBtn.on('click', function () {
                     $dateInput.val('');
                     $(this).hide();
-                    applyAllFilters();
+                    filterByDateRange();
                 });
 
-                $searchInput.on('keyup', function () {
-                    applyAllFilters();
+                // Search global
+                $('#searchLaporan').on('keyup', function () {
+                    let filter = $(this).val().toLowerCase();
+                    $tableRows.each(function () {
+                        let text = $(this).text().toLowerCase();
+                        $(this).toggle(text.includes(filter));
+                    });
                 });
             });
         </script>
+
         <script>
             // Search divisi di tabel
             document.getElementById('searchLaporan').addEventListener('keyup', function () {

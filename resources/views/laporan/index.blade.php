@@ -3,6 +3,9 @@
 @section('title', 'Laporan')
 
 @section('content')
+    <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
+    <script src="{{ asset('duralux/assets/vendors/js/moment.min.js') }}"></script>
+    <script src="{{ asset('duralux/assets/vendors/js/daterangepicker.min.js') }}"></script>
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
@@ -27,21 +30,15 @@
 
 
                     <!-- Rentang Tanggal -->
-                    <div class="dropdown">
-                        <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between rounded-pill"
-                            style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                            <i class="feather-calendar me-2"></i>
-                            <span>Rentang Tanggal</span>
-                            <i class="feather-chevron-down ms-2"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end p-3">
-                            <input type="text" class="form-control mb-2" placeholder="Pilih tanggal awal">
-                            <input type="text" class="form-control mb-2" placeholder="Pilih tanggal akhir">
-                            <div class="d-flex justify-content-between mt-2">
-                                <button class="btn btn-sm btn-light">Reset</button>
-                                <button class="btn btn-sm btn-success">Terapkan</button>
-                            </div>
-                        </div>
+                    <div class="input-group" style="max-width: 200px; height: 38px;">
+                        <span
+                            class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
+                            <i class="feather-calendar"></i>
+                        </span>
+                        <input type="text" id="dateRange"
+                            class="form-control border-start-0 rounded-end-pill shadow-none h-100 py-0"
+                            placeholder="Rentang Tanggal" readonly
+                            style="cursor: pointer; font-size: small; background-color: #fff;">
                     </div>
                     <!-- Tombol Export Compact -->
                     <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
@@ -153,6 +150,77 @@
     </div>
 
     @push('scripts')
+        <script>
+            $(function () {
+                const $dateInput = $('#dateRange');
+                const $clearBtn = $('#clearDateRange');
+                const $searchInput = $('#searchLaporan');
+                const $tableRows = $('#laporanTable tbody tr');
+
+                // 1. Inisialisasi Date Range Picker (Persis seperti di Arsip)
+                $dateInput.daterangepicker({
+                    autoUpdateInput: false,
+                    locale: {
+                        format: 'DD MMM YYYY',
+                        applyLabel: 'Terapkan',
+                        cancelLabel: 'Batal',
+                        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                        monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+                    },
+                    opens: 'left'
+                });
+
+                // 2. Fungsi Filter Gabungan
+                function applyAllFilters() {
+                    const searchText = $searchInput.val().toLowerCase();
+                    const picker = $dateInput.data('daterangepicker');
+                    const isDateActive = $dateInput.val() !== '';
+
+                    $tableRows.each(function () {
+                        const $row = $(this);
+                        const rowContent = $row.text().toLowerCase();
+                        const rowDateRaw = $row.attr('data-date'); // Pastikan ada atribut data-date="YYYY-MM-DD"
+
+                        // Cek Teks
+                        const matchesText = rowContent.includes(searchText);
+
+                        // Cek Tanggal
+                        let matchesDate = true;
+                        if (isDateActive && rowDateRaw) {
+                            const targetDate = moment(rowDateRaw, 'YYYY-MM-DD');
+                            matchesDate = targetDate.isSameOrAfter(picker.startDate, 'day') &&
+                                targetDate.isSameOrBefore(picker.endDate, 'day');
+                        }
+
+                        $row.toggle(matchesText && matchesDate);
+                    });
+                }
+
+                // 3. Event Handlers
+                $dateInput.on('apply.daterangepicker', function (ev, picker) {
+                    $(this).val(picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY'));
+                    $clearBtn.show();
+                    applyAllFilters();
+                });
+
+                $dateInput.on('cancel.daterangepicker', function () {
+                    $(this).val('');
+                    $clearBtn.hide();
+                    applyAllFilters();
+                });
+
+                $clearBtn.on('click', function () {
+                    $dateInput.val('');
+                    $(this).hide();
+                    applyAllFilters();
+                });
+
+                $searchInput.on('keyup', function () {
+                    applyAllFilters();
+                });
+            });
+        </script>
         <script>
             // Search divisi di tabel
             document.getElementById('searchLaporan').addEventListener('keyup', function () {

@@ -26,6 +26,10 @@ Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
 });
 
+Route::get('/tambah-pengguna', function () {
+    return view('manajemen-pengguna.add-user');
+});
+
 Route::get('/login', function () {
     return view('auth.login');
 });

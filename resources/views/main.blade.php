@@ -5,11 +5,11 @@
 @section('content')
     <!-- Row 4 Card Dashboard -->
     <div class="page-header rounded">
-                <div class="page-header-left d-flex align-items-center">
-                    <div class="page-header-title">
-                        <h5 class="m-b-10">Dashboard</h5>
-                    </div>
-                </div>
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Dashboard</h5>
+            </div>
+        </div>
 
         <div class="page-header-right ms-auto">
             <div class="page-header-right-items">
@@ -204,12 +204,14 @@
                         <h5 class="fs-14 fw-semibold mb-0">Aktivitas Terbaru</h5>
 
                         <!-- Search Input with Icon -->
-                        <div class="input-group" style="max-width: 250px;">
-                            <span class="input-group-text bg-white border-end-0 rounded-start" id="search-icon">
+                        <div class="input-group" style="max-width: 250px; height: 38px;">
+                            <span
+                                class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center"
+                                style="height: 100%;">
                                 <i class="feather-search"></i>
                             </span>
-                            <input type="text" id="searchTable" class="form-control rounded-end"
-                                placeholder="Cari aktivitas...">
+                            <input type="text" id="searchTable" class="form-control rounded-end-pill"
+                                placeholder="Cari aktivitas..." style="height: 100%;">
                         </div>
                     </div>
 

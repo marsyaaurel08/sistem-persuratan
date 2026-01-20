@@ -50,7 +50,7 @@
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a href="javascript:void(0);" class="nxl-link" data-bs-toggle="modal" data-bs-target="#modalLogout">
                         <span class="nxl-micon"><i class="feather-log-out"></i></span>
                         <span class="nxl-mtext">Logout</span><span class="nxl-arrow">
                     </a>

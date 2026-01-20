@@ -1262,6 +1262,30 @@
         @include('layout.footer')
         <!-- [ Footer ] end -->
     </main>
+
+    <div class="modal fade" id="modalLogout" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-body p-4 text-center">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light mb-3" 
+                         style="width: 60px; height: 60px;">
+                        <i class="feather-log-out fs-24" style="color: #000B58;"></i>
+                    </div>
+                    <h6 class="fw-bold mb-2" style="color: #000B58;">Konfirmasi Keluar</h6>
+                    <p class="text-secondary small mb-4">Apakah Anda yakin ingin mengakhiri sesi ini?</p>
+                    <div class="d-grid gap-2">
+                        <a href="/logout" class="btn rounded-pill text-white" style="background-color: #000B58;">
+                            Ya, Keluar
+                        </a>
+                        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="path/to/bootstrap.bundle.min.js"></script>
     <!--! ================================================================ !-->
     <!--! [End] Main Content !-->
     <!--! ================================================================ !-->

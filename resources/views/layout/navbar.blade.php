@@ -3,8 +3,8 @@
         <div class="m-header" style= "background-color: #000B58;">
             <a href="index.html" class="b-brand">
                 <!-- ========   change your logo hear   ============ -->
-                <img src="{{ asset('assets/images/logo full.png') }}" alt="" class="logo logo-lg" style="max-width: 200px;"/>
-                <img src="{{ asset('assets/images/logo icon.png') }}" alt="" class="logo logo-sm" style="width: 70px;"/>
+                <img src="{{ asset('assets/images/logo-full-pjt.png') }}" alt="" class="logo logo-lg" style="max-width: 200px;"/>
+                <img src="{{ asset('assets/images/logo-pjt.png') }}" alt="" class="logo logo-sm" style="width: 70px;"/>
             </a>
         </div>
         <div class="navbar-content">
@@ -19,13 +19,13 @@
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="{{ url('/upload_surat') }}" class="nxl-link">
+                    <a href="{{ url('/surat_masuk') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-mail"></i></span>
                         <span class="nxl-mtext">Surat Masuk</span><span class="nxl-arrow">
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a href="{{ url('/surat_keluar') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-send"></i></span>
                         <span class="nxl-mtext">Surat Keluar</span><span class="nxl-arrow">
                     </a>
@@ -38,13 +38,13 @@
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="/laporan" class="nxl-link">
+                    <a href="{{ url('/laporan') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-bar-chart-2"></i></span>
                         <span class="nxl-mtext">Laporan</span><span class="nxl-arrow">
                     </a>
                 </li>
                 <li class="nxl-item">
-                    <a href="/manajemen-pengguna" class="nxl-link">
+                    <a href="{{ url('/manajemen-pengguna') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-users"></i></span>
                         <span class="nxl-mtext">Manajemen Pengguna</span><span class="nxl-arrow">
                     </a>

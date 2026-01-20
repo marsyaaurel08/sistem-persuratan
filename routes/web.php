@@ -13,11 +13,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// surat masuk
+Route::get('/surat_masuk', function () {
+    return view('surat_masuk.index');
+});
+
+// surat keluar
+Route::get('/surat_keluar', function () {
+    return view('surat_keluar.index');
+});
+
 Route::get('/', function () {
     return view('main');
 });
 Route::get('/arsip', function () {
-    return view('arsip.arsip');
+    return view('arsip.index');
 });
 Route::get('/laporan', function () {
     return view('laporan.index');
@@ -30,9 +40,10 @@ Route::get('/tambah-pengguna', function () {
     return view('manajemen-pengguna.add-user');
 });
 
+
+Route::get('/upload_surat', function () {
+    return view('surat_masuk.upload_surat');
+});
 Route::get('/login', function () {
     return view('auth.login');
-});
-Route::get('/upload_surat', function () {
-    return view('arsip.upload_surat');
 });

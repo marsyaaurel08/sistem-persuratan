@@ -210,8 +210,8 @@
                                 style="height: 100%;">
                                 <i class="feather-search"></i>
                             </span>
-                            <input type="text" id="searchTable" class="form-control rounded-end-pill"
-                                placeholder="Cari aktivitas..." style="height: 100%;">
+                            <input type="text" id="searchTable" class="form-control rounded-end"
+                                placeholder="Cari aktivitas..." style="font-size: small">
                         </div>
                     </div>
 

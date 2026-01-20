@@ -1,7 +1,7 @@
 @extends('layout.app')
 @section('title', 'Manajemen Pengguna')
 @section('content')
-    <div class="page-header">
+    <div class="page-header rounded">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
                 <h5 class="m-b-10">Manajemen Pengguna</h5>

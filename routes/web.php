@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +24,7 @@ Route::get('/surat_keluar', function () {
     return view('surat_keluar.index');
 });
 
-Route::get('/', function () {
-    return view('main');
-});
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/arsip', function () {
     return view('arsip.index');
 });

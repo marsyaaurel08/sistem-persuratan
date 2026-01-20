@@ -1,7 +1,7 @@
 @extends('layout.app')
 @section('title', 'Manajemen Pengguna')
 @section('content')
-    <div class="page-header rounded">
+    <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
                 <h5 class="m-b-10">Manajemen Pengguna</h5>
@@ -63,9 +63,9 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fs-14 fw-semibold mb-0">Data Pengguna</h5>
                         <a href="/tambah-pengguna"><button class="btn btn-sm rounded-pill px-3"
-                                style="background-color: #000B58; color: white; border: none;">
-                                <i class="feather-plus me-1"></i> Tambah
-                            </button></a>
+                            style="background-color: #000B58; color: white; border: none;">
+                            <i class="feather-plus me-1"></i> Tambah
+                        </button></a>
                     </div>
 
                     <div class="table-responsive">

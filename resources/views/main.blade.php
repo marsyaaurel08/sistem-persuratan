@@ -85,7 +85,7 @@
                             <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Masuk</h3>
                         </div>
                     </div>
-                    <div class="display-5 fw-bold text-dark mt-2">57</div>
+                    <div class="display-5 fw-bold text-dark mt-2">{{ $totalMasuk }}</div>
                 </div>
             </div>
         </div>
@@ -102,7 +102,7 @@
                             <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Keluar</h3>
                         </div>
                     </div>
-                    <div class="display-5 fw-bold text-dark mt-2">121</div>
+                    <div class="display-5 fw-bold text-dark mt-2">{{ $totalKeluar }}</div>
                 </div>
             </div>
         </div>
@@ -119,7 +119,7 @@
                             <h3 class="fs-13 fw-bold text-muted mb-0">Menunggu Respon</h3>
                         </div>
                     </div>
-                    <div class="display-5 fw-bold text-dark mt-2">45</div>
+                    <div class="display-5 fw-bold text-dark mt-2">{{ $menungguRespon }}</div>
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@
                         </div>
                     </div>
                     <div class="d-flex align-items-baseline justify-content-center gap-2 mt-2">
-                        <span class="display-5 fw-bold text-dark">2</span>
+                        <span class="display-5 fw-bold text-dark">{{ $waktuRespon }}</span>
                         <span class="fs-14 fw-bold text-muted">Hari</span>
                     </div>
                 </div>
@@ -204,14 +204,13 @@
                         <h5 class="fs-14 fw-semibold mb-0">Aktivitas Terbaru</h5>
 
                         <!-- Search Input with Icon -->
-                        <div class="input-group" style="max-width: 250px; height: 38px;">
-                            <span
-                                class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center"
-                                style="height: 100%;">
-                                <i class="feather-search"></i>
+                        <div class="input-group" style="max-width: 250px;">
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill py-2 ps-3">
+                                <i class="feather-search text-muted"></i>
                             </span>
-                            <input type="text" id="searchTable" class="form-control rounded-end"
-                                placeholder="Cari aktivitas..." style="font-size: small">
+                            <input type="text" id="searchTable"
+                                class="form-control border-start-0 rounded-end-pill py-2 shadow-none"
+                                placeholder="Cari aktivitas..." style="font-size: 13px;">
                         </div>
                     </div>
 
@@ -227,34 +226,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>001/INV/2026</td>
-                                    <td>Pembayaran Invoice</td>
-                                    <td>PT ABC / Finance</td>
-                                    <td>19 Jan 2026</td>
-                                    <td><span class="badge-custom badge-success">Selesai</span></td>
-                                </tr>
-                                <tr>
-                                    <td>002/INV/2026</td>
-                                    <td>Order Barang</td>
-                                    <td>PT XYZ / Warehouse</td>
-                                    <td>18 Jan 2026</td>
-                                    <td><span class="badge-custom badge-warning">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td>003/INV/2026</td>
-                                    <td>Proposal Kerja Sama</td>
-                                    <td>Marketing / PT DEF</td>
-                                    <td>17 Jan 2026</td>
-                                    <td><span class="badge-custom badge-danger">Ditolak</span></td>
-                                </tr>
-                                <tr>
-                                    <td>004/INV/2026</td>
-                                    <td>Follow Up Payment</td>
-                                    <td>Finance / PT GHI</td>
-                                    <td>16 Jan 2026</td>
-                                    <td><span class="badge-custom badge-info">Proses</span></td>
-                                </tr>
+                                @foreach($aktivitas as $item)
+                                    <tr>
+                                        <td>{{ $item->nomor_surat }}</td>
+                                        <td>{{ $item->perihal }}</td>
+                                        <td>{{ $item->lokasi }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>
+                                        <td>
+                                            @php
+                                                $badge = [
+                                                    'Selesai' => 'badge-success',
+                                                    'Pending' => 'badge-warning',
+                                                    'Disposisi' => 'badge-info'
+                                                ][$item->status] ?? 'badge-secondary';
+                                            @endphp
+                                            <span class="badge-custom {{ $badge }}">{{ $item->status }}</span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
                             </tbody>
                         </table>
                     </div>
@@ -268,15 +258,23 @@
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        // Line Chart
+        // Ambil data dari controller (Laravel kirim ke Blade)
+        const monthLabels = @json($months);
+        const lineData = @json($chartData);
+        const pieLabels = @json($pieLabels);
+        const pieValues = @json($pieValues);
+
+        // =============================
+        // LINE CHART (Tren Surat)
+        // =============================
         const ctxLine = document.getElementById('lineChart').getContext('2d');
         const lineChart = new Chart(ctxLine, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: monthLabels,
                 datasets: [{
-                    label: 'Sales',
-                    data: [12, 19, 14, 21, 17, 23],
+                    label: 'Total Surat',
+                    data: lineData,
                     borderColor: '#000B58',
                     backgroundColor: 'rgba(0,11,88,0.2)',
                     tension: 0.4,
@@ -285,20 +283,26 @@
             },
             options: {
                 responsive: true,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true } }
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
             }
         });
 
-        // Pie Chart
+        // =============================
+        // PIE CHART (Status Surat)
+        // =============================
         const ctxPie = document.getElementById('pieChart').getContext('2d');
         const pieChart = new Chart(ctxPie, {
             type: 'pie',
             data: {
-                labels: ['Nota Dinas', 'Undangan', 'Lainnya'],
+                labels: pieLabels,
                 datasets: [{
-                    data: [31, 48, 21],
-                    backgroundColor: ['#000B58', '#8BBCE7', '#FFEB3B']
+                    data: pieValues,
+                    backgroundColor: ['#000B58', '#8BBCE7', '#FFEB3B', '#4CAF50', '#F44336']
                 }]
             },
             options: {
@@ -309,7 +313,7 @@
                         position: 'bottom',
                         align: 'center',
                         labels: {
-                            usePointStyle: true, // lingkaran
+                            usePointStyle: true,
                             pointStyle: 'circle',
                             boxWidth: 12,
                             padding: 10,
@@ -319,11 +323,10 @@
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                let label = context.label || '';
-                                let value = context.raw || 0;
-                                let total = context.chart._metasets[context.datasetIndex].total;
-                                let percentage = ((value / total) * 100).toFixed(0);
-                                return `${label}: ${percentage} %`;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const value = context.raw;
+                                const percent = ((value / total) * 100).toFixed(1);
+                                return `${context.label}: ${value} (${percent}%)`;
                             }
                         }
                     }
@@ -331,14 +334,12 @@
             }
         });
 
-
-    </script>
-    <script>
-        // Simple Search Table
+        // =============================
+        // SEARCH TABLE (Aktivitas)
+        // =============================
         document.getElementById('searchTable').addEventListener('keyup', function () {
             let filter = this.value.toLowerCase();
             let rows = document.querySelectorAll('#aktivitasTable tbody tr');
-
             rows.forEach(row => {
                 let text = row.textContent.toLowerCase();
                 row.style.display = text.includes(filter) ? '' : 'none';

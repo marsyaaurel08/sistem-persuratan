@@ -6,60 +6,50 @@
     <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
     <script src="{{ asset('duralux/assets/vendors/js/moment.min.js') }}"></script>
     <script src="{{ asset('duralux/assets/vendors/js/daterangepicker.min.js') }}"></script>
-    <div class="page-header">
-        <div class="page-header-left d-flex align-items-center">
-            <div class="page-header-title">
-                <h5 class="m-b-10">Laporan</h5>
-            </div>
+    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header-left">
+        <div class="page-header-title">
+            <h5 class="m-b-10">Laporan</h5>
         </div>
     </div>
 
     <div class="page-header-right ms-auto">
         <div class="page-header-right-items">
-            <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper ">
+            <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                <!-- Search Divisi -->
                 <div class="input-group" style="max-width: 250px; height: 38px;">
-                    <span
-                        class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center"
-                        style="height: 100%;">
+                    <span class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
                         <i class="feather-search"></i>
                     </span>
-                    <input type="text" id="searchLaporan" class="form-control rounded-end-pill"
-                        placeholder="Cari laporan..." style="height: 100%;">
+                    <input type="text" id="searchLaporan" class="form-control border-start-0 rounded-end-pill" 
+                           placeholder="Cari laporan..." style="height: 100%;">
                 </div>
 
-
-                    <!-- Rentang Tanggal -->
-                    <div class="input-group" style="max-width: 200px; height: 38px;">
-                        <span
-                            class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
-                            <i class="feather-calendar"></i>
-                        </span>
-                        <input type="text" id="dateRange"
-                            class="form-control border-start-0 rounded-end-pill shadow-none h-100 py-0"
-                            placeholder="Rentang Tanggal" readonly
-                            style="cursor: pointer; font-size: small; background-color: #fff;">
-                    </div>
+                <div class="input-group" style="max-width: 200px; height: 38px;">
+                    <span class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
+                        <i class="feather-calendar"></i>
+                    </span>
+                    <input type="text" id="dateRange" class="form-control border-start-0 rounded-end-pill shadow-none bg-white py-0" 
+                           placeholder="Rentang Tanggal" readonly style="cursor: pointer; font-size: small; height: 100%;">
                 </div>
-                <!-- Tombol Export Compact -->
-                <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-                    style="width: 70px; height: 35px;">
+
+                <button class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                        style="width: 70px; height: 35px;">
                     <i class="feather-file-text"></i>
                     <span>PDF</span>
                 </button>
 
-                <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-                    style="width: 70px; height: 35px;">
+                <button class="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                        style="width: 70px; height: 35px;">
                     <i class="feather-file"></i>
                     <span>Excel</span>
                 </button>
 
+            </div> </div> </div> </div>
+    
 
-            </div>
-        </div>
-    </div>
-    </div>
+
+
 
     <!-- Card Tabel Laporan -->
     <div class="row g-2 mt-3">

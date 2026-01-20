@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SuratMasuk extends Model
 {
-    use HasFactory;
-
     protected $table = 'surat_masuk';
 
     protected $fillable = [
@@ -21,9 +18,20 @@ class SuratMasuk extends Model
         'status'
     ];
 
-    // relasi ke pengguna (pengirim)
+    protected $casts = [
+        'tanggal_surat' => 'date'
+    ];
+
+    // 🔗 Pengirim (Pengguna)
     public function pengirim()
     {
         return $this->belongsTo(Pengguna::class, 'pengirim_id');
     }
+
+    // 🔗 Arsip
+    public function arsip()
+    {
+        return $this->hasOne(Arsip::class);
+    }
+
 }

@@ -27,7 +27,7 @@ Route::get('/', function () {
     return view('main');
 });
 Route::get('/arsip', function () {
-    return view('arsip.arsip');
+    return view('arsip.index');
 });
 Route::get('/laporan', function () {
     return view('laporan.index');
@@ -36,5 +36,8 @@ Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
 });
 Route::get('/upload_surat', function () {
-    return view('arsip.upload_surat');
+    return view('surat_masuk.upload_surat');
+});
+Route::get('/logout', function () {
+    return view('auth.login');
 });

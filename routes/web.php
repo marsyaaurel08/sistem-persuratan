@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArsipController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
@@ -53,6 +54,13 @@ Route::get('/arsip', function () {
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 
 
+Route::get('/', function () {
+    return view('main');
+});
+Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
+Route::get('/laporan', function () {
+    return view('laporan.index');
+});
 Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
 });
@@ -67,4 +75,7 @@ Route::get('/upload_surat', function () {
 });
 Route::get('/login', function () {
     return view('auth.login');
+});
+Route::get('/upload_berkas', function () {
+    return view('arsip.upload_berkas');
 });

@@ -14,9 +14,11 @@
 
     <!--! END:  Apps Title-->
     <!--! BEGIN: Favicon-->
+    
     <link rel="shortcut icon" type="image/x-icon" href="https://eproc.jasatirta1.co.id/assets/images/logo-jasatirta-crop.png" />
     <!--! END: Favicon-->
     <!--! BEGIN: Bootstrap CSS-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}" />
     <!--! END: Bootstrap CSS-->

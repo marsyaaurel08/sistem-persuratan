@@ -23,21 +23,30 @@
                             <span>Semua Divisi</span>
                             <i class="feather-chevron-down ms-2"></i>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end p-3">
-                            <div class="form-check mb-1">
-                                <input class="form-check-input" type="checkbox" id="divisi1" checked>
-                                <label class="form-check-label" for="divisi1">Divisi A</label>
+
+                        <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 220px;">
+                            <!-- Checkbox pilih semua -->
+                            <div class="form-check mb-2 border-bottom pb-2">
+                                <input class="form-check-input" type="checkbox" id="pilihSemuaDivisi" checked>
+                                <label class="form-check-label fw-bold" for="pilihSemuaDivisi">
+                                    Pilih Semua
+                                </label>
                             </div>
-                            <div class="form-check mb-1">
-                                <input class="form-check-input" type="checkbox" id="divisi2" checked>
-                                <label class="form-check-label" for="divisi2">Divisi B</label>
-                            </div>
-                            <div class="form-check mb-1">
-                                <input class="form-check-input" type="checkbox" id="divisi3">
-                                <label class="form-check-label" for="divisi3">Divisi C</label>
-                            </div>
+
+                            <!-- Daftar divisi dari controller -->
+                            @foreach ($divisi as $item)
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input divisi-checkbox" type="checkbox"
+                                        id="divisi{{ $loop->index }}" checked>
+                                    <label class="form-check-label" for="divisi{{ $loop->index }}">
+                                        {{ $item->divisi }}
+                                    </label>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
+
+
 
                     <!-- Dropdown Rentang Tanggal -->
                     <div class="dropdown">
@@ -346,4 +355,24 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const pilihSemua = document.getElementById('pilihSemuaDivisi');
+            const checkboxDivisi = document.querySelectorAll('.divisi-checkbox');
+
+            // Saat "Pilih Semua" diubah, ubah semua checkbox divisi
+            pilihSemua.addEventListener('change', function () {
+                checkboxDivisi.forEach(cb => cb.checked = pilihSemua.checked);
+            });
+
+            // Jika salah satu checkbox divisi diubah, cek status "Pilih Semua"
+            checkboxDivisi.forEach(cb => {
+                cb.addEventListener('change', function () {
+                    const semuaTercentang = Array.from(checkboxDivisi).every(x => x.checked);
+                    pilihSemua.checked = semuaTercentang;
+                });
+            });
+        });
+    </script>
+
 @endpush

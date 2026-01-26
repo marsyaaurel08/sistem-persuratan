@@ -22,14 +22,18 @@ class SuratKeluar extends Model
     ];
 
     protected $casts = [
-        'tanggal_surat' => 'date',
+        'tanggal_surat' => 'date'
     ];
-    
-    public $timestamps = true;
 
-    // Relasi ke User (Pengguna)
+    // 🔗 Penerima (Pengguna)
     public function penerima()
     {
-        return $this->belongsTo(User::class, 'penerima_id');
+        return $this->belongsTo(Pengguna::class, 'penerima_id');
+    }
+
+    // 🔗 Arsip
+    public function arsip()
+    {
+        return $this->hasOne(Arsip::class);
     }
 }

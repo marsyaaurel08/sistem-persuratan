@@ -20,7 +20,7 @@
                             Total Surat Terkirim
                         </div>
                         <div class="fw-bold fs-5">
-                            500
+                            {{ $totalSurat }}
                         </div>
                     </div>
 
@@ -34,12 +34,14 @@
                     <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
 
                         <!-- SEARCH -->
-                        <div class="input-group rounded-pill overflow-hidden border border-secondary-subtle"
-                            style="max-width: 500px;">
-                            <span class="input-group-text bg-light border-0">
-                                <i class="bi bi-search"></i>
-                            </span>
-                            <input type="text" class="form-control border-0" placeholder="Cari ...">
+                        <div style="max-width: 500px; width: 100%;">
+                            <div class="input-group rounded-pill overflow-hidden border border-secondary-subtle">
+                                <span class="input-group-text bg-light border-0">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" id="search" class="form-control border-0"
+                                    placeholder="Cari nomor surat / perihal / penerima ...">
+                            </div>
                         </div>
 
                         <!-- ACTION BUTTON -->
@@ -96,44 +98,38 @@
                                 </tr>
                             </thead>
 
-                            <tbody class="fs-6">
+                            <tbody class="fs-6" id="surat-table">
+                                @forelse ($suratKeluar as $item)
+                                    <tr>
+                                        <td>{{ $item->nomor_surat }}</td>
 
-                                <tr>
-                                    <td>RJ/0927/273</td>
-                                    <td>Izin Kegiatan Magang</td>
-                                    <td>Politeknik Negeri Malang</td>
-                                    <td>01 Jan 2026</td>
-                                    <td>
-                                        <span class="badge bg-warning-subtle text-warning">
-                                            PENDING
-                                        </span>
-                                    </td>
-                                </tr>
+                                        <td>{{ $item->perihal }}</td>
 
-                                <tr>
-                                    <td>RJ/0927/274</td>
-                                    <td>Laporan Keuangan Q3</td>
-                                    <td>Direktur Keuangan</td>
-                                    <td>01 Jan 2026</td>
-                                    <td>
-                                        <span class="badge bg-success-subtle text-success">
-                                            SELESAI
-                                        </span>
-                                    </td>
-                                </tr>
+                                        <td>
+                                            {{ $item->penerima?->name ?? '-' }}
+                                        </td>
 
-                                <tr>
-                                    <td>RJ/0927/275</td>
-                                    <td>Undangan Rapat Koordinasi</td>
-                                    <td>Direktur Utama</td>
-                                    <td>01 Jan 2026</td>
-                                    <td>
-                                        <span class="badge bg-info-subtle text-info">
-                                            DISPOSISI
-                                        </span>
-                                    </td>
-                                </tr>
+                                        <td>
+                                            {{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}
+                                        </td>
 
+                                        <td>
+                                            @if ($item->status === 'Pending')
+                                                <span class="badge bg-warning-subtle text-warning">PENDING</span>
+                                            @elseif ($item->status === 'Disposisi')
+                                                <span class="badge bg-info-subtle text-info">DISPOSISI</span>
+                                            @else
+                                                <span class="badge bg-success-subtle text-success">SELESAI</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            Belum ada surat keluar
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -142,4 +138,27 @@
 
 
         </div>
-@endsection
+    @endsection
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            const tableBody = document.getElementById('surat-table');
+
+            let timeout = null;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timeout);
+
+                timeout = setTimeout(() => {
+                    const query = this.value;
+
+                    fetch(`{{ route('surat_keluar.search') }}?search=${query}`)
+                        .then(response => response.text())
+                        .then(html => {
+                            tableBody.innerHTML = html;
+                        });
+                }, 300); // debounce 300ms
+            });
+        });
+    </script>

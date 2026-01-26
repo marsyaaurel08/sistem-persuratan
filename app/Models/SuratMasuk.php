@@ -21,15 +21,20 @@ class SuratMasuk extends Model
         'status'
     ];
 
-    public $timestamps = true;
-
     protected $casts = [
-        'tanggal_surat' => 'date',
+        'tanggal_surat' => 'date'
     ];
 
-    // Relasi ke User (Pengguna)
+    // 🔗 Pengirim (Pengguna)
     public function pengirim()
     {
-        return $this->belongsTo(User::class, 'pengirim_id');
+        return $this->belongsTo(Pengguna::class, 'pengirim_id');
     }
+
+    // 🔗 Arsip
+    public function arsip()
+    {
+        return $this->hasOne(Arsip::class);
+    }
+
 }

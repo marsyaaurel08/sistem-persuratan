@@ -20,6 +20,13 @@ class DashboardController extends Controller
         $menungguRespon = SuratMasuk::where('status', 'Pending')->count() +
             SuratKeluar::where('status', 'Pending')->count();
         $waktuRespon = 2; // contoh nilai statis
+        $divisiMasuk = SuratMasuk::select('penerima_divisi as divisi')->distinct();
+        $divisiKeluar = SuratKeluar::select('pengirim_divisi as divisi')->distinct();
+
+        $divisi = $divisiMasuk
+            ->union($divisiKeluar)
+            ->orderBy('divisi')
+            ->get();
 
         // =============================
         // Data Tren (Line Chart)
@@ -66,7 +73,7 @@ class DashboardController extends Controller
         // =============================
         // Aktivitas Terbaru
         // =============================
-        
+
 
 
         $aktivitas = DB::table(DB::raw("(
@@ -113,7 +120,8 @@ class DashboardController extends Controller
             'chartData',
             'pieLabels',
             'pieValues',
-            'aktivitas'
+            'aktivitas',
+            'divisi'
         ));
     }
 }

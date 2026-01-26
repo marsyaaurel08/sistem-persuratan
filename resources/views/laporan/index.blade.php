@@ -3,8 +3,11 @@
 @section('title', 'Laporan')
 
 @section('content')
-    <div class="page-header rounded">
-    <div class="page-header-left d-flex align-items-center">
+    <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
+    <script src="{{ asset('duralux/assets/vendors/js/moment.min.js') }}"></script>
+    <script src="{{ asset('duralux/assets/vendors/js/daterangepicker.min.js') }}"></script>
+    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header-left">
         <div class="page-header-title">
             <h5 class="m-b-10">Laporan</h5>
         </div>
@@ -12,55 +15,41 @@
 
     <div class="page-header-right ms-auto">
         <div class="page-header-right-items">
-            <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper ">
+            <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                <!-- Search Divisi -->
                 <div class="input-group" style="max-width: 250px; height: 38px;">
-                    <span
-                        class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center"
-                        style="height: 100%;">
+                    <span class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
                         <i class="feather-search"></i>
                     </span>
-                    <input type="text" id="searchLaporan" class="form-control rounded-end-pill"
-                        placeholder="Cari laporan..." style="height: 100%;">
+                    <input type="text" id="searchLaporan" class="form-control border-start-0 rounded-end-pill" 
+                           placeholder="Cari laporan..." style="height: 100%;">
                 </div>
 
-
-                <!-- Rentang Tanggal -->
-                <div class="dropdown">
-                    <a class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between rounded-pill"
-                        style="min-width: 180px; height: 38px;" data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                        <i class="feather-calendar me-2"></i>
-                        <span>Rentang Tanggal</span>
-                        <i class="feather-chevron-down ms-2"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end p-3">
-                        <input type="text" class="form-control mb-2" placeholder="Pilih tanggal awal">
-                        <input type="text" class="form-control mb-2" placeholder="Pilih tanggal akhir">
-                        <div class="d-flex justify-content-between mt-2">
-                            <button class="btn btn-sm btn-light">Reset</button>
-                            <button class="btn btn-sm btn-success">Terapkan</button>
-                        </div>
-                    </div>
+                <div class="input-group" style="max-width: 200px; height: 38px;">
+                    <span class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
+                        <i class="feather-calendar"></i>
+                    </span>
+                    <input type="text" id="dateRange" class="form-control border-start-0 rounded-end-pill shadow-none bg-white py-0" 
+                           placeholder="Rentang Tanggal" readonly style="cursor: pointer; font-size: small; height: 100%;">
                 </div>
-                <!-- Tombol Export Compact -->
-                <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-                    style="width: 70px; height: 35px;">
+
+                <button class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                        style="width: 70px; height: 35px;">
                     <i class="feather-file-text"></i>
                     <span>PDF</span>
                 </button>
 
-                <button class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-                    style="width: 70px; height: 35px;">
+                <button class="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                        style="width: 70px; height: 35px;">
                     <i class="feather-file"></i>
                     <span>Excel</span>
                 </button>
 
+            </div> </div> </div> </div>
+    
 
-            </div>
-        </div>
-    </div>
-    </div>
+
+
 
     <!-- Card Tabel Laporan -->
     <div class="row g-2 mt-3">
@@ -153,6 +142,77 @@
     </div>
 
     @push('scripts')
+        <script>
+            $(function () {
+                const $dateInput = $('#dateRange');
+                const $clearBtn = $('#clearDateRange');
+                const $searchInput = $('#searchLaporan');
+                const $tableRows = $('#laporanTable tbody tr');
+
+                // 1. Inisialisasi Date Range Picker (Persis seperti di Arsip)
+                $dateInput.daterangepicker({
+                    autoUpdateInput: false,
+                    locale: {
+                        format: 'DD MMM YYYY',
+                        applyLabel: 'Terapkan',
+                        cancelLabel: 'Batal',
+                        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                        monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+                    },
+                    opens: 'left'
+                });
+
+                // 2. Fungsi Filter Gabungan
+                function applyAllFilters() {
+                    const searchText = $searchInput.val().toLowerCase();
+                    const picker = $dateInput.data('daterangepicker');
+                    const isDateActive = $dateInput.val() !== '';
+
+                    $tableRows.each(function () {
+                        const $row = $(this);
+                        const rowContent = $row.text().toLowerCase();
+                        const rowDateRaw = $row.attr('data-date'); // Pastikan ada atribut data-date="YYYY-MM-DD"
+
+                        // Cek Teks
+                        const matchesText = rowContent.includes(searchText);
+
+                        // Cek Tanggal
+                        let matchesDate = true;
+                        if (isDateActive && rowDateRaw) {
+                            const targetDate = moment(rowDateRaw, 'YYYY-MM-DD');
+                            matchesDate = targetDate.isSameOrAfter(picker.startDate, 'day') &&
+                                targetDate.isSameOrBefore(picker.endDate, 'day');
+                        }
+
+                        $row.toggle(matchesText && matchesDate);
+                    });
+                }
+
+                // 3. Event Handlers
+                $dateInput.on('apply.daterangepicker', function (ev, picker) {
+                    $(this).val(picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY'));
+                    $clearBtn.show();
+                    applyAllFilters();
+                });
+
+                $dateInput.on('cancel.daterangepicker', function () {
+                    $(this).val('');
+                    $clearBtn.hide();
+                    applyAllFilters();
+                });
+
+                $clearBtn.on('click', function () {
+                    $dateInput.val('');
+                    $(this).hide();
+                    applyAllFilters();
+                });
+
+                $searchInput.on('keyup', function () {
+                    applyAllFilters();
+                });
+            });
+        </script>
         <script>
             // Search divisi di tabel
             document.getElementById('searchLaporan').addEventListener('keyup', function () {

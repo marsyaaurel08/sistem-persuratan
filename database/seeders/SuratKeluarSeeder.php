@@ -2,128 +2,51 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
+use Carbon\Carbon;
 
 class SuratKeluarSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        DB::table('surat_keluar')->insert([
-            [
-                'nomor_surat' => 'SK-001',
-                'tanggal_surat' => '2026-01-01',
-                'pengirim_divisi' => 'Keuangan',
-                'penerima_id' => 2, // pastikan pengguna id 2 ada
-                'perihal' => 'Surat Pemberitahuan Pajak',
-                'file_path' => 'surat/sk-001.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-002',
-                'tanggal_surat' => '2026-01-02',
-                'pengirim_divisi' => 'Marketing',
-                'penerima_id' => 3,
-                'perihal' => 'Undangan Seminar',
-                'file_path' => 'surat/sk-002.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-003',
-                'tanggal_surat' => '2026-01-03',
-                'pengirim_divisi' => 'HR',
-                'penerima_id' => 1,
-                'perihal' => 'Pengumuman Libur Nasional',
-                'file_path' => 'surat/sk-003.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-004',
-                'tanggal_surat' => '2026-01-04',
-                'pengirim_divisi' => 'IT',
-                'penerima_id' => 2,
-                'perihal' => 'Permintaan Backup Data',
-                'file_path' => 'surat/sk-004.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-005',
-                'tanggal_surat' => '2026-01-05',
-                'pengirim_divisi' => 'Keuangan',
-                'penerima_id' => 3,
-                'perihal' => 'Tagihan Vendor',
-                'file_path' => 'surat/sk-005.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-006',
-                'tanggal_surat' => '2026-01-06',
-                'pengirim_divisi' => 'Marketing',
-                'penerima_id' => 1,
-                'perihal' => 'Proposal Kerjasama',
-                'file_path' => 'surat/sk-006.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-007',
-                'tanggal_surat' => '2026-01-07',
-                'pengirim_divisi' => 'HR',
-                'penerima_id' => 2,
-                'perihal' => 'Surat Cuti Karyawan',
-                'file_path' => 'surat/sk-007.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-008',
-                'tanggal_surat' => '2026-01-08',
-                'pengirim_divisi' => 'IT',
-                'penerima_id' => 3,
-                'perihal' => 'Laporan Masalah Server',
-                'file_path' => 'surat/sk-008.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-009',
-                'tanggal_surat' => '2026-01-09',
-                'pengirim_divisi' => 'Keuangan',
-                'penerima_id' => 1,
-                'perihal' => 'Revisi Anggaran',
-                'file_path' => 'surat/sk-009.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nomor_surat' => 'SK-010',
-                'tanggal_surat' => '2026-01-10',
-                'pengirim_divisi' => 'Marketing',
-                'penerima_id' => 2,
-                'perihal' => 'Surat Penawaran Produk',
-                'file_path' => 'surat/sk-010.pdf',
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+        $faker = Faker::create('id_ID');
+        
+        // Daftar Perihal yang realistis
+        $daftarPerihal = [
+            'Undangan Rapat Koordinasi Tahunan',
+            'Surat Pemberitahuan Cuti Bersama',
+            'Pengajuan Anggaran Inventaris IT',
+            'Surat Teguran Keterlambatan Vendor',
+            'Permohonan Izin Kegiatan Sosialisasi',
+            'Laporan Progres Pemasaran Bulanan',
+            'Surat Keputusan Pengangkatan Karyawan',
+            'Pemberitahuan Revisi Prosedur Operasional',
+            'Permintaan Penawaran Harga Barang',
+            'Surat Pengantar Pengiriman Dokumen Audit'
+        ];
+
+        $divisi = ['Keuangan', 'Marketing', 'HR', 'IT', 'Sarpras', 'Produksi'];
+        $statuses = ['Pending', 'Disposisi', 'Selesai'];
+
+        // Loop untuk membuat 20 data
+        for ($i = 1; $i <= 10; $i++) {
+            // Membuat waktu acak (Maksimal hari ini, tidak boleh lebih)
+            $randomDate = $faker->dateTimeBetween('-5 months', 'now');
+            $createdAt = Carbon::instance($randomDate);
+
+            DB::table('surat_keluar')->insert([
+                'nomor_surat'     => 'SK-2026-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'tanggal_surat'   => $createdAt->format('Y-m-d'),
+                'pengirim_divisi' => $faker->randomElement($divisi),
+                'penerima_id'     => $faker->numberBetween(1, 3), 
+                'perihal'         => $faker->randomElement($daftarPerihal), // Mengambil dari daftar di atas
+                'file_path'       => 'surat/sk-' . $i . '.pdf',
+                'status'          => $faker->randomElement($statuses),
+                'created_at'      => $createdAt,
+                'updated_at'      => $createdAt,
+            ]);
+        }
     }
 }

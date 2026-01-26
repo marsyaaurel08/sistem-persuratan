@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SuratMasuk extends Model
 {
-    protected $table = 'surat_masuk';
+    use HasFactory;
+
+    protected $table = 'surat_masuk'; // Sesuai migration
 
     protected $fillable = [
         'nomor_surat',

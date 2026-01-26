@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
 
@@ -39,9 +40,7 @@ Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
 //     return view('surat_keluar.index');
 // });
 
-Route::get('/', function () {
-    return view('main');
-});
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/arsip', function () {
     return view('arsip.index');
 });
@@ -51,9 +50,15 @@ Route::get('/laporan', function () {
 Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
 });
+
+Route::get('/tambah-pengguna', function () {
+    return view('manajemen-pengguna.add-user');
+});
+
+
 Route::get('/upload_surat', function () {
     return view('surat_masuk.upload_surat');
 });
-Route::get('/logout', function () {
+Route::get('/login', function () {
     return view('auth.login');
 });

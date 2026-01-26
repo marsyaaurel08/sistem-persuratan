@@ -5,7 +5,7 @@
                     document.write(new Date().getFullYear());
                 </script>
             </p>
-            <p><span>By: <a target="_blank" href="https://wrapbootstrap.com/user/theme_ocean"
+            <p><span> <a target="_blank" href="https://wrapbootstrap.com/user/theme_ocean"
                         target="_blank">Perum Jasa Tirta</a></span> • <span>Develop by: Bella, Marsya, Keysha</span></p>
             <div class="d-flex align-items-center gap-4">
                 <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Help</a>

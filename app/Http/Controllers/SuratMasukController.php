@@ -84,24 +84,49 @@ class SuratMasukController extends Controller
         ));
     }
 
-
     public function search(Request $request)
     {
         $search = $request->search;
+        $status = $request->status;
 
-        $suratMasuk = SuratMasuk::with('pengirim')
-            ->where(function ($q) use ($search) {
+        $query = SuratMasuk::with('pengirim');
+
+        if ($status) {
+            $query->where('status', ucfirst($status));
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nomor_surat', 'like', "%$search%")
                 ->orWhere('perihal', 'like', "%$search%")
                 ->orWhereHas('pengirim', function ($q2) use ($search) {
                     $q2->where('name', 'like', "%$search%");
                 });
-            })
-            ->latest()
-            ->get();
+            });
+        }
+
+        $suratMasuk = $query->latest()->get();
 
         return view('surat_masuk.partials.table', compact('suratMasuk'))->render();
     }
+
+    // public function search(Request $request)
+    // {
+    //     $search = $request->search;
+
+    //     $suratMasuk = SuratMasuk::with('pengirim')
+    //         ->where(function ($q) use ($search) {
+    //             $q->where('nomor_surat', 'like', "%$search%")
+    //             ->orWhere('perihal', 'like', "%$search%")
+    //             ->orWhereHas('pengirim', function ($q2) use ($search) {
+    //                 $q2->where('name', 'like', "%$search%");
+    //             });
+    //         })
+    //         ->latest()
+    //         ->get();
+
+    //     return view('surat_masuk.partials.table', compact('suratMasuk'))->render();
+    // }
 
     // Menyimpan data surat masuk
     public function store(Request $request)

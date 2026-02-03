@@ -8,8 +8,6 @@
             </div>
         </div>
 
-
-
         <div class="page-header-right ms-auto">
             <div class="page-header-right-items">
                 <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
@@ -48,9 +46,6 @@
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
@@ -63,9 +58,9 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fs-14 fw-semibold mb-0">Data Pengguna</h5>
                         <a href="/tambah-pengguna"><button class="btn btn-sm rounded-pill px-3"
-                            style="background-color: #000B58; color: white; border: none;">
-                            <i class="feather-plus me-1"></i> Tambah
-                        </button></a>
+                                style="background-color: #000B58; color: white; border: none;">
+                                <i class="feather-plus me-1"></i> Tambah
+                            </button></a>
                     </div>
 
                     <div class="table-responsive">
@@ -81,58 +76,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Ahmad Santoso</td>
-                                    <td>ahmad@example.com</td>
-                                    <td><span class="badge-custom badge-info">Admin</span></td>
-                                    <td>Keuangan</td>
-                                    <td>
-                                        <div class="d-flex gap-1">
-                                            <button class="btn btn-sm btn-primary"><i class="feather-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger"><i class="feather-trash-2"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Siti Nurhaliza</td>
-                                    <td>siti@example.com</td>
-                                    <td><span class="badge-custom badge-success">User</span></td>
-                                    <td>Marketing</td>
-                                    <td>
-                                        <div class="d-flex gap-1">
-                                            <button class="btn btn-sm btn-primary"><i class="feather-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger"><i class="feather-trash-2"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Budi Prasetyo</td>
-                                    <td>budi@example.com</td>
-                                    <td><span class="badge-custom badge-purple">Manager</span></td>
-                                    <td>HR</td>
-                                    <td>
-                                        <div class="d-flex gap-1">
-                                            <button class="btn btn-sm btn-primary"><i class="feather-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger"><i class="feather-trash-2"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Rina Wijaya</td>
-                                    <td>rina@example.com</td>
-                                    <td><span class="badge-custom badge-warning">User</span></td>
-                                    <td>IT</td>
-                                    <td>
-                                        <div class="d-flex gap-1">
-                                            <button class="btn btn-sm btn-primary"><i class="feather-edit"></i></button>
-                                            <button class="btn btn-sm btn-danger"><i class="feather-trash-2"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @forelse ($pengguna as $index => $user)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>
+                                            <span
+                                                class="badge-custom
+            @if ($user->role === 'Admin') badge-info
+            @elseif($user->role === 'Pimpinan') badge-purple
+            @else badge-success @endif
+        ">
+                                                {{ $user->role }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $user->divisi ?? '-' }}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <a href="#" class="btn btn-sm btn-primary">
+                                                    <i class="feather-edit"></i>
+                                                </a>
+                                                <form action="#" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-sm btn-danger">
+                                                        <i class="feather-trash-2"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            Data pengguna tidak ditemukan
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -146,10 +127,9 @@
 @endsection
 @push('scripts')
     <script>
-        // Simple Search Table
-        document.getElementById('searchPengguna').addEventListener('keyup', function () {
+        document.getElementById('searchPengguna').addEventListener('keyup', function() {
             let filter = this.value.toLowerCase();
-            let rows = document.querySelectorAll('#aktivitasTable tbody tr');
+            let rows = document.querySelectorAll('#userTable tbody tr');
 
             rows.forEach(row => {
                 let text = row.textContent.toLowerCase();

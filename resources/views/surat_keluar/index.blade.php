@@ -61,27 +61,23 @@
                     </div>
 
                     <!-- FILTER STATUS -->
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        <span class="input-group-text bg-transparent border-0 fw-semibold">
-                            Status :
+                    <div class="d-flex flex-wrap gap-2 mb-3" id="statusFilter">
+                        <span class="fw-semibold me-2">Status :</span>
+
+                        <span class="badge rounded-pill bg-primary px-3 py-2 status-btn" data-status="">
+                            Semua ({{ $totalSurat }})
                         </span>
-                        <span class="badge rounded-pill bg-primary px-3 py-2">
-                            Semua
+
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Pending">
+                            Baru ({{ $statusCounts['Pending'] ?? 0 }})
                         </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Baru (10)
+
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Disposisi">
+                            Disposisi ({{ $statusCounts['Disposisi'] ?? 0 }})
                         </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Dalam Proses (5)
-                        </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Disposisi (7)
-                        </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Disposisi (7)
-                        </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Selesai
+
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Selesai">
+                            Selesai ({{ $statusCounts['Selesai'] ?? 0 }})
                         </span>
                     </div>
 
@@ -142,23 +138,127 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search');
+
             const tableBody = document.getElementById('surat-table');
+            const searchInput = document.getElementById('search');
+            const statusButtons = document.querySelectorAll('.status-btn');
 
             let timeout = null;
+            let currentStatus = '';
 
-            searchInput.addEventListener('input', function() {
-                clearTimeout(timeout);
+            /* ===============================
+               FETCH TABLE (AJAX GLOBAL)
+            =============================== */
+            function fetchTable() {
+                const search = searchInput?.value ?? '';
 
-                timeout = setTimeout(() => {
-                    const query = this.value;
+                fetch(`{{ route('surat_keluar.search') }}?search=${search}&status=${currentStatus}`)
+                    .then(res => res.text())
+                    .then(html => {
+                        tableBody.innerHTML = html;
+                        filterByDateRange(); // kalau date filter dipakai
+                    });
+            }
 
-                    fetch(`{{ route('surat_keluar.search') }}?search=${query}`)
-                        .then(response => response.text())
-                        .then(html => {
-                            tableBody.innerHTML = html;
-                        });
-                }, 300); // debounce 300ms
+            /* ===============================
+               FILTER STATUS (BADGE)
+            =============================== */
+            statusButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    statusButtons.forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('bg-light', 'text-dark');
+                    });
+
+                    this.classList.remove('bg-light', 'text-dark');
+                    this.classList.add('bg-primary', 'text-white');
+
+                    currentStatus = this.dataset.status;
+                    fetchTable();
+                });
             });
+
+            /* ===============================
+               LIVE SEARCH (DEBOUNCE)
+            =============================== */
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(fetchTable, 300);
+                });
+            }
+
+            /* ===============================
+               FILTER DATE (CLIENT SIDE)
+            =============================== */
+            function filterByDateRange() {
+                if (typeof $ === 'undefined') return;
+
+                const picker = $('#dateRange').data('daterangepicker');
+                if (!picker || !$('#dateRange').val()) {
+                    $('#surat-table tr').show();
+                    return;
+                }
+
+                const start = picker.startDate;
+                const end = picker.endDate;
+
+                $('#surat-table tr').each(function() {
+                    const rowDateStr = $(this).data('date');
+                    if (!rowDateStr) return;
+
+                    const rowDate = moment(rowDateStr, 'YYYY-MM-DD');
+                    const show =
+                        rowDate.isSameOrAfter(start, 'day') &&
+                        rowDate.isSameOrBefore(end, 'day');
+
+                    $(this).toggle(show);
+                });
+            }
+
+            /* ===============================
+               DATE PICKER INIT
+            =============================== */
+            if (typeof $ !== 'undefined' && $.fn.daterangepicker) {
+
+                const dateInput = $('#dateRange');
+                const label = document.getElementById('dateRangeLabel');
+                const clearBtn = document.getElementById('clearDateRange');
+                const openBtn = document.getElementById('openDateRange');
+
+                dateInput.daterangepicker({
+                    autoUpdateInput: false,
+                    opens: 'left',
+                    locale: {
+                        format: 'DD MMM YYYY',
+                        applyLabel: 'Terapkan',
+                        cancelLabel: 'Batal'
+                    }
+                });
+
+                openBtn?.addEventListener('click', e => {
+                    if (e.target !== clearBtn) dateInput.trigger('click');
+                });
+
+                dateInput.on('apply.daterangepicker', function(ev, picker) {
+                    label.textContent =
+                        picker.startDate.format('DD MMM YYYY') +
+                        ' - ' +
+                        picker.endDate.format('DD MMM YYYY');
+
+                    clearBtn.classList.remove('d-none');
+                    filterByDateRange();
+                });
+
+                clearBtn?.addEventListener('click', e => {
+                    e.stopPropagation();
+                    dateInput.val('');
+                    label.textContent = 'Rentang Tanggal';
+                    clearBtn.classList.add('d-none');
+                    filterByDateRange();
+                });
+            }
+
         });
     </script>

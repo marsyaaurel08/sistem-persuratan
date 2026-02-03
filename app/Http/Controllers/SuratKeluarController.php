@@ -6,14 +6,41 @@ use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
 
 class SuratKeluarController extends Controller
-{
+{ 
     // Menampilkan daftar surat keluar
-    public function index()
+    public function index(Request $request)
     {
-        $suratKeluar = SuratKeluar::latest()->get();
+        $query = SuratKeluar::with('penerima')->latest();
 
+        // FILTER STATUS (langsung, tanpa ucfirst)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // FILTER SEARCH
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor_surat', 'like', "%{$search}%")
+                ->orWhere('perihal', 'like', "%{$search}%")
+                ->orWhere('pengirim_divisi', 'like', "%{$search}%")
+                ->orWhereHas('penerima', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $suratKeluar = $query->get();
+
+        // Statistik
         $totalSurat = SuratKeluar::count();
-        $belumDisposisi = SuratKeluar::where('status', 'Pending')->count();
+
+        $statusCounts = SuratKeluar::select('status')
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         $selesaiBulanIni = SuratKeluar::where('status', 'Selesai')
             ->whereMonth('tanggal_surat', now()->month)
             ->whereYear('tanggal_surat', now()->year)
@@ -22,7 +49,7 @@ class SuratKeluarController extends Controller
         return view('surat_keluar.index', compact(
             'suratKeluar',
             'totalSurat',
-            'belumDisposisi',
+            'statusCounts',
             'selesaiBulanIni'
         ));
     }
@@ -30,18 +57,28 @@ class SuratKeluarController extends Controller
     public function search(Request $request)
     {
         $search = $request->search;
+        $status = $request->status;
 
-        $suratKeluar = SuratKeluar::with('penerima')
-            ->where(function ($q) use ($search) {
-                $q->where('nomor_surat', 'like', "%$search%")
-                ->orWhere('perihal', 'like', "%$search%")
-                ->orWhere('pengirim_divisi', 'like', "%$search%")
+        $query = SuratKeluar::with('penerima');
+
+        // FILTER STATUS (langsung, TANPA ucfirst)
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        // FILTER SEARCH
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor_surat', 'like', "%{$search}%")
+                ->orWhere('perihal', 'like', "%{$search}%")
+                ->orWhere('pengirim_divisi', 'like', "%{$search}%")
                 ->orWhereHas('penerima', function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%$search%");
+                    $q2->where('name', 'like', "%{$search}%");
                 });
-            })
-            ->latest()
-            ->get();
+            });
+        }
+
+        $suratKeluar = $query->latest()->get();
 
         return view('surat_keluar.partials.table', compact('suratKeluar'))->render();
     }

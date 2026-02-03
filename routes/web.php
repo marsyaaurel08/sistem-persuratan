@@ -4,9 +4,6 @@ use App\Http\Controllers\ArsipController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
-
-
-
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
 
@@ -46,6 +43,8 @@ Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
 // });
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
+
 Route::get('/arsip', function () {
     return view('arsip.index');
 });
@@ -54,13 +53,8 @@ Route::get('/arsip', function () {
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 
 
-Route::get('/', function () {
-    return view('main');
-});
 Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
-Route::get('/laporan', function () {
-    return view('laporan.index');
-});
+
 Route::get('/manajemen-pengguna', function () {
     return view('manajemen-pengguna.index');
 });

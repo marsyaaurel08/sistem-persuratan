@@ -92,11 +92,6 @@
                         <!-- ACTION BUTTON -->
                         <div class="d-flex gap-2">
                             <!-- RENTANG TANGGAL -->
-                            {{-- <button class="btn bg-secondary-subtle text-dark rounded px-3">
-                                <i class="bi bi-calendar-event-fill me-1 text-dark"></i>
-                                Rentang Tanggal
-                            </button> --}}
-                            <!-- RENTANG TANGGAL -->
                             <button id="openDateRange"
                                 class="btn bg-secondary-subtle text-dark rounded px-3 d-flex align-items-center gap-2">
 
@@ -125,19 +120,19 @@
                         <span class="fw-semibold me-2">Status :</span>
 
                         <span class="badge rounded-pill bg-primary px-3 py-2 status-btn" data-status="">
-                            Semua
+                            Semua ({{ $totalSurat }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="pending">
-                            Baru
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Pending">
+                            Baru ({{ $statusCounts['Pending'] ?? 0 }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="disposisi">
-                            Disposisi
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Disposisi">
+                            Disposisi ({{ $statusCounts['Disposisi'] ?? 0 }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="selesai">
-                            Selesai
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Selesai">
+                            Selesai ({{ $statusCounts['Selesai'] ?? 0 }})
                         </span>
                     </div>
 
@@ -184,7 +179,7 @@
                                                 {{ $statusLabel[$status] ?? strtoupper($item->status) }}
                                             </span>
                                         </td>
-                                        
+
                                         <td class="text-center">
                                             <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown">
                                                 <i class="bi bi-three-dots-vertical"></i>
@@ -224,7 +219,9 @@
             function fetchTable() {
                 const search = searchInput?.value ?? '';
 
-                fetch(`{{ route('surat_masuk.search') }}?search=${search}&status=${currentStatus}`)
+                fetch(
+                        `{{ route('surat_masuk.search') }}?search=${encodeURIComponent(search)}&status=${encodeURIComponent(currentStatus)}`
+                        )
                     .then(res => res.text())
                     .then(html => {
                         tableBody.innerHTML = html;
@@ -233,7 +230,7 @@
             }
 
             /* ===============================
-               FILTER STATUS
+               FILTER STATUS (BADGE)
             =============================== */
             statusButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -252,7 +249,7 @@
             });
 
             /* ===============================
-               LIVE SEARCH
+               LIVE SEARCH (DEBOUNCE)
             =============================== */
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
@@ -323,7 +320,7 @@
                     filterByDateRange();
                 });
 
-                clearBtn.addEventListener('click', e => {
+                clearBtn?.addEventListener('click', e => {
                     e.stopPropagation();
                     dateInput.val('');
                     label.textContent = 'Rentang Tanggal';

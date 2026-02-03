@@ -8,43 +8,8 @@ use Illuminate\Http\Request;
 class SuratMasukController extends Controller
 {
     // Menampilkan daftar surat masuk
-    // public function index(Request $request)
-    // {
-    //     $query = SuratMasuk::with('pengirim')->latest();
-
-    //     if ($request->filled('search')) {
-    //         $search = $request->search;
-
-    //         $query->where(function ($q) use ($search) {
-    //             $q->where('nomor_surat', 'like', "%$search%")
-    //             ->orWhere('perihal', 'like', "%$search%")
-    //             ->orWhere('penerima_divisi', 'like', "%$search%")
-    //             ->orWhereHas('pengirim', function ($q2) use ($search) {
-    //                 $q2->where('name', 'like', "%$search%");
-    //             });
-    //         });
-    //     }
-
-    //     $suratMasuk = $query->get();
-
-    //     $totalSurat = SuratMasuk::count();
-    //     $belumDisposisi = SuratMasuk::where('status', 'Pending')->count();
-    //     $selesaiBulanIni = SuratMasuk::where('status', 'Selesai')
-    //         ->whereMonth('tanggal_surat', now()->month)
-    //         ->whereYear('tanggal_surat', now()->year)
-    //         ->count();
-
-    //     return view('surat_masuk.index', compact(
-    //         'suratMasuk',
-    //         'totalSurat',
-    //         'belumDisposisi',
-    //         'selesaiBulanIni'
-    //     ));
-    // }
-
     public function index(Request $request)
     {
-        // Query awal dengan eager loading pengirim dan urut terbaru
         $query = SuratMasuk::with('pengirim')->latest();
 
         // FILTER STATUS
@@ -57,20 +22,27 @@ class SuratMasukController extends Controller
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
-                $q->where('nomor_surat', 'like', "%$search%")
-                ->orWhere('perihal', 'like', "%$search%")
-                ->orWhere('penerima_divisi', 'like', "%$search%")
+                $q->where('nomor_surat', 'like', "%{$search}%")
+                ->orWhere('perihal', 'like', "%{$search}%")
+                ->orWhere('penerima_divisi', 'like', "%{$search}%")
                 ->orWhereHas('pengirim', function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%$search%");
+                    $q2->where('name', 'like', "%{$search}%");
                 });
             });
         }
 
         $suratMasuk = $query->get();
 
-        // Statistik untuk dashboard
+        // ================= STATISTIK =================
         $totalSurat = SuratMasuk::count();
+
         $belumDisposisi = SuratMasuk::where('status', 'Pending')->count();
+
+        $statusCounts = SuratMasuk::select('status')
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         $selesaiBulanIni = SuratMasuk::where('status', 'Selesai')
             ->whereMonth('tanggal_surat', now()->month)
             ->whereYear('tanggal_surat', now()->year)
@@ -80,6 +52,7 @@ class SuratMasukController extends Controller
             'suratMasuk',
             'totalSurat',
             'belumDisposisi',
+            'statusCounts',
             'selesaiBulanIni'
         ));
     }
@@ -91,16 +64,19 @@ class SuratMasukController extends Controller
 
         $query = SuratMasuk::with('pengirim');
 
-        if ($status) {
-            $query->where('status', ucfirst($status));
+        // FILTER STATUS (langsung, TANPA ucfirst)
+        if (!empty($status)) {
+            $query->where('status', $status);
         }
 
-        if ($search) {
+        // FILTER SEARCH
+        if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('nomor_surat', 'like', "%$search%")
-                ->orWhere('perihal', 'like', "%$search%")
+                $q->where('nomor_surat', 'like', "%{$search}%")
+                ->orWhere('perihal', 'like', "%{$search}%")
+                ->orWhere('penerima_divisi', 'like', "%{$search}%")
                 ->orWhereHas('pengirim', function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%$search%");
+                    $q2->where('name', 'like', "%{$search}%");
                 });
             });
         }
@@ -109,24 +85,6 @@ class SuratMasukController extends Controller
 
         return view('surat_masuk.partials.table', compact('suratMasuk'))->render();
     }
-
-    // public function search(Request $request)
-    // {
-    //     $search = $request->search;
-
-    //     $suratMasuk = SuratMasuk::with('pengirim')
-    //         ->where(function ($q) use ($search) {
-    //             $q->where('nomor_surat', 'like', "%$search%")
-    //             ->orWhere('perihal', 'like', "%$search%")
-    //             ->orWhereHas('pengirim', function ($q2) use ($search) {
-    //                 $q2->where('name', 'like', "%$search%");
-    //             });
-    //         })
-    //         ->latest()
-    //         ->get();
-
-    //     return view('surat_masuk.partials.table', compact('suratMasuk'))->render();
-    // }
 
     // Menyimpan data surat masuk
     public function store(Request $request)

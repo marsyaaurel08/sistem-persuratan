@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengguna', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->enum('role', ['Admin', 'Pimpinan', 'Staff'])->default('Staff');
-            $table->string('divisi')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('pengguna')) {
+            Schema::create('pengguna', function (Blueprint $table) {
+            // Schema::create('pengguna', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('email')->unique();
+                $table->string('password');
+                $table->enum('role', ['Admin', 'Pimpinan', 'Staff'])->default('Staff');
+                $table->string('divisi')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

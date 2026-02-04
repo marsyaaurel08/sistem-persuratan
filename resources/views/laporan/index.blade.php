@@ -42,19 +42,28 @@
                         </button>
                     </div>
 
-                    <button
-                        class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
-                        style="width: 70px; height: 35px;">
-                        <i class="feather-file-text"></i>
-                        <span>PDF</span>
-                    </button>
+                    <form id="pdfForm" action="{{ route('laporan.exportPdf') }}" method="GET" target="_blank">
+                        <input type="hidden" name="start" id="pdfStart">
+                        <input type="hidden" name="end" id="pdfEnd">
+                        <button type="submit"
+                            class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                            style="width: 70px; height: 35px;">
+                            <i class="feather-file-text"></i>
+                            <span>PDF</span>
+                        </button>
+                    </form>
 
-                    <button
-                        class="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
-                        style="width: 70px; height: 35px;">
-                        <i class="feather-file"></i>
-                        <span>Excel</span>
-                    </button>
+                    <form id="excelForm" action="{{ route('laporan.previewExcel') }}" method="GET" target="_blank">
+                        <input type="hidden" name="start" id="excelStart">
+                        <input type="hidden" name="end" id="excelEnd">
+                        <button type="submit"
+                            class="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                            style="width: 70px; height: 35px;">
+                            <i class="feather-file"></i>
+                            <span>Excel</span>
+                        </button>
+                    </form>
+
 
                 </div>
             </div>
@@ -97,10 +106,10 @@
                                         <td>
                                             <span
                                                 class="badge-custom 
-                                                                                                                                                        @if($laporan->status == 'Selesai') badge-success
-                                                                                                                                                        @elseif($laporan->status == 'Pending') badge-warning
-                                                                                                                                                        @elseif($laporan->status == 'Ditolak') badge-danger
-                                                                                                                                                        @else badge-info @endif">
+                                                                                                                                    @if($laporan->status == 'Selesai') badge-success
+                                                                                                                                    @elseif($laporan->status == 'Pending') badge-warning
+                                                                                                                                    @elseif($laporan->status == 'Ditolak') badge-danger
+                                                                                                                                    @else badge-info @endif">
                                                 {{ $laporan->status }}
                                             </span>
                                         </td>
@@ -108,9 +117,12 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <div class="mt-2 d-flex justify-content-center">
-                            {{ $laporans->links() }}
-                        </div>
+                        @if($laporans instanceof \Illuminate\Pagination\AbstractPaginator)
+                            <div class="mt-2 d-flex justify-content-center">
+                                {{ $laporans->links() }}
+                            </div>
+                        @endif
+
                     </div>
 
                 </div>
@@ -137,6 +149,56 @@
                 border-color: #dee2e6;
                 color: #000;
             }
+
+            /* Pastikan tombol PDF kembali ke warna normal setelah klik */
+            .btn-outline-danger {
+                color: #dc3545 !important;
+                border-color: #dc3545 !important;
+                background-color: transparent !important;
+            }
+
+            /* Hover dan active: tetap merah normal */
+            .btn-outline-danger:hover,
+            .btn-outline-danger:active,
+            .btn-outline-danger:focus,
+            .btn-outline-danger:focus-visible {
+                color: #fff !important;
+                background-color: #dc3545 !important;
+                border-color: #dc3545 !important;
+            }
+
+            /* Setelah klik (hilangkan efek focus putih) */
+            .btn-outline-danger:not(:hover):not(:active):focus {
+                color: #dc3545 !important;
+                background-color: transparent !important;
+                border-color: #dc3545 !important;
+                box-shadow: none !important;
+            }
+
+            /* Pastikan tombol Excel kembali ke warna normal setelah klik */
+            .btn-outline-success {
+                color: #198754 !important;
+                border-color: #198754 !important;
+                background-color: transparent !important;
+            }
+
+            /* Hover dan active: tetap hijau normal */
+            .btn-outline-success:hover,
+            .btn-outline-success:active,
+            .btn-outline-success:focus,
+            .btn-outline-success:focus-visible {
+                color: #fff !important;
+                background-color: #198754 !important;
+                border-color: #198754 !important;
+            }
+
+            /* Setelah klik (hilangkan efek focus putih) */
+            .btn-outline-success:not(:hover):not(:active):focus {
+                color: #198754 !important;
+                background-color: transparent !important;
+                border-color: #198754 !important;
+                box-shadow: none !important;
+            }
         </style>
     @endpush
     @push('scripts')
@@ -147,7 +209,7 @@
                 const $clearBtn = $('#clearDateRange');
                 const $tableRows = $('#laporanTable tbody tr');
 
-                // Date Range Picker
+                // 🔹 Inisialisasi Date Range Picker
                 $dateInput.daterangepicker({
                     autoUpdateInput: false,
                     locale: {
@@ -155,18 +217,22 @@
                         applyLabel: 'Terapkan',
                         cancelLabel: 'Batal',
                         daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                        monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+                        monthNames: [
+                            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                        ]
                     },
                     opens: 'left'
                 });
 
-                // Fungsi filter
+                // 🔹 Fungsi filter tabel berdasarkan tanggal
                 function filterByDateRange() {
                     const dateStr = $dateInput.val();
                     if (!dateStr) {
                         $tableRows.show();
                         return;
                     }
+
                     const picker = $dateInput.data('daterangepicker');
                     const startDate = picker.startDate;
                     const endDate = picker.endDate;
@@ -174,61 +240,66 @@
                     $tableRows.each(function () {
                         const rowDateStr = $(this).attr('data-date');
                         const rowDate = rowDateStr ? moment(rowDateStr, 'YYYY-MM-DD') : null;
-                        $(this).toggle(rowDate && rowDate.isSameOrAfter(startDate, 'day') && rowDate.isSameOrBefore(endDate, 'day'));
+
+                        $(this).toggle(
+                            rowDate &&
+                            rowDate.isSameOrAfter(startDate, 'day') &&
+                            rowDate.isSameOrBefore(endDate, 'day')
+                        );
                     });
                 }
 
+                // 🔹 Saat user pilih tanggal
                 $dateInput.on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY'));
+                    $(this).val(
+                        picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY')
+                    );
                     $clearBtn.show();
                     filterByDateRange();
+
+                    // 🟢 Simpan nilai ke form PDF & Excel
+                    $('#pdfStart').val(picker.startDate.format('YYYY-MM-DD'));
+                    $('#pdfEnd').val(picker.endDate.format('YYYY-MM-DD'));
+                    $('#excelStart').val(picker.startDate.format('YYYY-MM-DD'));
+                    $('#excelEnd').val(picker.endDate.format('YYYY-MM-DD'));
                 });
 
+                // 🔹 Saat user klik batal
                 $dateInput.on('cancel.daterangepicker', function () {
                     $(this).val('');
                     $clearBtn.hide();
                     filterByDateRange();
+
+                    // 🟢 Kosongkan hidden input
+                    $('#pdfStart, #pdfEnd, #excelStart, #excelEnd').val('');
                 });
 
+                // 🔹 Tombol reset tanggal
                 $clearBtn.on('click', function () {
                     $dateInput.val('');
                     $(this).hide();
                     filterByDateRange();
-                });
 
-                // Search global
-                $('#searchLaporan').on('keyup', function () {
-                    let filter = $(this).val().toLowerCase();
-                    $tableRows.each(function () {
-                        let text = $(this).text().toLowerCase();
-                        $(this).toggle(text.includes(filter));
-                    });
+                    // 🟢 Reset hidden input
+                    $('#pdfStart, #pdfEnd, #excelStart, #excelEnd').val('');
                 });
             });
         </script>
 
         <script>
-            // Search divisi di tabel
+            // Search seluruh kolom di tabel
             document.getElementById('searchLaporan').addEventListener('keyup', function () {
-                let filter = this.value.toLowerCase();
-                let rows = document.querySelectorAll('#laporanTable tbody tr');
+                const filter = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#laporanTable tbody tr');
 
                 rows.forEach(row => {
-                    let divisi = row.cells[2].textContent.toLowerCase(); // kolom Divisi
-                    row.style.display = divisi.includes(filter) ? '' : 'none';
-                });
-            });
-
-            // Search seluruh tabel
-            document.getElementById('searchTableLaporan').addEventListener('keyup', function () {
-                let filter = this.value.toLowerCase();
-                let rows = document.querySelectorAll('#laporanTable tbody tr');
-
-                rows.forEach(row => {
-                    let text = row.textContent.toLowerCase();
+                    const text = row.textContent.toLowerCase();
                     row.style.display = text.includes(filter) ? '' : 'none';
                 });
             });
+
+
+            
         </script>
     @endpush
 

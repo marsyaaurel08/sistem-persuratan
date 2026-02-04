@@ -50,7 +50,12 @@ Route::get('/arsip', function () {
 });
 
 
+/** FITUR LAPORAN */
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
+Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.exportExcel');
+Route::get('/laporan/preview-excel', [LaporanController::class, 'previewExcel'])->name('laporan.previewExcel');
+
 
 
 Route::get('/manajemen-pengguna', function () {

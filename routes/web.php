@@ -48,6 +48,8 @@ Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
 // ------------------------------------------------
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
+
 Route::get('/arsip', function () {
     return view('arsip.index');
 });

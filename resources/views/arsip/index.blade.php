@@ -7,7 +7,6 @@
     <script src="{{ asset('duralux/assets/vendors/js/moment.min.js') }}"></script>
     <script src="{{ asset('duralux/assets/vendors/js/daterangepicker.min.js') }}"></script>
 
-    <!-- Row 4 Card Dashboard -->
     <div class="page-header rounded">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
@@ -18,291 +17,356 @@
         <div class="page-header-right ms-auto">
             <div class="page-header-right-items">
                 <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
-
-                    <!-- Search Bar -->
                     <div class="input-group" style="min-width: 300px;">
                         <span class="input-group-text bg-white border-end-0 rounded-start-pill" id="search-icon">
                             <i class="feather-search"></i>
                         </span>
-                        <input type="text" id="searchTable" class="form-control rounded-end-pill" placeholder="Cari surat..."
-                            style="font-size: small">
+                        <input type="text" id="searchTable" class="form-control rounded-end-pill"
+                            placeholder="Cari surat..." style="font-size: small">
                     </div>
 
-
-                    <!-- Date Range Picker -->
                     <div class="input-group" style="min-width: 300px;">
-                        <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i class="feather-calendar"></i></span>
-                        <input type="text" id="dateRange" class="form-control rounded-end-pill" placeholder="Pilih Rentang Tanggal" readonly
-                            style="cursor: pointer; font-size: small;">
-                        <button class="btn btn-light border" type="button" id="clearDateRange" title="Reset tanggal"
+                        <span class="input-group-text bg-white border-end-0 rounded-start-pill"><i
+                                class="feather-calendar"></i></span>
+                        <input type="text" id="dateRange" class="form-control rounded-end-pill"
+                            placeholder="Pilih Rentang Tanggal" readonly style="cursor: pointer; font-size: small;">
+                        <button class="btn btn-light border rounded" type="button" id="clearDateRange" title="Reset tanggal"
                             style="display: none;">
                             <i class="feather-x"></i>
                         </button>
                     </div>
+
+                    <button class="btn btn-white border shadow-sm rounded-pill px-3">
+                        <a href="{{ url('/upload_berkas') }}" class="text-decoration-none text-dark">
+                            <i class="feather-upload me-1"></i> Upload
+                        </a>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row g-2">
 
-        <!-- Row Arsip Terbaru -->
-        <div class="row g-2 mt-3">
-            <div class="col-12">
-                <div class="card stretch stretch-full p-2">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fs-14 fw-semibold mb-0">Arsip Terbaru</h5>
-
-                        </div>
-
-                        <!-- Bulk Action Bar -->
-                        <div id="bulkActionBar"
-                            class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
-                            style="display:none;">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="selectAll">
+    <div class="row g-3 mb-4">
+        @if($folders && count($folders) > 0)
+            @foreach($folders as $folder)
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
+                        data-divisi="{{ $folder['name'] }}" style="cursor: pointer;">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
+                                    <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 20px;"></i>
+                                </div>
                             </div>
-
-                            <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
-
-                            <div class="vr"></div>
-
-                            <button class="btn btn-sm btn-light">
-                                <i class="feather-download me-1"></i> Unduh
-                            </button>
-
-                            <button class="btn btn-sm btn-light">
-                                <i class="feather-rotate-ccw me-1"></i> Pulihkan
-                            </button>
-
-                            <button class="btn btn-sm btn-danger">
-                                <i class="feather-trash me-1"></i> Hapus
-                            </button>
-
-                            <button class="btn-close ms-auto"></button>
-                        </div>
-
-
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm align-middle" id="aktivitasTable">
-                                <thead>
-                                    <tr>
-                                        <th style="width:40px;"></th>
-                                        <th>No. Surat</th>
-                                        <th>Perihal</th>
-                                        <th>Penerima</th>
-                                        <th>Tanggal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" class="row-checkbox">
-                                        </td>
-                                        <td>001/INV/2026</td>
-                                        <td>Pembayaran Invoice</td>
-                                        <td>PT ABC / Finance</td>
-                                        <td>19 Jan 2026</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" class="row-checkbox">
-                                        </td>
-                                        <td>002/INV/2026</td>
-                                        <td>Order Barang</td>
-                                        <td>PT XYZ / Warehouse</td>
-                                        <td>18 Jan 2026</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" class="row-checkbox">
-                                        </td>
-                                        <td>003/INV/2026</td>
-                                        <td>Proposal Kerja Sama</td>
-                                        <td>Marketing / PT DEF</td>
-                                        <td>17 Jan 2026</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" class="row-checkbox">
-                                        </td>
-                                        <td>004/INV/2026</td>
-                                        <td>Follow Up Payment</td>
-                                        <td>Finance / PT GHI</td>
-                                        <td>16 Jan 2026</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
+                            <small class="text-muted">{{ $folder['count'] }}</small>
                         </div>
                     </div>
                 </div>
+            @endforeach
+        @else
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="feather-info me-2"></i> Tidak ada arsip untuk ditampilkan
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <div class="row g-2">
+        <div class="col-12">
+            <div class="card stretch stretch-full p-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fs-14 fw-semibold mb-0"><i class="feather-file-text me-2 text-primary"></i>Arsip Terbaru
+                        </h5>
+                    </div>
+
+                    <div id="bulkActionBar" class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
+                        style="display:none;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="selectAll">
+                        </div>
+
+                        <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
+
+                        <div class="vr"></div>
+
+                        <button class="btn btn-sm btn-light">
+                            <i class="feather-download me-1"></i> Unduh
+                        </button>
+
+                        <button class="btn btn-sm btn-light">
+                            <i class="feather-rotate-ccw me-1"></i> Pulihkan
+                        </button>
+
+                        <button class="btn btn-sm btn-danger">
+                            <i class="feather-trash me-1"></i> Hapus
+                        </button>
+
+                        <button class="btn-close ms-auto"></button>
+                    </div>
+
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm align-middle small" id="arsipTable">
+                            <thead>
+                                <tr class="text-muted small text-uppercase">
+                                    <th style="width:40px;"></th>
+                                    <th>No. Surat</th>
+                                    <th>Perihal</th>
+                                    <th>Penerima</th>
+                                    <th>Tanggal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($arsip as $item)
+                                                        <tr
+                                                            data-date="{{ $item->tanggal_arsip ? \Carbon\Carbon::parse($item->tanggal_arsip)->format('Y-m-d') : '' }}">
+                                                            <td>
+                                                                <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
+                                                            </td>
+                                                            <td class="fw-bold text-dark">
+                                                                {{ $item->jenis_surat === 'Masuk'
+                                    ? (optional($item->suratMasuk)->nomor_surat ?? '-')
+                                    : (optional($item->suratKeluar)->nomor_surat ?? '-') }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $item->jenis_surat === 'Masuk'
+                                    ? (optional($item->suratMasuk)->perihal ?? '-')
+                                    : (optional($item->suratKeluar)->perihal ?? '-') }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $item->jenis_surat === 'Masuk'
+                                    ? (optional($item->suratMasuk)->penerima_divisi ?? '-')
+                                    : (optional($item->suratKeluar)->pengirim_divisi ?? '-') }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $item->tanggal_arsip ? \Carbon\Carbon::parse($item->tanggal_arsip)->format('d M Y') : '-' }}
+                                                            </td>
+                                                        </tr>
+                                @endforeach
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-2 d-flex justify-content-center">
+                        {{ $arsip->links() }}
+                    </div>
+
+                    @push('styles')
+                        <style>
+                            .pagination {
+                                color: #000 !important;
+                                /* teks hitam */
+                            }
+
+                            .pagination .page-item .page-link {
+                                color: #000;
+                                /* teks link hitam */
+                                border: 1px solid #dee2e6;
+                                /* optional: border standar */
+                            }
+
+                            .pagination .page-item.active .page-link {
+                                background-color: #f8f9fa;
+                                /* latar active page */
+                                border-color: #dee2e6;
+                                color: #000;
+                            }
+                        </style>
+                    @endpush
+                </div>
             </div>
         </div>
-
+    </div>
 @endsection
 
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-        <script>
-            // Line Chart
-            const ctxLine = document.getElementById('lineChart').getContext('2d');
-            const lineChart = new Chart(ctxLine, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Sales',
-                        data: [12, 19, 14, 21, 17, 23],
-                        borderColor: '#000B58',
-                        backgroundColor: 'rgba(0,11,88,0.2)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
+<!-- Modal Detail Divisi -->
+<div class="modal fade" id="folderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Dokumen Divisi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-sm small">
+                        <thead>
+                            <tr>
+                                <th>No. Surat</th>
+                                <th>Perihal</th>
+                                <th>Penerima</th>
+                                <th>Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-            // Pie Chart
-            const ctxPie = document.getElementById('pieChart').getContext('2d');
-            const pieChart = new Chart(ctxPie, {
-                type: 'pie',
-                data: {
-                    labels: ['Nota Dinas', 'Undangan', 'Lainnya'],
-                    datasets: [{
-                        data: [31, 48, 21],
-                        backgroundColor: ['#000B58', '#8BBCE7', '#FFEB3B']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            align: 'center',
-                            labels: {
-                                usePointStyle: true, // lingkaran
-                                pointStyle: 'circle',
-                                boxWidth: 12,
-                                padding: 10,
-                                font: { size: 12 }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    let label = context.label || '';
-                                    let value = context.raw || 0;
-                                    let total = context.chart._metasets[context.datasetIndex].total;
-                                    let percentage = ((value / total) * 100).toFixed(0);
-                                    return `${label}: ${percentage} %`;
-                                }
-                            }
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const folderCards = document.querySelectorAll('.folder-card');
+            const modal = new bootstrap.Modal(document.getElementById('folderModal'));
+
+            folderCards.forEach(card => {
+                card.addEventListener('click', function () {
+                    const divisi = this.getAttribute('data-divisi');
+                    const rows = document.querySelectorAll('#arsipTable tbody tr');
+                    const modalTableBody = document.getElementById('modalTableBody');
+                    const modalTitle = document.getElementById('modalTitle');
+
+                    modalTitle.textContent = `Dokumen - ${divisi}`;
+                    modalTableBody.innerHTML = '';
+
+                    rows.forEach(row => {
+                        const penerima = row.querySelector('td:nth-child(4)').textContent.trim();
+                        if (penerima === divisi) {
+                            const clone = row.cloneNode(true);
+                            clone.querySelector('td:first-child').remove(); // hapus checkbox
+                            modalTableBody.appendChild(clone);
                         }
-                    }
-                }
+                    });
+
+                    modal.show();
+                });
             });
+        });
+    </script>
 
-
-        </script>
-        <script>
-            // Simple Search Table
-            document.getElementById('searchTable').addEventListener('keyup', function () {
-                let filter = this.value.toLowerCase();
-                let rows = document.querySelectorAll('#aktivitasTable tbody tr');
-
+    <!-- Search Table -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchTable');
+            if (!searchInput) return;
+            searchInput.addEventListener('keyup', function () {
+                const filter = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#arsipTable tbody tr');
                 rows.forEach(row => {
-                    let text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(filter) ? '' : 'none';
+                    row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
                 });
             });
-        </script>
-        <script>
-            // Date Range Picker Initialization
-            $(function () {
-                $('#dateRange').daterangepicker({
-                    autoUpdateInput: false,
-                    locale: {
-                        format: 'DD MMM YYYY',
-                        applyLabel: 'Terapkan',
-                        cancelLabel: 'Batal',
-                        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                        monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-                    },
-                    opens: 'left'
-                });
+        });
+    </script>
 
-                // Event ketika user memilih tanggal
-                $('#dateRange').on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(
-                        picker.startDate.format('DD MMM YYYY') +
-                        ' - ' +
-                        picker.endDate.format('DD MMM YYYY')
-                    );
-                    $('#clearDateRange').show(); // Tampilkan tombol clear
-                });
+    <!-- Date Range Picker with Filtering -->
+    <script>
+        $(function () {
+            if (!$.fn.daterangepicker) {
+                console.error('daterangepicker plugin not loaded');
+                return;
+            }
 
-                // Event ketika user membatalkan pilihan
-                $('#dateRange').on('cancel.daterangepicker', function () {
-                    $(this).val('');
-                    $('#clearDateRange').hide(); // Sembunyikan tombol clear
-                });
+            const $dateInput = $('#dateRange');
+            const $clearBtn = $('#clearDateRange');
+            const $tableRows = $('#arsipTable tbody tr');
 
-                // Event ketika tombol clear diklik
-                $('#clearDateRange').on('click', function () {
-                    $('#dateRange').val('');
-                    $(this).hide();
-                });
-
-                // Event ketika tombol filter diklik
-                $('#btnFilter').on('click', function () {
-                    var dateRange = $('#dateRange').val();
-                    if (dateRange) {
-                        console.log('Filter dengan rentang tanggal:', dateRange);
-                        // Tambahkan logic filter di sini
-                        alert('Filter akan diterapkan untuk: ' + dateRange);
-                    } else {
-                        alert('Silakan pilih rentang tanggal terlebih dahulu');
-                    }
-                });
+            $dateInput.daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    format: 'DD MMM YYYY',
+                    applyLabel: 'Terapkan',
+                    cancelLabel: 'Batal',
+                    daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                    monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+                },
+                opens: 'left'
             });
-        </script>
-        <script>
-            document.addEventListener('change', function (e) {
 
-                const selectAll = document.getElementById('selectAll');
-                const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-                const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
-
-                // ======================
-                // KLIK SELECT ALL
-                // ======================
-                if (e.target.id === 'selectAll') {
-                    rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+            // Fungsi untuk filter berdasarkan tanggal
+            function filterByDateRange() {
+                const dateStr = $dateInput.val();
+                if (!dateStr) {
+                    $tableRows.show();
+                    return;
                 }
 
-                // ======================
-                // UPDATE SELECT ALL STATUS
-                // ======================
-                selectAll.checked = checkedCount === rowCheckboxes.length && rowCheckboxes.length > 0;
-                selectAll.indeterminate = checkedCount > 0 && checkedCount < rowCheckboxes.length;
+                const picker = $dateInput.data('daterangepicker');
+                const startDate = picker.startDate;
+                const endDate = picker.endDate;
 
-                // ======================
-                // BULK BAR
-                // ======================
-                const bulkBar = document.getElementById('bulkActionBar');
-                const countText = document.getElementById('selectedCount');
+                $tableRows.each(function () {
+                    const rowDateStr = $(this).attr('data-date');
+                    if (!rowDateStr) {
+                        $(this).hide();
+                        return;
+                    }
 
-                countText.textContent = checkedCount;
-                bulkBar.style.display = checkedCount > 0 ? 'flex' : 'none';
+                    const rowDate = moment(rowDateStr, 'YYYY-MM-DD');
+                    const isInRange = rowDate.isSameOrAfter(startDate, 'day') &&
+                        rowDate.isSameOrBefore(endDate, 'day');
+                    $(this).toggle(isInRange);
+                });
+            }
 
+            $dateInput.on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY'));
+                $clearBtn.show();
+                filterByDateRange();
             });
-        </script>
 
+            $dateInput.on('cancel.daterangepicker', function () {
+                $(this).val('');
+                $clearBtn.hide();
+                filterByDateRange();
+            });
 
-    @endpush
+            $clearBtn.on('click', function () {
+                $dateInput.val('');
+                $(this).hide();
+                filterByDateRange();
+            });
+        });
+    </script>
+
+    <!-- Checkbox & Bulk Actions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const bulkBar = document.getElementById('bulkActionBar');
+            const selectedCount = document.getElementById('selectedCount');
+            const selectAll = document.getElementById('selectAll');
+            const table = document.getElementById('arsipTable');
+
+            function updateCount() {
+                const checked = document.querySelectorAll('.row-checkbox:checked').length;
+                const total = document.querySelectorAll('.row-checkbox').length;
+                selectedCount.textContent = checked;
+                if (bulkBar) bulkBar.style.display = checked ? 'flex' : 'none';
+                if (selectAll) {
+                    selectAll.checked = total > 0 && checked === total;
+                    selectAll.indeterminate = checked > 0 && checked < total;
+                }
+            }
+
+            if (table) {
+                table.addEventListener('change', function (e) {
+                    if (e.target && e.target.classList && e.target.classList.contains('row-checkbox')) {
+                        updateCount();
+                    }
+                });
+            }
+
+            if (selectAll) {
+                selectAll.addEventListener('change', function () {
+                    const all = document.querySelectorAll('.row-checkbox');
+                    all.forEach(cb => cb.checked = this.checked);
+                    updateCount();
+                });
+            }
+
+            updateCount();
+        });
+    </script>
+@endpush

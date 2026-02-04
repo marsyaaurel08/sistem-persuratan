@@ -92,11 +92,6 @@
                         <!-- ACTION BUTTON -->
                         <div class="d-flex gap-2">
                             <!-- RENTANG TANGGAL -->
-                            {{-- <button class="btn bg-secondary-subtle text-dark rounded px-3">
-                                <i class="bi bi-calendar-event-fill me-1 text-dark"></i>
-                                Rentang Tanggal
-                            </button> --}}
-                            <!-- RENTANG TANGGAL -->
                             <button id="openDateRange"
                                 class="btn bg-secondary-subtle text-dark rounded px-3 d-flex align-items-center gap-2">
 
@@ -110,19 +105,6 @@
                             </button>
 
                             <input type="text" id="dateRange" class="d-none">
-
-                            {{-- <button type="button" id="openDateRange"
-                                class="btn bg-secondary-subtle text-dark rounded px-3">
-                                <i class="bi bi-calendar-event-fill me-1 text-dark"></i>
-                                Rentang Tanggal
-                            </button>
-
-                            <!-- INPUT DATE RANGE (HIDDEN) -->
-                            <input type="text" id="dateRange" class="form-control d-none">
-
-                            <button id="clearDateRange" class="btn btn-light d-none">
-                                Reset
-                            </button> --}}
 
                             <!-- TAMBAH SURAT -->
                             <button class="btn bg-secondary-subtle text-dark rounded px-3"
@@ -138,41 +120,21 @@
                         <span class="fw-semibold me-2">Status :</span>
 
                         <span class="badge rounded-pill bg-primary px-3 py-2 status-btn" data-status="">
-                            Semua
+                            Semua ({{ $totalSurat }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="pending">
-                            Baru
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Pending">
+                            Baru ({{ $statusCounts['Pending'] ?? 0 }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="disposisi">
-                            Disposisi
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Disposisi">
+                            Disposisi ({{ $statusCounts['Disposisi'] ?? 0 }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="selesai">
-                            Selesai
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Selesai">
+                            Selesai ({{ $statusCounts['Selesai'] ?? 0 }})
                         </span>
                     </div>
-                    {{-- <div class="d-flex flex-wrap gap-2 mb-3">
-                        <span class="input-group-text bg-transparent border-0 fw-semibold">
-                            Status :
-                        </span>
-                        <span class="badge rounded-pill bg-primary px-3 py-2">
-                            Semua
-                        </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Baru (10)
-                        </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Dalam Proses (5)
-                        </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Disposisi (7)
-                        </span>
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2">
-                            Selesai
-                        </span>
-                    </div> --}}
 
                     <!-- TABLE -->
                     <div class="table-responsive">
@@ -189,42 +151,37 @@
                             </thead>
                             <tbody class="fs-6" id="surat-table">
                                 @forelse ($suratMasuk as $item)
-                                    <tr data-date="{{ $item->tanggal_surat }}">
+                                    {{-- <tr data-date="{{ $item->tanggal_surat }}"> --}}
+                                    <tr data-date="{{ $item->tanggal_surat }}"
+                                        data-status="{{ strtolower($item->status) }}">
                                         <td>{{ $item->nomor_surat }}</td>
                                         <td>{{ $item->pengirim->name ?? '-' }}</td>
                                         <td>{{ $item->perihal }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>
                                         @php
+                                            $status = strtolower(trim($item->status));
+
                                             $statusLabel = [
-                                                'Pending' => 'Baru',
-                                                'Disposisi' => 'Disposisi',
-                                                'Selesai' => 'Selesai',
+                                                'pending' => 'PENDING',
+                                                'disposisi' => 'DISPOSISI',
+                                                'selesai' => 'SELESAI',
                                             ];
 
                                             $statusClass = [
-                                                'Pending' => 'bg-warning-subtle text-warning',
-                                                'Disposisi' => 'bg-info-subtle text-info',
-                                                'Selesai' => 'bg-success-subtle text-success',
+                                                'pending' => 'bg-warning-subtle text-warning',
+                                                'disposisi' => 'bg-info-subtle text-info',
+                                                'selesai' => 'bg-success-subtle text-success',
                                             ];
                                         @endphp
 
                                         <td>
-                                            <span
-                                                class="badge {{ $statusClass[strtolower($item->status)] ?? 'bg-secondary' }}">
-                                                {{ $statusLabel[strtolower($item->status)] ?? $item->status }}
+                                            <span class="badge {{ $statusClass[$status] ?? 'bg-secondary text-white' }}">
+                                                {{ $statusLabel[$status] ?? strtoupper($item->status) }}
                                             </span>
                                         </td>
-                                        {{-- <td>
-                                            @if ($item->status == 'Pending')
-                                                <span class="badge bg-warning-subtle text-warning">PENDING</span>
-                                            @elseif ($item->status == 'Disposisi')
-                                                <span class="badge bg-info-subtle text-info">DISPOSISI</span>
-                                            @else
-                                                <span class="badge bg-success-subtle text-success">SELESAI</span>
-                                            @endif
-                                        </td> --}}
+
                                         <td class="text-center">
-                                            <button class="btn btn-sm btn-light">
+                                            <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown">
                                                 <i class="bi bi-three-dots-vertical"></i>
                                             </button>
                                         </td>
@@ -249,20 +206,66 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            const searchInput = document.getElementById('search');
             const tableBody = document.getElementById('surat-table');
+            const searchInput = document.getElementById('search');
+            const statusButtons = document.querySelectorAll('.status-btn');
+
             let timeout = null;
+            let currentStatus = '';
 
             /* ===============================
-               FILTER BY DATE (GLOBAL)
+               FETCH TABLE (AJAX GLOBAL)
+            =============================== */
+            function fetchTable() {
+                const search = searchInput?.value ?? '';
+
+                fetch(
+                        `{{ route('surat_masuk.search') }}?search=${encodeURIComponent(search)}&status=${encodeURIComponent(currentStatus)}`
+                        )
+                    .then(res => res.text())
+                    .then(html => {
+                        tableBody.innerHTML = html;
+                        filterByDateRange(); // tetap jalan
+                    });
+            }
+
+            /* ===============================
+               FILTER STATUS (BADGE)
+            =============================== */
+            statusButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    statusButtons.forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('bg-light', 'text-dark');
+                    });
+
+                    this.classList.remove('bg-light', 'text-dark');
+                    this.classList.add('bg-primary', 'text-white');
+
+                    currentStatus = this.dataset.status;
+                    fetchTable();
+                });
+            });
+
+            /* ===============================
+               LIVE SEARCH (DEBOUNCE)
+            =============================== */
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(fetchTable, 300);
+                });
+            }
+
+            /* ===============================
+               FILTER DATE (CLIENT SIDE)
             =============================== */
             function filterByDateRange() {
                 if (typeof $ === 'undefined') return;
 
-                const dateInput = $('#dateRange');
-                const picker = dateInput.data('daterangepicker');
-
-                if (!picker || !dateInput.val()) {
+                const picker = $('#dateRange').data('daterangepicker');
+                if (!picker || !$('#dateRange').val()) {
                     $('#surat-table tr').show();
                     return;
                 }
@@ -284,59 +287,29 @@
             }
 
             /* ===============================
-               LIVE SEARCH (AJAX)
-            =============================== */
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(timeout);
-
-                    timeout = setTimeout(() => {
-                        fetch(`{{ route('surat_masuk.search') }}?search=${this.value}`)
-                            .then(res => res.text())
-                            .then(html => {
-                                tableBody.innerHTML = html;
-
-                                // 🔥 PENTING: filter ulang setelah AJAX
-                                filterByDateRange();
-                            });
-                    }, 300);
-                });
-            }
-
-            /* ===============================
-               DATE RANGE PICKER
+               DATE PICKER INIT
             =============================== */
             if (typeof $ !== 'undefined' && $.fn.daterangepicker) {
 
-                const openBtn = document.getElementById('openDateRange');
+                const dateInput = $('#dateRange');
                 const label = document.getElementById('dateRangeLabel');
                 const clearBtn = document.getElementById('clearDateRange');
-                const dateInput = $('#dateRange');
+                const openBtn = document.getElementById('openDateRange');
 
                 dateInput.daterangepicker({
                     autoUpdateInput: false,
                     opens: 'left',
-                    drops: 'down',
-                    parentEl: 'body',
                     locale: {
                         format: 'DD MMM YYYY',
                         applyLabel: 'Terapkan',
-                        cancelLabel: 'Batal',
-                        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                        monthNames: [
-                            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                        ]
+                        cancelLabel: 'Batal'
                     }
                 });
 
-                // buka kalender
-                openBtn?.addEventListener('click', function(e) {
-                    if (e.target === clearBtn) return;
-                    dateInput.trigger('click');
+                openBtn?.addEventListener('click', e => {
+                    if (e.target !== clearBtn) dateInput.trigger('click');
                 });
 
-                // apply
                 dateInput.on('apply.daterangepicker', function(ev, picker) {
                     label.textContent =
                         picker.startDate.format('DD MMM YYYY') +
@@ -347,8 +320,7 @@
                     filterByDateRange();
                 });
 
-                // reset (X)
-                clearBtn.addEventListener('click', function(e) {
+                clearBtn?.addEventListener('click', e => {
                     e.stopPropagation();
                     dateInput.val('');
                     label.textContent = 'Rentang Tanggal';
@@ -356,99 +328,6 @@
                     filterByDateRange();
                 });
             }
+
         });
     </script>
-
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search');
-            const tableBody = document.getElementById('surat-table');
-
-            let timeout = null;
-
-            searchInput.addEventListener('input', function() {
-                clearTimeout(timeout);
-
-                timeout = setTimeout(() => {
-                    const query = this.value;
-
-                    fetch(`{{ route('surat_masuk.search') }}?search=${query}`)
-                        .then(response => response.text())
-                        .then(html => {
-                            tableBody.innerHTML = html;
-                        });
-                }, 300); // debounce 300ms
-            });
-        });
-    </script>
-
-    <!-- Date Range Picker with Filtering -->
-    <script>
-        $(function () {
-            if (!$.fn.daterangepicker) {
-                console.error('daterangepicker plugin not loaded');
-                return;
-            }
-
-            const $dateInput = $('#dateRange');
-            const $clearBtn = $('#clearDateRange');
-            const $tableRows = $('#arsipTable tbody tr');
-
-            $dateInput.daterangepicker({
-                autoUpdateInput: false,
-                locale: {
-                    format: 'DD MMM YYYY',
-                    applyLabel: 'Terapkan',
-                    cancelLabel: 'Batal',
-                    daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                    monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-                },
-                opens: 'left'
-            });
-
-            // Fungsi untuk filter berdasarkan tanggal
-            function filterByDateRange() {
-                const dateStr = $dateInput.val();
-                if (!dateStr) {
-                    $tableRows.show();
-                    return;
-                }
-
-                const picker = $dateInput.data('daterangepicker');
-                const startDate = picker.startDate;
-                const endDate = picker.endDate;
-
-                $tableRows.each(function () {
-                    const rowDateStr = $(this).attr('data-date');
-                    if (!rowDateStr) {
-                        $(this).hide();
-                        return;
-                    }
-
-                    const rowDate = moment(rowDateStr, 'YYYY-MM-DD');
-                    const isInRange = rowDate.isSameOrAfter(startDate, 'day') &&
-                        rowDate.isSameOrBefore(endDate, 'day');
-                    $(this).toggle(isInRange);
-                });
-            }
-
-            $dateInput.on('apply.daterangepicker', function (ev, picker) {
-                $(this).val(picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY'));
-                $clearBtn.show();
-                filterByDateRange();
-            });
-
-            $dateInput.on('cancel.daterangepicker', function () {
-                $(this).val('');
-                $clearBtn.hide();
-                filterByDateRange();
-            });
-
-            $clearBtn.on('click', function () {
-                $dateInput.val('');
-                $(this).hide();
-                filterByDateRange();
-            });
-        });
-    </script> --}}

@@ -10,6 +10,8 @@ class Pengguna extends Model
 {
     use HasFactory;
     use Notifiable;
+    use HasFactory;
+
 
     protected $table = 'pengguna';
 

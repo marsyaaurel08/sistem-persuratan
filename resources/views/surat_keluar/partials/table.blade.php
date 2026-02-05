@@ -1,5 +1,6 @@
 @forelse ($suratKeluar as $surat)
-    <tr data-date="{{ $surat->tanggal_surat }}">
+    {{-- <tr data-date="{{ $surat->tanggal_surat }}"> --}}
+        <tr data-date="{{ $surat->tanggal_surat }}" data-status="{{ strtolower($surat->status) }}">
         <td>{{ $surat->nomor_surat }}</td>
         <td>{{ $surat->pengirim_divisi }}</td>
         <td>{{ $surat->penerima->name ?? '-' }}</td>
@@ -39,7 +40,7 @@
     </tr>
 @empty
     <tr>
-        <td colspan="7" class="text-center text-muted">
+        <td colspan="6" class="text-center text-muted">
             Data tidak ditemukan
         </td>
     </tr>

@@ -122,16 +122,16 @@
                             Semua ({{ $totalSurat }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Pending">
-                            Baru ({{ $statusCounts['Pending'] ?? 0 }})
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="pending">
+                            Baru ({{ $statusCounts['pending'] ?? 0 }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Disposisi">
-                            Disposisi ({{ $statusCounts['Disposisi'] ?? 0 }})
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="disposisi">
+                            Disposisi ({{ $statusCounts['disposisi'] ?? 0 }})
                         </span>
 
-                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="Selesai">
-                            Selesai ({{ $statusCounts['Selesai'] ?? 0 }})
+                        <span class="badge rounded-pill bg-light text-dark px-3 py-2 status-btn" data-status="selesai">
+                            Selesai ({{ $statusCounts['selesai'] ?? 0 }})
                         </span>
                     </div>
 
@@ -150,32 +150,39 @@
                             </thead>
                             <tbody class="fs-6" id="surat-table">
                                 @forelse ($suratMasuk as $item)
-                                    {{-- <tr data-date="{{ $item->tanggal_surat }}"> --}}
-                                    <tr data-date="{{ $item->tanggal_surat }}"
+                                    <tr data-date="{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('Y-m-d') }}"
                                         data-status="{{ strtolower($item->status) }}">
                                         <td>{{ $item->nomor_surat }}</td>
                                         <td>{{ $item->pengirim->name ?? '-' }}</td>
                                         <td>{{ $item->perihal }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>
+
                                         @php
                                             $status = strtolower(trim($item->status));
 
-                                            $statusLabel = [
-                                                'pending' => 'PENDING',
-                                                'disposisi' => 'DISPOSISI',
-                                                'selesai' => 'SELESAI',
+                                            $statusMap = [
+                                                'pending' => [
+                                                    'label' => 'Pending',
+                                                    'class' => 'bg-warning-subtle text-warning',
+                                                ],
+                                                'disposisi' => [
+                                                    'label' => 'Disposisi',
+                                                    'class' => 'bg-info-subtle text-info',
+                                                ],
+                                                'selesai' => [
+                                                    'label' => 'Selesai',
+                                                    'class' => 'bg-success-subtle text-success',
+                                                ],
                                             ];
 
-                                            $statusClass = [
-                                                'pending' => 'bg-warning-subtle text-warning',
-                                                'disposisi' => 'bg-info-subtle text-info',
-                                                'selesai' => 'bg-success-subtle text-success',
-                                            ];
+                                            $badgeClass =
+                                                $statusMap[$status]['class'] ?? 'bg-secondary-subtle text-secondary';
+                                            $badgeLabel = $statusMap[$status]['label'] ?? ucfirst($item->status);
                                         @endphp
 
                                         <td>
-                                            <span class="badge {{ $statusClass[$status] ?? 'bg-secondary text-white' }}">
-                                                {{ $statusLabel[$status] ?? strtoupper($item->status) }}
+                                            <span class="badge-custom {{ $badgeClass }}">
+                                                {{ $badgeLabel }}
                                             </span>
                                         </td>
 
@@ -193,7 +200,6 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-
                         </table>
                     </div>
 
@@ -202,6 +208,41 @@
         </div>
     @endsection
 
+    @push('styles')
+        <style>
+            .badge-custom {
+                display: inline-block;
+                padding: 0.35em 0.65em;
+                font-size: 0.85em;
+                font-weight: 500;
+                border-radius: 0.75rem;
+                /* bulat lembut */
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            /* Bisa pakai kelas bg-*-subtle Bootstrap, tapi biar konsisten bisa ditambahin style */
+            .bg-warning-subtle {
+                background-color: #fff3cd !important;
+                color: #f7bb16e7 !important;
+            }
+
+            .bg-info-subtle {
+                background-color: #b2f1ffde !important;
+                color: #2896ac !important;
+            }
+
+            .bg-success-subtle {
+                background-color: #d1f7b7c0 !important;
+                color: #30b616 !important;
+            }
+
+            .bg-secondary-subtle {
+                background-color: #e2e3e5 !important;
+                color: #41464b !important;
+            }
+        </style>
+    @endpush
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -211,6 +252,7 @@
 
             let timeout = null;
             let currentStatus = '';
+            let isDateActive = false;
 
             /* ===============================
                FETCH TABLE (AJAX GLOBAL)
@@ -224,7 +266,10 @@
                     .then(res => res.text())
                     .then(html => {
                         tableBody.innerHTML = html;
-                        filterByDateRange(); // tetap jalan
+                        if (isDateActive) {
+                            filterByDateRange();
+                        }
+                        // filterByDateRange(); // tetap jalan
                     });
             }
 
@@ -264,8 +309,9 @@
                 if (typeof $ === 'undefined') return;
 
                 const picker = $('#dateRange').data('daterangepicker');
-                if (!picker || !$('#dateRange').val()) {
-                    $('#surat-table tr').show();
+                const hasValue = $('#dateRange').val();
+
+                if (!picker || !hasValue) {
                     return;
                 }
 
@@ -288,8 +334,6 @@
             /* ===============================
                DATE PICKER INIT
             =============================== */
-            // document.addEventListener('DOMContentLoaded', function() {
-
             if (typeof $ === 'undefined' || !$.fn.daterangepicker) return;
 
             const dateInput = $('#dateRange');
@@ -302,7 +346,7 @@
                 opens: 'left',
                 // opens: 'right',
                 // drops: 'down',
-                parentEl: '#openDateRange',
+                // parentEl: '#openDateRange',
                 locale: {
                     format: 'DD MMM YYYY',
                     applyLabel: 'Terapkan',
@@ -317,6 +361,7 @@
 
             /* APPLY RANGE */
             dateInput.on('apply.daterangepicker', function(ev, picker) {
+                isDateActive = true;
                 label.textContent =
                     picker.startDate.format('DD MMM YYYY') +
                     ' - ' +
@@ -329,10 +374,14 @@
             /* CLEAR RANGE */
             clearIcon.addEventListener('click', function(e) {
                 e.stopPropagation();
+
+                isDateActive = false; 
+
                 dateInput.val('');
                 label.textContent = 'Rentang Tanggal';
                 clearIcon.classList.add('d-none');
-                filterByDateRange();
+                fetchTable();
+                // filterByDateRange();
             });
 
         });

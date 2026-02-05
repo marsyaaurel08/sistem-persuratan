@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengguna;
 use App\Models\SuratMasuk;
 use Illuminate\Http\Request;
 
@@ -90,17 +91,51 @@ class SuratMasukController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nomor_surat' => 'required',
-            'tanggal_surat' => 'required|date',
-            'pengirim' => 'required',
-            'perihal' => 'required',
+            'nomor_surat'     => 'required|string|max:100',
+            'tanggal_surat'   => 'required|date',
+            'pengirim_id'     => 'required|exists:pengguna,id',
+            'penerima_divisi' => 'required|string|max:255',
+            'perihal'         => 'required|string|max:255',
+            'file_surat'      => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
-        SuratMasuk::create($request->all());
+        try {
+            // UPLOAD FILE
+            $file = $request->file('file_surat');
+            $fileName = time() . '_' . preg_replace('/\s+/', '_', $file->getClientOriginalName());
+            $filePath = $file->storeAs('surat_masuk', $fileName, 'public');
 
-        return redirect()
-            ->route('surat-masuk.index')
-            ->with('success', 'Surat masuk berhasil disimpan');
+            // SIMPAN DB
+            SuratMasuk::create([
+                'nomor_surat'     => $request->nomor_surat,
+                'tanggal_surat'   => $request->tanggal_surat,
+                'pengirim_id'     => $request->pengirim_id,
+                'penerima_divisi' => $request->penerima_divisi,
+                'perihal'         => $request->perihal,
+                'file_path'       => $filePath,
+                'status'          => 'Pending',
+            ]);
+
+            // RESPONSE AJAX
+            return response()->json([
+                'success'  => true,
+                'message'  => 'Surat masuk berhasil disimpan',
+                'redirect' => route('surat_masuk.index')
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan surat'
+            ], 500);
+        }
+    }
+
+    public function create()
+    {
+        $pengguna = Pengguna::orderBy('divisi')->orderBy('name')->get();
+
+        return view('surat_masuk.upload_surat', compact('pengguna'));
     }
 
     // Detail surat

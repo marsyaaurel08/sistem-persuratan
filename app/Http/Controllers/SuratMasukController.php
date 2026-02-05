@@ -13,9 +13,9 @@ class SuratMasukController extends Controller
     {
         $query = SuratMasuk::with('pengirim')->latest();
 
-        // FILTER STATUS
+        // FILTER STATUS (case-insensitive)
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->whereRaw('LOWER(status) = ?', [strtolower($request->status)]);
         }
 
         // FILTER SEARCH
@@ -37,14 +37,13 @@ class SuratMasukController extends Controller
         // ================= STATISTIK =================
         $totalSurat = SuratMasuk::count();
 
-        $belumDisposisi = SuratMasuk::where('status', 'Pending')->count();
+        $belumDisposisi = SuratMasuk::whereRaw("LOWER(status) = 'pending'")->count();
 
-        $statusCounts = SuratMasuk::select('status')
-            ->selectRaw('COUNT(*) as total')
+        $statusCounts = SuratMasuk::selectRaw('LOWER(status) as status, COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        $selesaiBulanIni = SuratMasuk::where('status', 'Selesai')
+        $selesaiBulanIni = SuratMasuk::whereRaw("LOWER(status) = 'selesai'")
             ->whereMonth('tanggal_surat', now()->month)
             ->whereYear('tanggal_surat', now()->year)
             ->count();
@@ -65,9 +64,9 @@ class SuratMasukController extends Controller
 
         $query = SuratMasuk::with('pengirim');
 
-        // FILTER STATUS (langsung, TANPA ucfirst)
+        // FILTER STATUS (AMAN)
         if (!empty($status)) {
-            $query->where('status', $status);
+            $query->whereRaw('LOWER(status) = ?', [strtolower($status)]);
         }
 
         // FILTER SEARCH

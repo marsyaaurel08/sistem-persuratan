@@ -1,5 +1,5 @@
 @extends('layout.app')
-
+@section('title', 'Surat Masuk')
 @section('content')
     <div class="page-header rounded">
         <div class="page-header-left d-flex align-items-center">
@@ -96,19 +96,18 @@
                                 class="btn bg-secondary-subtle text-dark rounded px-3 d-flex align-items-center gap-2">
 
                                 <i class="bi bi-calendar-event-fill"></i>
-
                                 <span id="dateRangeLabel">Rentang Tanggal</span>
 
-                                <!-- RESET (X) -->
-                                <i id="clearDateRange" class="bi bi-x-circle-fill text-danger d-none"
+                                <i id="clearDateIcon" class="bi bi-x-circle-fill text-danger d-none"
                                     style="cursor: pointer;"></i>
                             </button>
 
-                            <input type="text" id="dateRange" class="d-none">
+                            <input type="text" id="dateRange" class="position-absolute opacity-0"
+                                style="pointer-events: none;">
 
                             <!-- TAMBAH SURAT -->
                             <button class="btn bg-secondary-subtle text-dark rounded px-3"
-                                onclick="window.location='{{ url('/upload_surat') }}'">
+                                onclick="window.location='{{ route('surat-masuk.create') }}'">
                                 <i class="bi bi-plus-circle-fill me-1 text-dark"></i>
                                 Tambah Surat
                             </button>
@@ -221,7 +220,7 @@
 
                 fetch(
                         `{{ route('surat_masuk.search') }}?search=${encodeURIComponent(search)}&status=${encodeURIComponent(currentStatus)}`
-                        )
+                    )
                     .then(res => res.text())
                     .then(html => {
                         tableBody.innerHTML = html;
@@ -289,45 +288,52 @@
             /* ===============================
                DATE PICKER INIT
             =============================== */
-            if (typeof $ !== 'undefined' && $.fn.daterangepicker) {
+            // document.addEventListener('DOMContentLoaded', function() {
 
-                const dateInput = $('#dateRange');
-                const label = document.getElementById('dateRangeLabel');
-                const clearBtn = document.getElementById('clearDateRange');
-                const openBtn = document.getElementById('openDateRange');
+            if (typeof $ === 'undefined' || !$.fn.daterangepicker) return;
 
-                dateInput.daterangepicker({
-                    autoUpdateInput: false,
-                    opens: 'left',
-                    locale: {
-                        format: 'DD MMM YYYY',
-                        applyLabel: 'Terapkan',
-                        cancelLabel: 'Batal'
-                    }
-                });
+            const dateInput = $('#dateRange');
+            const label = document.getElementById('dateRangeLabel');
+            const openBtn = document.getElementById('openDateRange');
+            const clearIcon = document.getElementById('clearDateIcon');
 
-                openBtn?.addEventListener('click', e => {
-                    if (e.target !== clearBtn) dateInput.trigger('click');
-                });
+            dateInput.daterangepicker({
+                autoUpdateInput: true,
+                opens: 'left',
+                // opens: 'right',
+                // drops: 'down',
+                parentEl: '#openDateRange',
+                locale: {
+                    format: 'DD MMM YYYY',
+                    applyLabel: 'Terapkan',
+                    cancelLabel: 'Batal'
+                }
+            });
 
-                dateInput.on('apply.daterangepicker', function(ev, picker) {
-                    label.textContent =
-                        picker.startDate.format('DD MMM YYYY') +
-                        ' - ' +
-                        picker.endDate.format('DD MMM YYYY');
+            /* BUKA KALENDER */
+            openBtn.addEventListener('click', () => {
+                dateInput.trigger('click');
+            });
 
-                    clearBtn.classList.remove('d-none');
-                    filterByDateRange();
-                });
+            /* APPLY RANGE */
+            dateInput.on('apply.daterangepicker', function(ev, picker) {
+                label.textContent =
+                    picker.startDate.format('DD MMM YYYY') +
+                    ' - ' +
+                    picker.endDate.format('DD MMM YYYY');
 
-                clearBtn?.addEventListener('click', e => {
-                    e.stopPropagation();
-                    dateInput.val('');
-                    label.textContent = 'Rentang Tanggal';
-                    clearBtn.classList.add('d-none');
-                    filterByDateRange();
-                });
-            }
+                clearIcon.classList.remove('d-none');
+                filterByDateRange();
+            });
+
+            /* CLEAR RANGE */
+            clearIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dateInput.val('');
+                label.textContent = 'Rentang Tanggal';
+                clearIcon.classList.add('d-none');
+                filterByDateRange();
+            });
 
         });
     </script>

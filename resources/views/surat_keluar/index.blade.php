@@ -47,10 +47,33 @@
                         <!-- ACTION BUTTON -->
                         <div class="d-flex gap-2">
                             <!-- RENTANG TANGGAL -->
-                            <button class="btn bg-secondary-subtle text-dark rounded px-3">
+                            <button id="openDateRange"
+                                class="btn bg-secondary-subtle text-dark rounded px-3 d-flex align-items-center gap-2">
+
+                                <i class="bi bi-calendar-event-fill"></i>
+                                <span id="dateRangeLabel">Rentang Tanggal</span>
+
+                                <i id="clearDateIcon" class="bi bi-x-circle-fill text-danger d-none"
+                                    style="cursor: pointer;"></i>
+                            </button>
+
+                            <input type="text" id="dateRange" class="position-absolute opacity-0"
+                                style="pointer-events: none;">
+                            {{-- <button id="openDateRange"
+                                    class="btn bg-secondary-subtle text-dark rounded px-3 d-flex align-items-center gap-2">
+
+                                    <i class="bi bi-calendar-event-fill"></i>
+                                    <span id="dateRangeLabel">Rentang Tanggal</span>
+
+                                    <i id="clearDateIcon" class="bi bi-x-circle-fill text-danger d-none"
+                                        style="cursor: pointer;"></i>
+                                </button>
+
+                                <input type="text" id="dateRange" class="position-absolute opacity-0"> --}}
+                            {{-- <button class="btn bg-secondary-subtle text-dark rounded px-3">
                                 <i class="bi bi-calendar-event-fill me-1 text-dark"></i>
                                 Rentang Tanggal
-                            </button>
+                            </button> --}}
 
                             <!-- TAMBAH SURAT -->
                             <button class="btn bg-secondary-subtle text-dark rounded px-3">
@@ -135,7 +158,7 @@
 
         </div>
     @endsection
-
+    {{-- 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -261,4 +284,267 @@
             }
 
         });
+    </script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const tableBody = document.getElementById('surat-table');
+            const searchInput = document.getElementById('search');
+            const statusButtons = document.querySelectorAll('.status-btn');
+
+            let timeout = null;
+            let currentStatus = '';
+
+            /* ===============================
+               FETCH TABLE (AJAX GLOBAL)
+            =============================== */
+            function fetchTable() {
+                const search = searchInput?.value ?? '';
+
+                fetch(
+                        `{{ route('surat_keluar.search') }}?search=${encodeURIComponent(search)}&status=${encodeURIComponent(currentStatus)}`
+                    )
+                    .then(res => res.text())
+                    .then(html => {
+                        tableBody.innerHTML = html;
+                        filterByDateRange(); // tetap sinkron
+                    });
+            }
+
+            /* ===============================
+               FILTER STATUS (BADGE)
+            =============================== */
+            statusButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    statusButtons.forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('bg-light', 'text-dark');
+                    });
+
+                    this.classList.remove('bg-light', 'text-dark');
+                    this.classList.add('bg-primary', 'text-white');
+
+                    currentStatus = this.dataset.status;
+                    fetchTable();
+                });
+            });
+
+            /* ===============================
+               LIVE SEARCH (DEBOUNCE)
+            =============================== */
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(fetchTable, 300);
+                });
+            }
+
+            /* ===============================
+               FILTER DATE (CLIENT SIDE)
+            =============================== */
+            function filterByDateRange() {
+                if (typeof $ === 'undefined') return;
+
+                const picker = $('#dateRange').data('daterangepicker');
+                if (!picker || !$('#dateRange').val()) {
+                    $('#surat-table tr').show();
+                    return;
+                }
+
+                const start = picker.startDate;
+                const end = picker.endDate;
+
+                $('#surat-table tr').each(function() {
+                    const rowDateStr = $(this).data('date');
+                    if (!rowDateStr) return;
+
+                    const rowDate = moment(rowDateStr, 'YYYY-MM-DD');
+                    const show =
+                        rowDate.isSameOrAfter(start, 'day') &&
+                        rowDate.isSameOrBefore(end, 'day');
+
+                    $(this).toggle(show);
+                });
+            }
+
+            /* ===============================
+               DATE PICKER INIT
+            =============================== */
+            if (typeof $ === 'undefined' || !$.fn.daterangepicker) return;
+
+            const dateInput = $('#dateRange');
+            const label = document.getElementById('dateRangeLabel');
+            const openBtn = document.getElementById('openDateRange');
+            const clearIcon = document.getElementById('clearDateIcon');
+
+            dateInput.daterangepicker({
+                autoUpdateInput: true,
+                opens: 'left',
+                parentEl: '#openDateRange',
+                locale: {
+                    format: 'DD MMM YYYY',
+                    applyLabel: 'Terapkan',
+                    cancelLabel: 'Batal'
+                }
+            });
+
+            /* BUKA KALENDER */
+            openBtn.addEventListener('click', () => {
+                dateInput.trigger('click');
+            });
+
+            /* APPLY RANGE */
+            dateInput.on('apply.daterangepicker', function(ev, picker) {
+                label.textContent =
+                    picker.startDate.format('DD MMM YYYY') +
+                    ' - ' +
+                    picker.endDate.format('DD MMM YYYY');
+
+                clearIcon.classList.remove('d-none');
+                filterByDateRange();
+            });
+
+            /* CLEAR RANGE */
+            clearIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dateInput.val('');
+                label.textContent = 'Rentang Tanggal';
+                clearIcon.classList.add('d-none');
+                filterByDateRange();
+            });
+
+        });
     </script>
+
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const tableBody = document.getElementById('surat-table');
+            const searchInput = document.getElementById('search');
+            const statusButtons = document.querySelectorAll('.status-btn');
+
+            let timeout = null;
+            let currentStatus = '';
+
+            /* ===============================
+               FETCH TABLE (AJAX GLOBAL)
+            =============================== */
+            function fetchTable() {
+                const search = searchInput?.value ?? '';
+
+                fetch(
+                        `{{ route('surat_keluar.search') }}?search=${encodeURIComponent(search)}&status=${encodeURIComponent(currentStatus)}`
+                    )
+                    .then(res => res.text())
+                    .then(html => {
+                        tableBody.innerHTML = html;
+                        filterByDateRange();
+                    });
+            }
+
+            /* ===============================
+               FILTER STATUS (BADGE)
+            =============================== */
+            statusButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    statusButtons.forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('bg-light', 'text-dark');
+                    });
+
+                    this.classList.remove('bg-light', 'text-dark');
+                    this.classList.add('bg-primary', 'text-white');
+
+                    currentStatus = this.dataset.status;
+                    fetchTable();
+                });
+            });
+
+            /* ===============================
+               LIVE SEARCH (DEBOUNCE)
+            =============================== */
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(fetchTable, 300);
+                });
+            }
+
+            /* ===============================
+               FILTER DATE (CLIENT SIDE)
+            =============================== */
+            function filterByDateRange() {
+                if (typeof $ === 'undefined') return;
+
+                const picker = $('#dateRange').data('daterangepicker');
+                if (!picker || !$('#dateRange').val()) {
+                    $('#surat-table tr').show();
+                    return;
+                }
+
+                const start = picker.startDate;
+                const end = picker.endDate;
+
+                $('#surat-table tr').each(function() {
+                    const rowDateStr = $(this).data('date');
+                    if (!rowDateStr) return;
+
+                    const rowDate = moment(rowDateStr, 'YYYY-MM-DD');
+                    const show =
+                        rowDate.isSameOrAfter(start, 'day') &&
+                        rowDate.isSameOrBefore(end, 'day');
+
+                    $(this).toggle(show);
+                });
+            }
+
+            /* ===============================
+               DATE PICKER INIT
+            =============================== */
+            if (typeof $ === 'undefined' || !$.fn.daterangepicker) return;
+
+            const dateInput = $('#dateRange');
+            const label = document.getElementById('dateRangeLabel');
+            const openBtn = document.getElementById('openDateRange');
+            const clearIcon = document.getElementById('clearDateIcon');
+
+            dateInput.daterangepicker({
+                autoUpdateInput: true,
+                opens: 'left',
+                parentEl: '#openDateRange',
+                locale: {
+                    format: 'DD MMM YYYY',
+                    applyLabel: 'Terapkan',
+                    cancelLabel: 'Batal'
+                }
+            });
+
+            /* BUKA KALENDER */
+            openBtn.addEventListener('click', () => {
+                dateInput.trigger('click');
+            });
+
+            /* APPLY RANGE */
+            dateInput.on('apply.daterangepicker', function(ev, picker) {
+                label.textContent =
+                    picker.startDate.format('DD MMM YYYY') +
+                    ' - ' +
+                    picker.endDate.format('DD MMM YYYY');
+
+                clearIcon.classList.remove('d-none');
+                filterByDateRange();
+            });
+
+            /* CLEAR RANGE */
+            clearIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dateInput.val('');
+                label.textContent = 'Rentang Tanggal';
+                clearIcon.classList.add('d-none');
+                filterByDateRange();
+            });
+
+        });
+    </script> --}}

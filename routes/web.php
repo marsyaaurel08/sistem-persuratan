@@ -26,6 +26,12 @@ Route::get('/surat_masuk', [SuratMasukController::class, 'index'])
 Route::get('/surat-masuk/search', [SuratMasukController::class, 'search'])
     ->name('surat_masuk.search');
 
+Route::post('/surat-masuk', [SuratMasukController::class, 'store'])
+    ->name('surat-masuk.store');
+
+Route::get('/surat-masuk/create', [SuratMasukController::class, 'create'])
+    ->name('surat-masuk.create');
+
 // surat keluar
 Route::get('/surat_keluar', [SuratKeluarController::class, 'index'])
     ->name('surat_keluar.index');
@@ -36,15 +42,9 @@ Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
 // ------------------------------------------------
 // JANGAN DI HAPUS DULU
 // Route::resource('surat_masuk', SuratMasukController::class);
-// Route::get('/surat_masuk', function () {
-//     return view('surat_masuk.index');
-// });
 
 // Route::get('/surat_keluar', [SuratKeluarController::class, 'index']);
 // Route::resource('surat_keluar', SuratKeluarController::class);
-// Route::get('/surat_keluar', function () {
-//     return view('surat_keluar.index');
-// });
 // ------------------------------------------------
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -70,18 +70,19 @@ Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pe
 Route::match(['put', 'patch', 'post'], '/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
 Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 
+Route::get('/manajemen-pengguna', [PenggunaController::class, 'index'])
+    ->name('pengguna.index');
+    
 Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
 
 
-
-
-
-Route::get('/upload_surat', function () {
-    return view('surat_masuk.upload_surat');
-});
 Route::get('/login', function () {
     return view('auth.login');
 });
-Route::get('/upload_berkas', function () {
-    return view('arsip.upload_berkas');
-});
+
+Route::get('/arsip/upload', [ArsipController::class, 'create'])
+    ->name('arsip.create');
+Route::post('/arsip/upload', [ArsipController::class, 'store'])
+    ->name('arsip.store');
+Route::get('/arsip/download/{id}', [ArsipController::class, 'download'])
+    ->name('arsip.download');

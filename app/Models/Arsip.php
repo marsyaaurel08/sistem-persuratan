@@ -16,7 +16,13 @@ class Arsip extends Model
         'surat_masuk_id',
         'surat_keluar_id',
         'tanggal_arsip',
-        'diarsipkan_oleh'
+        'lokasi_fisik',
+        'diarsipkan_oleh',
+        'diarsipkan_nama'
+    ];
+
+    protected $casts = [
+        'tanggal_arsip' => 'date',
     ];
 
     protected static function booted()
@@ -53,6 +59,12 @@ class Arsip extends Model
     }
     public function pengarsip()
     {
-        return $this->belongsTo(User::class, 'diarsipkan_oleh');
+        // Relasi ke tabel pengguna (sesuai constraint migration)
+        return $this->belongsTo(Pengguna::class, 'diarsipkan_oleh');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(ArsipFile::class);
     }
 }

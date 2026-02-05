@@ -66,6 +66,12 @@ Route::get('/manajemen-pengguna', [PenggunaController::class, 'index'])
     ->name('pengguna.index');
     
 Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
+// Route::get('/laporan', function () {
+//     return view('laporan.index');
+// });
+// Route::get('/manajemen-pengguna', function () {
+//     return view('manajemen-pengguna.index');
+// });
 
 Route::get('/tambah-pengguna', function () {
     return view('manajemen-pengguna.add-user');
@@ -74,6 +80,10 @@ Route::get('/tambah-pengguna', function () {
 Route::get('/login', function () {
     return view('auth.login');
 });
-Route::get('/upload_berkas', function () {
-    return view('arsip.upload_berkas');
-});
+
+Route::get('/arsip/upload', [ArsipController::class, 'create'])
+    ->name('arsip.create');
+Route::post('/arsip/upload', [ArsipController::class, 'store'])
+    ->name('arsip.store');
+Route::get('/arsip/download/{id}', [ArsipController::class, 'download'])
+    ->name('arsip.download');

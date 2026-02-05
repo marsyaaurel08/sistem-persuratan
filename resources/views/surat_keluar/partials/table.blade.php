@@ -1,8 +1,8 @@
 @forelse ($suratKeluar as $surat)
-    {{-- <tr data-date="{{ $surat->tanggal_surat }}"> --}}
-        <tr data-date="{{ $surat->tanggal_surat }}" data-status="{{ strtolower($surat->status) }}">
+    <tr data-date="{{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('Y-m-d') }}"
+        data-status="{{ strtolower($surat->status) }}">
         <td>{{ $surat->nomor_surat }}</td>
-        <td>{{ $surat->pengirim_divisi }}</td>
+        <td>{{ $surat->pengirim_divisi ?? '-' }}</td>
         <td>{{ $surat->penerima->name ?? '-' }}</td>
         <td>{{ $surat->perihal }}</td>
         <td>{{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d M Y') }}</td>
@@ -12,23 +12,30 @@
 
             $statusMap = [
                 'pending' => [
-                    'label' => 'PENDING',
+                    'label' => 'Pending',
                     'class' => 'bg-warning-subtle text-warning',
                 ],
                 'disposisi' => [
-                    'label' => 'DISPOSISI',
+                    'label' => 'Disposisi',
                     'class' => 'bg-info-subtle text-info',
                 ],
                 'selesai' => [
-                    'label' => 'SELESAI',
+                    'label' => 'Selesai',
                     'class' => 'bg-success-subtle text-success',
                 ],
+                'ditolak' => [
+                    'label' => 'Ditolak',
+                    'class' => 'bg-danger-subtle text-danger',
+                ],
             ];
+
+            $badgeClass = $statusMap[$status]['class'] ?? 'bg-secondary-subtle text-secondary';
+            $badgeLabel = $statusMap[$status]['label'] ?? ucfirst($surat->status);
         @endphp
 
         <td>
-            <span class="badge {{ $statusMap[$status]['class'] ?? 'bg-secondary text-white' }}">
-                {{ $statusMap[$status]['label'] ?? strtoupper($surat->status) }}
+            <span class="badge-custom {{ $badgeClass }}">
+                {{ $badgeLabel }}
             </span>
         </td>
 
@@ -40,7 +47,7 @@
     </tr>
 @empty
     <tr>
-        <td colspan="6" class="text-center text-muted">
+        <td colspan="7" class="text-center text-muted">
             Data tidak ditemukan
         </td>
     </tr>

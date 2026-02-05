@@ -12,9 +12,9 @@ class SuratKeluarController extends Controller
     {
         $query = SuratKeluar::with('penerima')->latest();
 
-        // FILTER STATUS (langsung, tanpa ucfirst)
+        // FILTER STATUS (case-insensitive)
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->whereRaw('LOWER(status) = ?', [strtolower($request->status)]);
         }
 
         // FILTER SEARCH
@@ -23,25 +23,24 @@ class SuratKeluarController extends Controller
 
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_surat', 'like', "%{$search}%")
-                ->orWhere('perihal', 'like', "%{$search}%")
-                ->orWhere('pengirim_divisi', 'like', "%{$search}%")
-                ->orWhereHas('penerima', function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%{$search}%");
-                });
+                    ->orWhere('perihal', 'like', "%{$search}%")
+                    ->orWhere('pengirim_divisi', 'like', "%{$search}%")
+                    ->orWhereHas('penerima', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
         $suratKeluar = $query->get();
 
-        // Statistik
+        // ================= STATISTIK =================
         $totalSurat = SuratKeluar::count();
 
-        $statusCounts = SuratKeluar::select('status')
-            ->selectRaw('COUNT(*) as total')
+        $statusCounts = SuratKeluar::selectRaw('LOWER(status) as status, COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        $selesaiBulanIni = SuratKeluar::where('status', 'Selesai')
+        $selesaiBulanIni = SuratKeluar::whereRaw("LOWER(status) = 'selesai'")
             ->whereMonth('tanggal_surat', now()->month)
             ->whereYear('tanggal_surat', now()->year)
             ->count();
@@ -61,20 +60,19 @@ class SuratKeluarController extends Controller
 
         $query = SuratKeluar::with('penerima');
 
-        // FILTER STATUS (langsung, TANPA ucfirst)
         if (!empty($status)) {
-            $query->where('status', $status);
+            $query->whereRaw('LOWER(status) = ?', [strtolower($status)]);
         }
 
         // FILTER SEARCH
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_surat', 'like', "%{$search}%")
-                ->orWhere('perihal', 'like', "%{$search}%")
-                ->orWhere('pengirim_divisi', 'like', "%{$search}%")
-                ->orWhereHas('penerima', function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%{$search}%");
-                });
+                    ->orWhere('perihal', 'like', "%{$search}%")
+                    ->orWhere('pengirim_divisi', 'like', "%{$search}%")
+                    ->orWhereHas('penerima', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 

@@ -7,6 +7,8 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
+use App\Http\Controllers\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +20,11 @@ use App\Http\Controllers\SuratKeluarController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// authentication
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // surat masuk
 Route::get('/surat_masuk', [SuratMasukController::class, 'index'])

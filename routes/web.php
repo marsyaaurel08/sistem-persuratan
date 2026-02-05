@@ -61,24 +61,19 @@ Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name
 Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.exportExcel');
 Route::get('/laporan/preview-excel', [LaporanController::class, 'previewExcel'])->name('laporan.previewExcel');
 
+/** FITUR MANAJEMEN PENGGUNA */
+Route::get('/manajemen-pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 
-Route::get('/manajemen-pengguna', [PenggunaController::class, 'index'])
-    ->name('pengguna.index');
-    
-// Route::get('/', function () {
-//     return view('main');
-// });
+Route::get('/tambah-pengguna', [PenggunaController::class, 'create'])->name('pengguna.create');
+Route::post('/tambah-pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
+Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
+Route::match(['put', 'patch', 'post'], '/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
+Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
+
 Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
-Route::get('/laporan', function () {
-    return view('laporan.index');
-});
-// Route::get('/manajemen-pengguna', function () {
-//     return view('manajemen-pengguna.index');
-// });
 
-Route::get('/tambah-pengguna', function () {
-    return view('manajemen-pengguna.add-user');
-});
+
+
 
 
 Route::get('/upload_surat', function () {

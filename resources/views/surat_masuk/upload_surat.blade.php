@@ -32,20 +32,21 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form action="#" method="POST" enctype="multipart/form-data">
+                        <form id="form-surat-masuk" action="{{ route('surat-masuk.store') }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
-
                             <!-- Row 1: Nomor Surat & Kategori -->
                             <div class="row g-3 mb-4">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <label class="form-label text-uppercase fw-bold text-muted"
                                         style="font-size: 11px; letter-spacing: 0.5px;">
                                         <i class="feather-hash me-1"></i>Nomor Surat
                                     </label>
-                                    <input type="text" class="form-control form-control-sm"
+                                    <input type="text" name="nomor_surat" class="form-control form-control-sm"
                                         placeholder="Contoh : PJT/0927/273" style="border-radius: 8px;">
                                 </div>
-                                <div class="col-md-6">
+                                {{-- Kategori di tutup --}}
+                                {{-- <div class="col-md-6">
                                     <label class="form-label text-uppercase fw-bold text-muted"
                                         style="font-size: 11px; letter-spacing: 0.5px;">
                                         <i class="feather-tag me-1"></i>Kategori
@@ -56,7 +57,7 @@
                                         <option>Surat Keluar</option>
                                         <option>Surat Internal</option>
                                     </select>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <!-- Row 2: Pengirim & Penerima -->
@@ -66,42 +67,57 @@
                                         style="font-size: 11px; letter-spacing: 0.5px;">
                                         <i class="feather-user me-1"></i>Pengirim / Sumber
                                     </label>
-                                    <input type="text" class="form-control form-control-sm"
-                                        placeholder="Contoh : Direktur Keuangan"
-                                        style="border-radius: 8px; font-size: small;">
+
+                                    <select name="pengirim_id" class="form-select form-select-sm"
+                                        style="border-radius: 8px;">
+                                        <option value="" selected disabled>-- Pilih Divisi Pengirim --</option>
+                                        @foreach ($pengguna as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ old('pengirim_id') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->divisi }} - {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-uppercase fw-bold text-muted"
                                         style="font-size: 11px; letter-spacing: 0.5px;">
                                         <i class="feather-users me-1"></i>Penerima / Unit
                                     </label>
-                                    <input type="text" class="form-control form-control-sm"
+                                    <input type="text" name="penerima_divisi" class="form-control form-control-sm"
                                         placeholder="Contoh : Divisi Human Capital"
                                         style="border-radius: 8px; font-size: small;">
                                 </div>
                             </div>
 
-                            <!-- Row 3: Tanggal & Perihal -->
                             <div class="row g-3 mb-4">
+                                <!-- TANGGAL -->
                                 <div class="col-md-6">
                                     <label class="form-label text-uppercase fw-bold text-muted"
                                         style="font-size: 11px; letter-spacing: 0.5px;">
                                         <i class="feather-calendar me-1"></i>Tanggal
                                     </label>
-                                    <div class="input-group input-group-sm">
-                                        <input type="text" class="form-control" id="single-datepicker"
-                                            placeholder="01 / 01 / 2026"
+
+                                    <div class="input-group">
+                                        <input type="text" name="tanggal_surat" id="single-datepicker"
+                                            class="form-control form-control-sm" placeholder="01 / 01 / 2026"
                                             style="border-radius: 8px 0 0 8px; font-size: small;">
-                                        <span class="input-group-text" style="border-radius: 0 8px 8px 0;"><i
-                                                class="feather-calendar"></i></span>
+
+                                        <span class="input-group-text"
+                                            style="border-radius: 0 8px 8px 0; font-size: small;">
+                                            <i class="feather-calendar"></i>
+                                        </span>
                                     </div>
                                 </div>
+
+                                <!-- PERIHAL -->
                                 <div class="col-md-6">
                                     <label class="form-label text-uppercase fw-bold text-muted"
                                         style="font-size: 11px; letter-spacing: 0.5px;">
                                         <i class="feather-message-square me-1"></i>Perihal
                                     </label>
-                                    <input type="text" class="form-control form-control-sm"
+
+                                    <input type="text" name="perihal" class="form-control form-control-sm"
                                         placeholder="Contoh : Permohonan Workshop"
                                         style="border-radius: 8px; font-size: small;">
                                 </div>
@@ -113,18 +129,27 @@
                                     style="font-size: 11px; letter-spacing: 0.5px;">
                                     <i class="feather-upload me-1"></i>Unggah Berkas
                                 </label>
-                                <div class="border-dashed border-2 p-4 text-center rounded-3 position-relative"
-                                    style="border-style: dashed; border-color: #dee2e6; background: linear-gradient(135deg, #fdfdfd 0%, #f8f9fa 100%); min-height: 120px; cursor: pointer; transition: all 0.3s ease;"
-                                    onmouseover="this.style.background='linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'"
-                                    onmouseout="this.style.background='linear-gradient(135deg, #fdfdfd 0%, #f8f9fa 100%)'">
-                                    <input type="file" class="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+
+                                <div id="upload-area"
+                                    class="border-dashed border-2 p-4 text-center rounded-3 position-relative"
+                                    style="border-style: dashed; border-color: #dee2e6;
+        background: linear-gradient(135deg, #fdfdfd 0%, #f8f9fa 100%);
+        min-height: 120px; cursor: pointer; transition: all 0.3s ease;">
+
+                                    <input type="file" id="file_surat" name="file_surat"
+                                        class="position-absolute top-0 start-0 w-100 h-100 opacity-0"
                                         style="cursor: pointer;" accept=".pdf,.jpg,.jpeg,.png">
-                                    <div class="d-flex flex-column align-items-center justify-content-center h-100">
+
+                                    <!-- ISI DINAMIS -->
+                                    <div id="upload-content"
+                                        class="d-flex flex-column align-items-center justify-content-center h-100">
                                         <i class="feather-upload-cloud display-4 text-primary mb-2"></i>
-                                        <p class="fw-semibold text-dark mb-1" style="font-size: small;">Upload berkas surat
+                                        <p class="fw-semibold text-dark mb-1" style="font-size: small;">
+                                            Unggah berkas surat
                                         </p>
-                                        <small class="text-muted" style="font-size: small;">Ukuran maksimal 5MB • Format:
-                                            PDF, JPG, PNG</small>
+                                        <small class="text-muted" style="font-size: small;">
+                                            Ukuran maksimal 5MB • PDF, JPG, PNG
+                                        </small>
                                     </div>
                                 </div>
                             </div>
@@ -278,94 +303,189 @@
     <script src="{{ asset('duralux/assets/js/bootstrap.min.js') }}"></script>
 
     <script>
-        $(document).ready(function () {
-            // Initialize Date Picker
+        $(document).ready(function() {
             $('#single-datepicker').daterangepicker({
                 singleDatePicker: true,
+                autoApply: true, // otomatis pilih tanpa tombol apply
                 showDropdowns: true,
+                autoUpdateInput: false, // biar kita bisa set format berbeda
                 locale: {
-                    format: 'DD / MM / YYYY',
+                    format: 'DD-MM-YYYY', // ini untuk tampilan di input
                     daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                    monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+                    monthNames: [
+                        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ]
                 }
             });
 
-            // File Upload Handler
-            const fileInput = $('input[type="file"]');
-            const uploadArea = $('.border-dashed');
-            const fileInfo = $('.alert-light');
-            const previewArea = $('.bg-light.rounded-3');
-            const fileActions = $('#file-actions');
+            // set value input setelah user pilih tanggal
+            $('#single-datepicker').on('apply.daterangepicker', function(ev, picker) {
+                // tampilkan DD-MM-YYYY di input
+                $(this).val(picker.startDate.format('DD-MM-YYYY'));
 
-            uploadArea.on('click', function () {
+                // simpan versi YYYY-MM-DD untuk backend Laravel
+                $(this).data('real-value', picker.startDate.format('YYYY-MM-DD'));
+            });
+
+            // ===============================
+            // FILE UPLOAD (UPLOAD AREA ONLY)
+            // ===============================
+            const fileInput = $('#file_surat');
+            const uploadArea = $('#upload-area');
+            const uploadContent = $('#upload-content');
+
+            uploadArea.on('click', function() {
                 fileInput.click();
             });
 
-            fileInput.on('change', function () {
+            fileInput.on('change', function() {
                 const file = this.files[0];
-                if (file) {
-                    // Validate file size (5MB)
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('Ukuran file maksimal 5MB');
-                        this.value = '';
-                        return;
-                    }
+                if (!file) return;
 
-                    // Validate file type
-                    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-                    if (!allowedTypes.includes(file.type)) {
-                        alert('Format file harus PDF, JPG, atau PNG');
-                        this.value = '';
-                        return;
-                    }
-
-                    // Update file info
-                    fileInfo.html(`
-                        <i class="feather-file-text me-3 text-success fs-4"></i>
-                        <div class="flex-grow-1">
-                            <div class="fw-semibold text-dark">${file.name}</div>
-                            <small class="text-muted">${(file.size / 1024 / 1024).toFixed(2)} MB • ${file.type.split('/')[1].toUpperCase()}</small>
-                        </div>
-                    `);
-
-                    // Show file actions
-                    fileActions.show();
-
-                    // Update preview area
-                    previewArea.html(`
-                        <div class="text-center">
-                            <i class="feather-file-text display-1 text-success mb-3"></i>
-                            <h6 class="text-dark mb-2">File berhasil dipilih</h6>
-                            <p class="text-sm text-muted mb-0">Siap untuk diupload</p>
-                        </div>
-                    `);
-
-                    // Add drag and drop visual feedback
-                    uploadArea.css('border-color', '#28a745');
-                    setTimeout(() => {
-                        uploadArea.css('border-color', '#dee2e6');
-                    }, 1000);
+                // validasi ukuran
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Ukuran file maksimal 5MB');
+                    this.value = '';
+                    resetUpload();
+                    return;
                 }
+
+                // validasi tipe
+                const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Format file harus PDF, JPG, atau PNG');
+                    this.value = '';
+                    resetUpload();
+                    return;
+                }
+
+                // TAMPILKAN DI UPLOAD AREA SAJA
+                uploadContent.html(`
+                    <i class="feather-file-text display-4 text-success mb-2"></i>
+                    <p class="fw-semibold text-dark mb-1" style="font-size: small;">
+                        ${file.name}
+                    </p>
+                    <small class="text-muted" style="font-size: small;">
+                        ${(file.size / 1024 / 1024).toFixed(2)} MB • ${file.type.split('/')[1].toUpperCase()}
+                    </small>
+                `);
+
+                uploadArea.css('border-color', '#28a745');
             });
+
+            function resetUpload() {
+                uploadContent.html(`
+                    <i class="feather-upload-cloud display-4 text-primary mb-2"></i>
+                    <p class="fw-semibold text-dark mb-1" style="font-size: small;">
+                        Unggah berkas surat
+                    </p>
+                    <small class="text-muted" style="font-size: small;">
+                        Ukuran maksimal 5MB • PDF, JPG, PNG
+                    </small>
+                `);
+
+                uploadArea.css('border-color', '#dee2e6');
+            }
+
+            // --------------------------------------
+            // JANGAN DI HAPUS DULU, BUAT JAGA JAGA
+            // // File Upload Handler
+            // const fileInput = $('#file_surat');
+            // const fileName = $('#file-name');
+            // // const fileInput = $('input[type="file"]');
+            // const uploadArea = $('.border-dashed');
+            // const fileInfo = $('.alert-light');
+            // const previewArea = $('.bg-light.rounded-3');
+            // const fileActions = $('#file-actions');
+
+            // uploadArea.on('click', function() {
+            //     fileInput.click();
+            // });
+
+            // fileInput.on('change', function() {
+            //     const file = this.files[0];
+            //     if (!file) {
+            //         fileName.text('Belum ada file dipilih');
+            //         return;
+            //     }
+
+            //     // tampilkan nama file
+            //     fileName.html(`
+        //             <strong>${file.name}</strong><br>
+        //             <small>${(file.size / 1024 / 1024).toFixed(2)} MB</small>
+        //         `);
+            //     // if (file) {
+            //     //     // tampilkan nama file
+            //     //     fileName.html(`
+        // //         <strong>${file.name}</strong><br>
+        // //         <small>${(file.size / 1024 / 1024).toFixed(2)} MB</small>
+        // //     `);
+            //     // Validate file size (5MB)
+            //     if (file.size > 5 * 1024 * 1024) {
+            //         alert('Ukuran file maksimal 5MB');
+            //         this.value = '';
+            //         return;
+            //     }
+
+            //     // Validate file type
+            //     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+            //     if (!allowedTypes.includes(file.type)) {
+            //         alert('Format file harus PDF, JPG, atau PNG');
+            //         this.value = '';
+            //         return;
+            //     }
+
+            //     // Update file info
+            //     fileInfo.html(`
+        //             <i class="feather-file-text me-3 text-success fs-4"></i>
+        //             <div class="flex-grow-1">
+        //                 <div class="fw-semibold text-dark">${file.name}</div>
+        //                 <small class="text-muted">${(file.size / 1024 / 1024).toFixed(2)} MB • ${file.type.split('/')[1].toUpperCase()}</small>
+        //             </div>
+        //         `);
+
+            //     // Show file actions
+            //     fileActions.show();
+
+            //     // Update preview area
+            //     previewArea.html(`
+        //             <div class="text-center">
+        //                 <i class="feather-file-text display-1 text-success mb-3"></i>
+        //                 <h6 class="text-dark mb-2">File berhasil dipilih</h6>
+        //                 <p class="text-sm text-muted mb-0">Siap untuk diupload</p>
+        //             </div>
+        //         `);
+
+            //     // Add drag and drop visual feedback
+            //     uploadArea.css('border-color', '#28a745');
+            //     setTimeout(() => {
+            //         uploadArea.css('border-color', '#dee2e6');
+            //     }, 1000);
+            // });
+            // --------------------------------------
+
 
             // Drag and drop functionality
-            uploadArea.on('dragover dragenter', function (e) {
+            uploadArea.on('dragover dragenter', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                $(this).addClass('border-primary').css('background', 'linear-gradient(135deg, #e7f3ff 0%, #f8f9fa 100%)');
+                $(this).addClass('border-primary').css('background',
+                    'linear-gradient(135deg, #e7f3ff 0%, #f8f9fa 100%)');
             });
 
-            uploadArea.on('dragleave dragend', function (e) {
+            uploadArea.on('dragleave dragend', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                $(this).removeClass('border-primary').css('background', 'linear-gradient(135deg, #fdfdfd 0%, #f8f9fa 100%)');
+                $(this).removeClass('border-primary').css('background',
+                    'linear-gradient(135deg, #fdfdfd 0%, #f8f9fa 100%)');
             });
 
-            uploadArea.on('drop', function (e) {
+            uploadArea.on('drop', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                $(this).removeClass('border-primary').css('background', 'linear-gradient(135deg, #fdfdfd 0%, #f8f9fa 100%)');
+                $(this).removeClass('border-primary').css('background',
+                    'linear-gradient(135deg, #fdfdfd 0%, #f8f9fa 100%)');
 
                 const files = e.originalEvent.dataTransfer.files;
                 if (files.length > 0) {
@@ -375,20 +495,39 @@
             });
 
             // Add User Modal Handler
-            $('.btn-dark').on('click', function () {
+            $('.btn-dark').on('click', function() {
                 $('#addUserModal').modal('show');
             });
 
             // User search functionality
-            $('#userSearch').on('input', function () {
+            $('#userSearch').on('input', function() {
                 const query = $(this).val().toLowerCase();
                 if (query.length > 1) {
                     // Mock user data - replace with actual API call
-                    const mockUsers = [
-                        { id: 1, name: 'Ahmad Rahman', role: 'Staff IT', initials: 'AR' },
-                        { id: 2, name: 'Siti Nurhaliza', role: 'Manager HR', initials: 'SN' },
-                        { id: 3, name: 'Budi Santoso', role: 'Direktur', initials: 'BS' },
-                        { id: 4, name: 'Maya Sari', role: 'Staff Keuangan', initials: 'MS' }
+                    const mockUsers = [{
+                            id: 1,
+                            name: 'Ahmad Rahman',
+                            role: 'Staff IT',
+                            initials: 'AR'
+                        },
+                        {
+                            id: 2,
+                            name: 'Siti Nurhaliza',
+                            role: 'Manager HR',
+                            initials: 'SN'
+                        },
+                        {
+                            id: 3,
+                            name: 'Budi Santoso',
+                            role: 'Direktur',
+                            initials: 'BS'
+                        },
+                        {
+                            id: 4,
+                            name: 'Maya Sari',
+                            role: 'Staff Keuangan',
+                            initials: 'MS'
+                        }
                     ];
 
                     const filteredUsers = mockUsers.filter(user =>
@@ -421,7 +560,7 @@
             });
 
             // Select user from suggestions
-            $(document).on('click', '.select-user', function (e) {
+            $(document).on('click', '.select-user', function(e) {
                 e.preventDefault();
                 const user = JSON.parse($(this).attr('data-user'));
                 $('#userSearch').val(user.name);
@@ -429,7 +568,7 @@
             });
 
             // Add user button handler
-            $('#addUserBtn').on('click', function () {
+            $('#addUserBtn').on('click', function() {
                 const userName = $('#userSearch').val();
                 const accessLevel = $('#accessLevel').val();
 
@@ -485,7 +624,7 @@
             });
 
             // Remove user handler
-            $(document).on('click', '.remove-user', function () {
+            $(document).on('click', '.remove-user', function() {
                 if (confirm('Apakah Anda yakin ingin menghapus akses user ini?')) {
                     $(this).closest('.user-access-card').remove();
 
@@ -496,19 +635,28 @@
                 }
             });
 
-            // Form validation
-            $('form').on('submit', function (e) {
-                const requiredFields = ['input[placeholder*="Nomor Surat"]', 'select', 'input[placeholder*="Pengirim"]', 'input[placeholder*="Penerima"]', 'input[placeholder*="Tanggal"]', 'input[placeholder*="Perihal"]' style = "border-radius: 8px;  font-size: small;'];"];
+            $('#form-surat-masuk').on('submit', function(e) {
+                e.preventDefault();
+
                 let isValid = true;
 
+                const requiredFields = [
+                    'input[name="nomor_surat"]',
+                    'input[name="tanggal_surat"]',
+                    'input[name="perihal"]',
+                    'select[name="pengirim_id"]',
+                    'input[name="penerima_divisi"]'
+                ];
+
                 requiredFields.forEach(selector => {
-                    const field = $(selector);
-                    if (!field.val() || field.val() === '-- Pilih Kategori --') {
-                        field.addClass('is-invalid');
-                        isValid = false;
-                    } else {
-                        field.removeClass('is-invalid');
-                    }
+                    $(selector).each(function() {
+                        if (!$(this).val()) {
+                            $(this).addClass('is-invalid');
+                            isValid = false;
+                        } else {
+                            $(this).removeClass('is-invalid');
+                        }
+                    });
                 });
 
                 if (!fileInput[0].files[0]) {
@@ -519,9 +667,65 @@
                 }
 
                 if (!isValid) {
-                    e.preventDefault();
                     alert('Mohon lengkapi semua field yang diperlukan');
+                    return;
                 }
+
+                // ================= AJAX SUBMIT =================
+                const form = this;
+                const formData = new FormData(form);
+                const submitBtn = $(form).find('button[type="submit"]');
+
+                // Ambil tanggal versi YYYY-MM-DD untuk Laravel
+                const tanggalReal = $('#single-datepicker').data('real-value');
+                formData.set('tanggal_surat', tanggalReal); // overwrite nilai input DD-MM-YYYY
+
+                submitBtn.prop('disabled', true).html(
+                    '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...'
+                );
+
+                $.ajax({
+                    url: $(form).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+
+                    success: function(res) {
+                        if (res.success) {
+                            submitBtn.hide();
+
+                            // tampilkan ceklis
+                            submitBtn.after(`
+                    <div id="submit-status" class="mt-3 text-center">
+                        <i class="feather-check-circle text-success display-4"></i>
+                        <p class="fw-semibold mt-2">Berhasil disimpan</p>
+                    </div>
+                `);
+
+                            // redirect otomatis
+                            setTimeout(() => {
+                                window.location.href = res.redirect;
+                            }, 1500);
+                        }
+                    },
+
+                    error: function(xhr) {
+                        submitBtn.prop('disabled', false).html(
+                            '<i class="feather-send me-2"></i>Kirim Surat'
+                        );
+
+                        if (xhr.status === 422) {
+                            let msg = '';
+                            Object.values(xhr.responseJSON.errors).forEach(err => {
+                                msg += err[0] + '\n';
+                            });
+                            alert(msg);
+                        } else {
+                            alert('Terjadi kesalahan server');
+                        }
+                    }
+                });
             });
         });
     </script>

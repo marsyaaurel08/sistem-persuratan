@@ -57,25 +57,23 @@
     {{-- Division Folder Cards --}}
     {{-- <div class="row g-3 mb-4">
         @if ($folders && count($folders) > 0)
-            @foreach ($folders as $folder)
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
-                        data-divisi="{{ $folder['name'] }}"
-                        style="cursor: pointer; transition: transform 0.2s;"
-                        onmouseover="this.style.transform='translateY(-5px)'"
-                        onmouseout="this.style.transform='translateY(0)'">
-                        <div class="card-body p-3">
-                            <div class="d-flex justify-content-between mb-3">
-                                <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
-                                    <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 28px;"></i>
-                                </div>
-                            </div>
-                            <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
-                            <small class="text-muted">{{ $folder['count'] }}</small>
+        @foreach ($folders as $folder)
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
+                data-divisi="{{ $folder['name'] }}" style="cursor: pointer; transition: transform 0.2s;"
+                onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
+                            <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 28px;"></i>
                         </div>
                     </div>
+                    <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
+                    <small class="text-muted">{{ $folder['count'] }}</small>
                 </div>
-            @endforeach
+            </div>
+        </div>
+        @endforeach
         @else
         <div class="col-12">
             <div class="alert alert-info text-center">
@@ -121,313 +119,349 @@
                     </div>
 
                     {{-- Bulk Action --}}
-                    <div id="bulkActionBar" class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
-                        style="display: none;">
-                        <input type="checkbox" id="selectAll">
-                        <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
-                        <div class="vr"></div>
-                        <button id="downloadSelected" class="btn btn-sm btn-light" disabled>
-                            <i class="feather-download"></i>
-                            <span class="btn-text">Unduh</span>
-                            <span class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
-                        </button>
-                        {{-- <button id="downloadSelected" class="btn btn-sm btn-light"><i class="feather-download"></i>
-                            Unduh</button> --}}
-                        <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i> Pulihkan</button>
-                        <button class="btn btn-sm btn-danger"><i class="feather-trash"></i> Hapus</button>
-                        <button class="btn-close ms-auto"></button>
-                    </div>
+                    <div id="bulkActionBar"
+                        class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3 fade d-none">
 
-                    {{-- Table --}}
+                        {{-- <div id="bulkActionBar"
+                            class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
+                            style="display: none;"> --}}
+                            <input type="checkbox" id="selectAll">
+                            <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
+                            <div class="vr"></div>
+                            <button id="downloadSelected" class="btn btn-sm btn-light" disabled>
+                                <i class="feather-download"></i>
+                                <span class="btn-text">Unduh</span>
+                                <span class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
+                            </button>
+                            {{-- <button id="downloadSelected" class="btn btn-sm btn-light"><i class="feather-download"></i>
+                                Unduh</button> --}}
+                            <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i> Pulihkan</button>
+                            <button class="btn btn-sm btn-danger"><i class="feather-trash"></i> Hapus</button>
+                            <button type="button" id="closeBulkBar" class="btn-close ms-auto"></button>
+                        </div>
+
+                        {{-- Table --}}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm align-middle small" id="arsipTable">
+                                <thead class="text-uppercase text-muted small">
+                                    <tr>
+                                        <th width="40"></th>
+                                        <th>Kode Arsip</th>
+                                        <th>No. Surat</th>
+                                        <th>Perihal</th>
+                                        {{-- <th>Divisi</th> --}}
+                                        <th>Tanggal</th>
+                                        <th>Pengarsip</th>
+                                        <th>File</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($arsip as $item)
+                                        @php
+                                            $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
+                                            $pengarsip = $item->pengarsip->name ?? '-';
+                                        @endphp
+
+                                        <tr data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
+                                            data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
+                                            data-tanggal="{{ $tanggalDisplay }}"
+                                            data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
+                                            data-pengarsip="{{ $pengarsip }}" data-files='@json(
+                                                $item->files->map(fn($f) => [
+                                                    "id" => $f->id,
+                                                    "nama_file" => $f->nama_file
+                                                ])
+                                            )'>
+                                            <td>
+                                                <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
+                                            </td>
+
+                                            <td class="text-nowrap">
+                                                <span class="badge bg-light text-dark border">
+                                                    {{ $item->kode_arsip }}
+                                                </span>
+                                            </td>
+
+                                            <td class="fw-bold">
+                                                {{ $item->nomor_surat ?? '-' }}
+                                            </td>
+
+                                            <td>
+                                                {{ $item->perihal ?? '-' }}
+                                            </td>
+
+                                            {{-- <td>
+                                                <span class="badge bg-secondary-subtle text-dark">
+                                                    {{ $item->divisi ?? '-' }}
+                                                </span>
+                                            </td> --}}
+
+                                            <td>
+                                                {{ $tanggalDisplay ?? '-' }}
+                                            </td>
+
+                                            <td>
+                                                <small class="text-muted">
+                                                    {{ $item->pengarsip->name ?? '-' }}
+                                                </small>
+                                            </td>
+
+                                            <td>
+                                                @if ($item->files->count())
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        @foreach ($item->files as $file)
+                                                            <a href="{{ route('arsip.download', $file->id) }}"
+                                                                class="badge bg-light text-primary border d-inline-flex align-items-center">
+                                                                <i class="feather-download me-1" style="font-size: 11px;"></i>
+                                                                <span class="text-truncate" style="max-width: 140px;">
+                                                                    {{ $file->nama_file }}
+                                                                </span>
+                                                            </a>
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                        {{-- Pagination --}}
+                        @if (!request()->hasAny(['tanggal_arsip', 'search']))
+                            <div class="mt-2 d-flex justify-content-center">
+                                {{ $arsip->links() }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+@endsection
+
+    {{-- Modal Detail Divisi --}}
+    <div class="modal fade" id="folderModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Dokumen Divisi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
                     <div class="table-responsive">
-                        <table class="table table-hover table-sm align-middle small" id="arsipTable">
-                            <thead class="text-uppercase text-muted small">
+                        <table class="table table-hover table-sm small">
+                            <thead class="table-light">
                                 <tr>
-                                    <th width="40"></th>
                                     <th>Kode Arsip</th>
                                     <th>No. Surat</th>
                                     <th>Perihal</th>
-                                    {{-- <th>Divisi</th> --}}
                                     <th>Tanggal</th>
-                                    <th>Pengarsip</th>
                                     <th>File</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($arsip as $item)
-                                    @php
-                                        $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
-                                        $pengarsip = $item->pengarsip->name ?? '-';
-                                    @endphp
-
-                                    <tr data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
-                                        data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
-                                        data-tanggal="{{ $tanggalDisplay }}"
-                                        data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
-                                        data-pengarsip="{{ $pengarsip }}" data-files='@json(
-                                            $item->files->map(fn($f) => [
-                                                "id" => $f->id,
-                                                "nama_file" => $f->nama_file
-                                            ])
-                                        )'>
-                                        <td>
-                                            <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
-                                        </td>
-
-                                        <td class="text-nowrap">
-                                            <span class="badge bg-light text-dark border">
-                                                {{ $item->kode_arsip }}
-                                            </span>
-                                        </td>
-
-                                        <td class="fw-bold">
-                                            {{ $item->nomor_surat ?? '-' }}
-                                        </td>
-
-                                        <td>
-                                            {{ $item->perihal ?? '-' }}
-                                        </td>
-
-                                        {{-- <td>
-                                            <span class="badge bg-secondary-subtle text-dark">
-                                                {{ $item->divisi ?? '-' }}
-                                            </span>
-                                        </td> --}}
-
-                                        <td>
-                                            {{ $tanggalDisplay ?? '-' }}
-                                        </td>
-
-                                        <td>
-                                            <small class="text-muted">
-                                                {{ $item->pengarsip->name ?? '-' }}
-                                            </small>
-                                        </td>
-
-                                        <td>
-                                            @if ($item->files->count())
-                                                <div class="d-flex flex-wrap gap-1">
-                                                    @foreach ($item->files as $file)
-                                                        <a href="{{ route('arsip.download', $file->id) }}"
-                                                            class="badge bg-light text-primary border d-inline-flex align-items-center">
-                                                            <i class="feather-download me-1" style="font-size: 11px;"></i>
-                                                            <span class="text-truncate" style="max-width: 140px;">
-                                                                {{ $file->nama_file }}
-                                                            </span>
-                                                        </a>
-                                                    @endforeach
-                                                </div>
-                                            @else
-                                                <span class="text-muted">-</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
+                            <tbody id="modalTableBody">
                             </tbody>
-
                         </table>
                     </div>
-
-                    {{-- Pagination --}}
-                    @if (!request()->hasAny(['tanggal_arsip', 'search']))
-                        <div class="mt-2 d-flex justify-content-center">
-                            {{ $arsip->links() }}
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
     </div>
-@endsection
 
-{{-- Modal Detail Divisi --}}
-<div class="modal fade" id="folderModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Dokumen Divisi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm small">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Kode Arsip</th>
-                                <th>No. Surat</th>
-                                <th>Perihal</th>
-                                <th>Tanggal</th>
-                                <th>File</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modalTableBody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-@push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 
-    <!-- Search Table -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchTable');
-            if (!searchInput) return;
-            searchInput.addEventListener('keyup', function() {
-                const filter = this.value.toLowerCase();
+        <!-- Search Table -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const searchInput = document.getElementById('searchTable');
+                if (!searchInput) return;
+                searchInput.addEventListener('keyup', function () {
+                    const filter = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('#arsipTable tbody tr');
+                    rows.forEach(row => {
+                        row.style.display = row.textContent.toLowerCase().includes(filter) ? '' :
+                            'none';
+                    });
+                });
+            });
+        </script>
+
+        @push('styles')
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        @endpush
+        <!-- Date Range Picker & Filter -->
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dateInput = document.getElementById('dateRange');
+                const clearBtn = document.getElementById('clearDateRange');
                 const rows = document.querySelectorAll('#arsipTable tbody tr');
-                rows.forEach(row => {
-                    row.style.display = row.textContent.toLowerCase().includes(filter) ? '' :
-                        'none';
+                const pagination = document.querySelector('.pagination')?.parentElement;
+
+                if (!dateInput) return;
+
+                const fp = flatpickr(dateInput, {
+                    mode: 'range',
+                    dateFormat: 'd M Y',
+                    locale: 'id',
+                    allowInput: false,
+                    onChange: function (selectedDates) {
+                        if (selectedDates.length === 2) {
+                            filterByDate(selectedDates[0], selectedDates[1]);
+                            clearBtn.style.display = 'inline-flex';
+                            hidePagination();
+                        }
+                    }
+                });
+
+                function filterByDate(start, end) {
+                    rows.forEach(row => {
+                        const dateStr = row.dataset.date;
+                        if (!dateStr) {
+                            row.style.display = 'none';
+                            return;
+                        }
+
+                        const rowDate = new Date(dateStr);
+                        row.style.display =
+                            rowDate >= start && rowDate <= end ? '' : 'none';
+                    });
+                }
+
+                function hidePagination() {
+                    if (pagination) pagination.style.display = 'none';
+                }
+
+                function showPagination() {
+                    if (pagination) pagination.style.display = 'block';
+                }
+
+                clearBtn.addEventListener('click', function () {
+                    fp.clear();
+                    dateInput.value = '';
+                    clearBtn.style.display = 'none';
+                    rows.forEach(row => row.style.display = '');
+                    showPagination();
                 });
             });
-        });
-    </script>
+        </script>
 
-    @push('styles')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    @endpush
-    <!-- Date Range Picker & Filter -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const dateInput = document.getElementById('dateRange');
-            const clearBtn = document.getElementById('clearDateRange');
-            const rows = document.querySelectorAll('#arsipTable tbody tr');
-            const pagination = document.querySelector('.pagination')?.parentElement;
+        <!-- Checkbox & Bulk Actions -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const bulkBar = document.getElementById('bulkActionBar');
+                const selectedCount = document.getElementById('selectedCount');
+                const selectAll = document.getElementById('selectAll');
+                const table = document.getElementById('arsipTable');
+                const closeBulkBtn = document.getElementById('closeBulkBar');
 
-            if (!dateInput) return;
-
-            const fp = flatpickr(dateInput, {
-                mode: 'range',
-                dateFormat: 'd M Y',
-                locale: 'id',
-                allowInput: false,
-                onChange: function (selectedDates) {
-                    if (selectedDates.length === 2) {
-                        filterByDate(selectedDates[0], selectedDates[1]);
-                        clearBtn.style.display = 'inline-flex';
-                        hidePagination();
-                    }
+                function getRowCheckboxes() {
+                    return document.querySelectorAll('.row-checkbox');
                 }
-            });
 
-            function filterByDate(start, end) {
-                rows.forEach(row => {
-                    const dateStr = row.dataset.date;
-                    if (!dateStr) {
-                        row.style.display = 'none';
-                        return;
+                function showBulkBar() {
+                    bulkBar.classList.remove('d-none');
+                    bulkBar.classList.add('show');
+                }
+
+                function hideBulkBar() {
+                    bulkBar.classList.add('d-none');
+                    bulkBar.classList.remove('show');
+                }
+
+                function updateCount() {
+                    const checked = document.querySelectorAll('.row-checkbox:checked').length;
+                    const total = getRowCheckboxes().length;
+
+                    selectedCount.textContent = checked;
+
+                    if (checked > 0) {
+                        showBulkBar();
+                    } else {
+                        hideBulkBar();
                     }
 
-                    const rowDate = new Date(dateStr);
-                    row.style.display =
-                        rowDate >= start && rowDate <= end ? '' : 'none';
-                });
-            }
-
-            function hidePagination() {
-                if (pagination) pagination.style.display = 'none';
-            }
-
-            function showPagination() {
-                if (pagination) pagination.style.display = 'block';
-            }
-
-            clearBtn.addEventListener('click', function () {
-                fp.clear();
-                dateInput.value = '';
-                clearBtn.style.display = 'none';
-                rows.forEach(row => row.style.display = '');
-                showPagination();
-            });
-        });
-    </script>
-
-
-    <!-- Checkbox & Bulk Actions -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const bulkBar = document.getElementById('bulkActionBar');
-            const selectedCount = document.getElementById('selectedCount');
-            const selectAll = document.getElementById('selectAll');
-            const table = document.getElementById('arsipTable');
-
-            function updateCount() {
-                const checked = document.querySelectorAll('.row-checkbox:checked').length;
-                const total = document.querySelectorAll('.row-checkbox').length;
-                selectedCount.textContent = checked;
-                if (bulkBar) bulkBar.style.display = checked ? 'flex' : 'none';
-                if (selectAll) {
-                    selectAll.checked = total > 0 && checked === total;
-                    selectAll.indeterminate = checked > 0 && checked < total;
+                    if (selectAll) {
+                        selectAll.checked = checked === total && total > 0;
+                        selectAll.indeterminate = checked > 0 && checked < total;
+                    }
                 }
-            }
 
-            if (table) {
-                table.addEventListener('change', function(e) {
-                    if (e.target && e.target.classList && e.target.classList.contains('row-checkbox')) {
+                // checkbox row
+                table.addEventListener('change', function (e) {
+                    if (e.target.classList.contains('row-checkbox')) {
                         updateCount();
                     }
                 });
-            }
 
-            if (selectAll) {
-                selectAll.addEventListener('change', function() {
-                    const all = document.querySelectorAll('.row-checkbox');
-                    all.forEach(cb => cb.checked = this.checked);
+                // select all
+                selectAll.addEventListener('change', function () {
+                    getRowCheckboxes().forEach(cb => cb.checked = this.checked);
                     updateCount();
                 });
-            }
 
-            updateCount();
-        });
-    </script>
+                // ❌ tombol silang
+                closeBulkBtn.addEventListener('click', function () {
+                    getRowCheckboxes().forEach(cb => cb.checked = false);
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const downloadBtn = document.getElementById('downloadSelected');
-            if (!downloadBtn) return;
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
 
-            const btnText = downloadBtn.querySelector('.btn-text');
-            const spinner = downloadBtn.querySelector('.spinner-border');
+                    selectedCount.textContent = 0;
+                    hideBulkBar();
+                });
 
-            const checkboxes = document.querySelectorAll('.row-checkbox');
-
-            // 🔄 fungsi enable / disable tombol
-            function updateDownloadButton() {
-                const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
-                downloadBtn.disabled = checkedCount === 0;
-            }
-
-            // pantau checkbox
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', updateDownloadButton);
+                hideBulkBar(); // initial
             });
+        </script>
 
-            // set kondisi awal
-            updateDownloadButton();
 
-            downloadBtn.addEventListener('click', function() {
-                const ids = Array.from(
-                    document.querySelectorAll('.row-checkbox:checked')
-                ).map(cb => cb.value);
 
-                if (ids.length === 0) return; // safety
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const downloadBtn = document.getElementById('downloadSelected');
+                if (!downloadBtn) return;
 
-                // 🔒 AKTIFKAN LOADING
-                downloadBtn.disabled = true;
-                btnText.textContent = 'Menyiapkan file...';
-                spinner.classList.remove('d-none');
+                const btnText = downloadBtn.querySelector('.btn-text');
+                const spinner = downloadBtn.querySelector('.spinner-border');
 
-                fetch("{{ route('arsip.bulkDownload') }}", {
+                const checkboxes = document.querySelectorAll('.row-checkbox');
+
+                // 🔄 fungsi enable / disable tombol
+                function updateDownloadButton() {
+                    const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+                    downloadBtn.disabled = checkedCount === 0;
+                }
+
+                // pantau checkbox
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', updateDownloadButton);
+                });
+
+                // set kondisi awal
+                updateDownloadButton();
+
+                downloadBtn.addEventListener('click', function () {
+                    const ids = Array.from(
+                        document.querySelectorAll('.row-checkbox:checked')
+                    ).map(cb => cb.value);
+
+                    if (ids.length === 0) return; // safety
+
+                    // 🔒 AKTIFKAN LOADING
+                    downloadBtn.disabled = true;
+                    btnText.textContent = 'Menyiapkan file...';
+                    spinner.classList.remove('d-none');
+
+                    fetch("{{ route('arsip.bulkDownload') }}", {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -437,44 +471,44 @@
                             ids
                         })
                     })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Gagal mengunduh');
+                        .then(response => {
+                            if (!response.ok) throw new Error('Gagal mengunduh');
 
-                        const disposition = response.headers.get('Content-Disposition');
-                        let filename = 'download';
+                            const disposition = response.headers.get('Content-Disposition');
+                            let filename = 'download';
 
-                        if (disposition && disposition.includes('filename=')) {
-                            filename = disposition.split('filename=')[1].replace(/"/g, '');
-                        }
+                            if (disposition && disposition.includes('filename=')) {
+                                filename = disposition.split('filename=')[1].replace(/"/g, '');
+                            }
 
-                        return response.blob().then(blob => ({
+                            return response.blob().then(blob => ({
+                                blob,
+                                filename
+                            }));
+                        })
+                        .then(({
                             blob,
                             filename
-                        }));
-                    })
-                    .then(({
-                        blob,
-                        filename
-                    }) => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = filename;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                        window.URL.revokeObjectURL(url);
-                    })
-                    .catch(err => {
-                        alert(err.message);
-                    })
-                    .finally(() => {
-                        // 🔓 KEMBALIKAN KE NORMAL
-                        btnText.textContent = 'Unduh';
-                        spinner.classList.add('d-none');
-                        updateDownloadButton(); // cek ulang checkbox
-                    });
+                        }) => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+                        })
+                        .catch(err => {
+                            alert(err.message);
+                        })
+                        .finally(() => {
+                            // 🔓 KEMBALIKAN KE NORMAL
+                            btnText.textContent = 'Unduh';
+                            spinner.classList.add('d-none');
+                            updateDownloadButton(); // cek ulang checkbox
+                        });
+                });
             });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush

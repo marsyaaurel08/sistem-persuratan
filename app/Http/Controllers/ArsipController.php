@@ -144,11 +144,65 @@ class ArsipController extends Controller
     public function download($id)
     {
         $file = ArsipFile::findOrFail($id);
-        // Resolve full path on public disk and download using response helper
         $path = storage_path('app/public/' . $file->path_file);
+
         if (!file_exists($path)) {
             abort(404, 'File tidak ditemukan');
         }
+
         return response()->download($path, $file->nama_file);
+    }
+
+    public function bulkDownload(Request $request)
+    {
+        $ids = $request->ids;
+
+        $files = ArsipFile::whereIn('id', $ids)->get();
+
+        if ($files->isEmpty()) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        // ✅ 1 FILE
+        if ($files->count() === 1) {
+            $file = $files->first();
+            $path = storage_path('app/public/' . $file->path_file);
+
+            return response()->download($path, $file->nama_file);
+        }
+
+        // ✅ BANYAK FILE → ZIP
+        $zipName = 'arsip_' . now()->format('Ymd_His') . '.zip';
+        $zipDir = storage_path('app/public/tmp');
+
+        if (!file_exists($zipDir)) {
+            mkdir($zipDir, 0775, true);
+        }
+
+        $zipPath = $zipDir . '/' . $zipName;
+
+        $zip = new \ZipArchive;
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            abort(500, 'Gagal membuat ZIP');
+        }
+
+        $added = 0;
+        foreach ($files as $file) {
+            $filePath = storage_path('app/public/' . $file->path_file);
+            if (file_exists($filePath)) {
+                $zip->addFile($filePath, $file->nama_file);
+                $added++;
+            }
+        }
+
+        $zip->close();
+
+        if ($added === 0) {
+            abort(500, 'Tidak ada file valid untuk di-ZIP');
+        }
+
+        return response()
+            ->download($zipPath, $zipName)
+            ->deleteFileAfterSend(true);
     }
 }

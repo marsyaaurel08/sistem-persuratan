@@ -50,11 +50,6 @@ Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
-Route::get('/arsip', function () {
-    return view('arsip.index');
-});
-
-
 /** FITUR LAPORAN */
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
@@ -73,16 +68,19 @@ Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('p
 Route::get('/manajemen-pengguna', [PenggunaController::class, 'index'])
     ->name('pengguna.index');
     
+
+/** FITUR ARSIP */
 Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
-
-
-Route::get('/login', function () {
-    return view('auth.login');
-});
-
 Route::get('/arsip/upload', [ArsipController::class, 'create'])
     ->name('arsip.create');
 Route::post('/arsip/upload', [ArsipController::class, 'store'])
     ->name('arsip.store');
 Route::get('/arsip/download/{id}', [ArsipController::class, 'download'])
     ->name('arsip.download');
+Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload'])
+    ->name('arsip.bulkDownload');
+
+
+Route::get('/login', function () {
+    return view('auth.login');
+});

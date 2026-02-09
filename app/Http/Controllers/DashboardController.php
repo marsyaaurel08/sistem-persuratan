@@ -53,7 +53,7 @@ class DashboardController extends Controller
                 ->whereYear('created_at', $date->year)
                 ->count();
 
-            $chartData[] = $countMasuk + $countKeluar;
+            $chartData[] = $countMasuk + $countKeluar + $countLaporan;
         }
 
         // =============================
@@ -80,35 +80,28 @@ class DashboardController extends Controller
 
         // =============================
         // Aktivitas Terbaru
-        // =============================
+        // ============================
+        $aktivitas = Arsip::with(['files', 'pengarsip'])
+            ->orderByDesc('tanggal_arsip')
+            ->limit(10)
+            ->get()
+            ->map(function ($a) {
+                return [
+                    'kode_arsip'    => $a->kode_arsip,
+                    'nomor_surat'   => $a->nomor_surat,
+                    'perihal'       => $a->perihal,
+                    'tanggal_arsip' => optional($a->tanggal_arsip)->format('Y-m-d'),
+                    'tanggal_view'  => optional($a->tanggal_arsip)->format('d M Y'),
+                    'pengarsip'     => optional($a->pengarsip)->name ?? '-',
+                    'files'         => $a->files->map(fn($f) => [
+                        'id'        => $f->id,
+                        'nama_file' => $f->nama_file,
+                        'url'       => asset('storage/' . $f->path_file), // ← untuk Preview
+                    ])->values(),
+                ];
+            })
+            ->values();
 
-
-
-        $aktivitas = DB::table(DB::raw("(
-            SELECT 
-                nomor_surat AS nomor_surat, 
-                perihal AS perihal, 
-                'Surat Masuk' AS jenis, 
-                penerima_divisi AS lokasi, 
-                tanggal_surat AS tanggal_surat, 
-                status AS status, 
-                created_at AS created_at
-            FROM surat_masuk
-            UNION ALL
-            SELECT 
-                nomor_surat AS nomor_surat, 
-                perihal AS perihal, 
-                'Surat Keluar' AS jenis, 
-                pengirim_divisi AS lokasi, 
-                tanggal_surat AS tanggal_surat, 
-                status AS status, 
-                created_at AS created_at
-            FROM surat_keluar
-                ) AS aktivitas_union"))
-            ->select('*')
-            ->orderByDesc('created_at')
-            ->limit(7)
-            ->get();
 
 
 
@@ -134,104 +127,82 @@ class DashboardController extends Controller
         ));
     }
 
+
     public function filter(Request $request)
     {
-        $divisi = $request->input('divisi', []);
         $tanggal = $request->input('tanggal', []);
 
-        $queryMasuk = SuratMasuk::query();
-        $queryKeluar = SuratKeluar::query();
-
-        if (!empty($divisi)) {
-            $queryMasuk->whereIn('penerima_divisi', $divisi);
-            $queryKeluar->whereIn('pengirim_divisi', $divisi);
-        }
-
-        if (!empty($tanggal)) {
+        $start = null;
+        $end   = null;
+        if (!empty($tanggal) && count($tanggal) === 2) {
             $start = Carbon::parse($tanggal[0])->startOfDay();
-            $end = Carbon::parse($tanggal[1])->endOfDay();
-            $queryMasuk->whereBetween('tanggal_surat', [$start, $end]);
-            $queryKeluar->whereBetween('tanggal_surat', [$start, $end]);
+            $end   = Carbon::parse($tanggal[1])->endOfDay();
         }
 
-        // === Statistik ===
-        $totalMasuk = $queryMasuk->count();
-        $totalKeluar = $queryKeluar->count();
-        $menungguRespon = $queryMasuk->where('status', 'Pending')->count() +
-            $queryKeluar->where('status', 'Pending')->count();
-        $waktuRespon = 2;
+        // === Statistik (dari Arsip) ===
+        $baseQuery = Arsip::query();
+        if ($start && $end) {
+            $baseQuery->whereBetween('tanggal_arsip', [$start, $end]);
+        }
 
-        // === Grafik Line ===
-        $months = [];
+        $totalMasuk    = (clone $baseQuery)->where('kategori', 'Masuk')->count();
+        $totalKeluar   = (clone $baseQuery)->where('kategori', 'Keluar')->count();
+        $totalLaporan  = (clone $baseQuery)->where('kategori', 'Laporan')->count();
+
+        // placeholder kalau masih dipakai di front-end
+        $menungguRespon = 0;
+        $waktuRespon    = 2;
+
+        // === Grafik Line (dari Arsip + filter tanggal) ===
+        $months    = [];
         $chartData = [];
 
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
             $months[] = $date->format('M');
 
-            $countMasuk = SuratMasuk::when(!empty($divisi), fn($q) => $q->whereIn('penerima_divisi', $divisi))
-                ->when(!empty($tanggal), fn($q) => $q->whereBetween('tanggal_surat', [$start, $end]))
+            $query = Arsip::query()
+                ->when($start && $end, fn($q) => $q->whereBetween('tanggal_arsip', [$start, $end]))
                 ->whereMonth('created_at', $date->month)
-                ->whereYear('created_at', $date->year)
-                ->count();
+                ->whereYear('created_at', $date->year);
 
-            $countKeluar = SuratKeluar::when(!empty($divisi), fn($q) => $q->whereIn('pengirim_divisi', $divisi))
-                ->when(!empty($tanggal), fn($q) => $q->whereBetween('tanggal_surat', [$start, $end]))
-                ->whereMonth('created_at', $date->month)
-                ->whereYear('created_at', $date->year)
-                ->count();
-
-            $chartData[] = $countMasuk + $countKeluar;
+            $chartData[] = $query->count();
         }
 
-        // === Grafik Pie ===
-        $statusMasuk = SuratMasuk::when(!empty($divisi), fn($q) => $q->whereIn('penerima_divisi', $divisi))
-            ->when(!empty($tanggal), fn($q) => $q->whereBetween('tanggal_surat', [$start, $end]))
-            ->select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
-            ->get();
-
-        $statusKeluar = SuratKeluar::when(!empty($divisi), fn($q) => $q->whereIn('pengirim_divisi', $divisi))
-            ->when(!empty($tanggal), fn($q) => $q->whereBetween('tanggal_surat', [$start, $end]))
-            ->select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
-            ->get();
-
-        $combinedStatus = [];
-        foreach ($statusMasuk as $s) {
-            $combinedStatus[$s->status] = ($combinedStatus[$s->status] ?? 0) + $s->total;
-        }
-        foreach ($statusKeluar as $s) {
-            $combinedStatus[$s->status] = ($combinedStatus[$s->status] ?? 0) + $s->total;
-        }
-
-        $pieLabels = array_keys($combinedStatus);
-        $pieValues = array_values($combinedStatus);
-
-        // === Aktivitas Terbaru ===
-        $aktivitas = DB::table(DB::raw("(
-        SELECT nomor_surat, perihal, 'Surat Masuk' AS jenis, penerima_divisi AS lokasi, tanggal_surat, status, created_at
-        FROM surat_masuk
-        UNION ALL
-        SELECT nomor_surat, perihal, 'Surat Keluar' AS jenis, pengirim_divisi AS lokasi, tanggal_surat, status, created_at
-        FROM surat_keluar
-    ) AS aktivitas_union"))
-            ->when(!empty($divisi), fn($q) => $q->whereIn('lokasi', $divisi))
-            ->when(!empty($tanggal), fn($q) => $q->whereBetween('tanggal_surat', [$start, $end]))
-            ->orderByDesc('created_at')
-            ->limit(7)
-            ->get();
+        // === Aktivitas Terbaru (dari Arsip + filter tanggal) ===
+        $aktivitas = Arsip::with(['files', 'pengarsip'])
+            ->when($start && $end, fn($q) => $q->whereBetween('tanggal_arsip', [$start, $end]))
+            ->orderByDesc('tanggal_arsip')
+            ->limit(10)
+            ->get()
+            ->map(function ($a) {
+                return [
+                    'kode_arsip'    => $a->kode_arsip,
+                    'nomor_surat'   => $a->nomor_surat,
+                    'perihal'       => $a->perihal,
+                    'tanggal_arsip' => optional($a->tanggal_arsip)->format('Y-m-d'),
+                    'tanggal_view'  => optional($a->tanggal_arsip)->format('d M Y'),
+                    'pengarsip'     => optional($a->pengarsip)->name ?? '-',
+                    'files'         => $a->files->map(fn($f) => [
+                        'id'        => $f->id,
+                        'nama_file' => $f->nama_file,
+                        'url'       => asset('storage/' . $f->path_file),
+                    ])->values(),
+                ];
+            })
+            ->values();
 
         return response()->json([
-            'totalMasuk' => $totalMasuk,
-            'totalKeluar' => $totalKeluar,
+            'totalMasuk'     => $totalMasuk,
+            'totalKeluar'    => $totalKeluar,
+            'totalLaporan'   => $totalLaporan,
             'menungguRespon' => $menungguRespon,
-            'waktuRespon' => $waktuRespon,
-            'months' => $months,
-            'chartData' => $chartData,
-            'pieLabels' => $pieLabels,
-            'pieValues' => $pieValues,
-            'aktivitas' => $aktivitas,
+            'waktuRespon'    => $waktuRespon,
+            'months'         => $months,
+            'chartData'      => $chartData,
+            'pieLabels'      => [],       // kalau nanti mau pie chart dari Arsip, bisa diisi
+            'pieValues'      => [],
+            'aktivitas'      => $aktivitas,
         ]);
     }
 }

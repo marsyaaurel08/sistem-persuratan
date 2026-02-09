@@ -130,23 +130,66 @@
                         <div class="table-responsive">
                             <table class="table table-hover table-sm align-middle" id="aktivitasTable">
                                 <thead>
-                                    <tr>
-                                        <th>No. Surat</th>
-                                        <th>Perihal</th>
-                                        <th>Asal / Tujuan</th>
-                                        <th>Tanggal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($aktivitas as $item)
-                                        <tr data-date="{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('Y-m-d') }}">
-                                            <td>{{ $item->nomor_surat }}</td>
-                                            <td>{{ $item->perihal }}</td>
-                                            <td>{{ $item->lokasi }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
+    <tr>
+        <th>Kode Arsip</th>
+        <th>No. Surat</th>
+        <th>Perihal</th>
+        <th>Tanggal</th>
+        <th>Pengarsip</th>
+        <th>File</th>
+    </tr>
+</thead>
+<tbody>
+    @foreach ($aktivitas as $item)
+        <tr data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
+            <td class="text-nowrap">
+                <span class="badge bg-light text-dark border">
+                    {{ $item['kode_arsip'] }}
+                </span>
+            </td>
+            <td class="fw-bold">
+                {{ $item['nomor_surat'] ?? '-' }}
+            </td>
+            <td>
+                {{ $item['perihal'] ?? '-' }}
+            </td>
+            <td>
+                {{ $item['tanggal_view'] ?? '-' }}
+            </td>
+            <td>
+                <small class="text-muted">
+                    {{ $item['pengarsip'] ?? '-' }}
+                </small>
+            </td>
+            <td>
+                @if (!empty($item['files']) && count($item['files']) > 0)
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach ($item['files'] as $file)
+                            {{-- Tombol Download --}}
+                            <a href="{{ route('arsip.download', $file['id']) }}"
+                               class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
+                               title="Download">
+                                <i class="feather-download me-1" style="font-size: 14px;"></i>
+                                <span style="font-size: 12px;">Unduh</span>
+                            </a>
+
+                            {{-- Tombol Preview (sama seperti di arsip.index) --}}
+                            <button type="button"
+                                    class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
+                                    data-bs-toggle="modal" data-bs-target="#previewModal"
+                                    data-file="{{ $file['url'] }}" title="Preview">
+                                <i class="feather-eye me-1" style="font-size: 14px;"></i>
+                                <span style="font-size: 12px;">Preview</span>
+                            </button>
+                        @endforeach
+                    </div>
+                @else
+                    <span class="text-muted">-</span>
+                @endif
+            </td>
+        </tr>
+    @endforeach
+</tbody>
                             </table>
                         </div>
                     </div>
@@ -175,6 +218,20 @@
         }
     </style>
 @endsection
+<!-- Modal Preview -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Preview Dokumen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 @push('scripts')
@@ -238,22 +295,65 @@
                         $('.card:contains("Total Surat Laporan") .display-5').text(res.totalLaporan);
 
                         // 🔹 Update Tabel
-                        $tableBody.empty();
-                        if (res.aktivitas && res.aktivitas.length) {
-                            res.aktivitas.forEach(a => {
-                                $tableBody.append(`
-                                <tr>
-                                    <td>${a.nomor_surat}</td>
-                                    <td>${a.perihal}</td>
-                                    <td>${a.lokasi}</td>
-                                    <td>${moment(a.tanggal_surat).format('DD MMM YYYY')}</td>
-                                </tr>
-                            `);
-                            });
-                        } else {
-                            $tableBody.html('<tr><td colspan="4" class="text-center text-muted py-3">Tidak ada data</td></tr>');
-                        }
+$tableBody.empty();
+if (res.aktivitas && res.aktivitas.length) {
+    res.aktivitas.forEach(a => {
+        let filesHtml = '';
 
+        if (a.files && a.files.length) {
+            filesHtml = '<div class="d-flex flex-wrap gap-1">';
+            a.files.forEach(f => {
+                filesHtml += `
+                    <a href="${downloadBase}/${f.id}"
+                       class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
+                       title="Download">
+                        <i class="feather-download me-1" style="font-size: 14px;"></i>
+                        <span style="font-size: 12px;">Unduh</span>
+                    </a>
+                    <button type="button"
+                            class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
+                            data-bs-toggle="modal" data-bs-target="#previewModal"
+                            data-file="${f.url}" title="Preview">
+                        <i class="feather-eye me-1" style="font-size: 14px;"></i>
+                        <span style="font-size: 12px;">Preview</span>
+                    </button>
+                `;
+            });
+            filesHtml += '</div>';
+        } else {
+            filesHtml = '<span class="text-muted">-</span>';
+        }
+
+        $tableBody.append(`
+            <tr data-date="${a.tanggal_arsip}">
+                <td class="text-nowrap">
+                    <span class="badge bg-light text-dark border">
+                        ${a.kode_arsip}
+                    </span>
+                </td>
+                <td class="fw-bold">
+                    ${a.nomor_surat ?? '-'}
+                </td>
+                <td>
+                    ${a.perihal ?? '-'}
+                </td>
+                <td>
+                    ${a.tanggal_view ?? '-'}
+                </td>
+                <td>
+                    <small class="text-muted">
+                        ${a.pengarsip ?? '-'}
+                    </small>
+                </td>
+                <td>
+                    ${filesHtml}
+                </td>
+            </tr>
+        `);
+    });
+} else {
+    $tableBody.html('<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>');
+}
                         // 🔹 Update Grafik
                         if (window.lineChart) window.lineChart.destroy();
 
@@ -332,4 +432,24 @@
             }
         });
     </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const previewButtons = document.querySelectorAll('.preview-btn');
+                const iframe = document.getElementById('previewFrame');
+
+                previewButtons.forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const fileUrl = this.dataset.file;
+                        console.log('Preview file URL:', fileUrl); // cek di console
+                        iframe.src = fileUrl;
+                    });
+                });
+
+                // Clear iframe saat modal ditutup
+                const modal = document.getElementById('previewModal');
+                modal.addEventListener('hidden.bs.modal', function () {
+                    iframe.src = '';
+                });
+            });
+        </script>
 @endpush

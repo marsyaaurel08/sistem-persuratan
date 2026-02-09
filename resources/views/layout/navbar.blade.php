@@ -15,7 +15,7 @@
                 <li class="nxl-item">
                     <a href="{{ url('/') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-home"></i></span>
-                        <span class="nxl-mtext">Dashboards</span><span class="nxl-arrow">
+                        <span class="nxl-mtext">Dashboard</span><span class="nxl-arrow">
                     </a>
                 </li>
                 {{-- <li class="nxl-item">

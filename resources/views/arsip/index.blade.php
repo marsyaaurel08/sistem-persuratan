@@ -32,10 +32,21 @@
                     <span class="input-group-text bg-white border-end-0 rounded-start-pill">
                         <i class="feather-calendar"></i>
                     </span>
-                    <input type="text" id="dateRange" class="form-control rounded-end-pill"
-                        placeholder="Pilih Rentang Tanggal" readonly style="cursor: pointer; font-size: small;">
-                    <button class="btn btn-light border rounded" type="button" id="clearDateRange" title="Reset tanggal"
-                        style="display: none;">
+                    <input
+                        type="text"
+                        id="dateRange"
+                        class="form-control rounded-end-pill"
+                        placeholder="Pilih Rentang Tanggal"
+                        readonly
+                        style="cursor: pointer; font-size: small;"
+                    >
+                    <button
+                        class="btn btn-light border rounded"
+                        type="button"
+                        id="clearDateRange"
+                        title="Reset tanggal"
+                        style="display: none;"
+                    >
                         <i class="feather-x"></i>
                     </button>
                 </div>
@@ -58,24 +69,26 @@
 
     {{-- Division Folder Cards --}}
     {{-- <div class="row g-3 mb-4">
-        @if($folders && count($folders) > 0)
-        @foreach($folders as $folder)
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
-                data-divisi="{{ $folder['name'] }}" style="cursor: pointer; transition: transform 0.2s;"
-                onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between mb-3">
-                        <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
-                            <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 28px;"></i>
+        @if ($folders && count($folders) > 0)
+            @foreach ($folders as $folder)
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
+                        data-divisi="{{ $folder['name'] }}"
+                        style="cursor: pointer; transition: transform 0.2s;"
+                        onmouseover="this.style.transform='translateY(-5px)'"
+                        onmouseout="this.style.transform='translateY(0)'">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
+                                    <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 28px;"></i>
+                                </div>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
+                            <small class="text-muted">{{ $folder['count'] }}</small>
                         </div>
                     </div>
-                    <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
-                    <small class="text-muted">{{ $folder['count'] }}</small>
                 </div>
-            </div>
-        </div>
-        @endforeach
+            @endforeach
         @else
         <div class="col-12">
             <div class="alert alert-info text-center">

@@ -3,11 +3,6 @@
 @section('title', 'Arsip')
 
 @section('content')
-    {{-- Vendor Scripts --}}
-    <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
-    <script src="{{ asset('duralux/assets/vendors/js/moment.min.js') }}"></script>
-    <script src="{{ asset('duralux/assets/vendors/js/daterangepicker.min.js') }}"></script>
-
     {{-- Page Header --}}
     <div class="page-header rounded">
         <div class="page-header-left d-flex align-items-center">
@@ -19,7 +14,7 @@
         <div class="page-header-right ms-auto">
             <div class="d-flex align-items-center gap-2">
                 {{-- Search --}}
-                <div class="input-group" style="min-width: 300px;">
+                <div class="input-group" style="max-width: 300px;">
                     <span class="input-group-text bg-white border-end-0 rounded-start-pill">
                         <i class="feather-search"></i>
                     </span>
@@ -28,25 +23,17 @@
                 </div>
 
                 {{-- Date Range --}}
-                <div class="input-group" style="min-width: 300px;">
-                    <span class="input-group-text bg-white border-end-0 rounded-start-pill">
+                <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                    style="width: 300px; height: 44px; overflow: hidden; font-size: small;">
+                    <span
+                        class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
                         <i class="feather-calendar"></i>
                     </span>
-                    <input
-                        type="text"
-                        id="dateRange"
-                        class="form-control rounded-end-pill"
-                        placeholder="Pilih Rentang Tanggal"
-                        readonly
-                        style="cursor: pointer; font-size: small;"
-                    >
-                    <button
-                        class="btn btn-light border rounded"
-                        type="button"
-                        id="clearDateRange"
-                        title="Reset tanggal"
-                        style="display: none;"
-                    >
+                    <input type="text" id="dateRange" class="form-control border-0 px-2 h-100 d-flex align-items-center"
+                        placeholder="Pilih Tanggal"
+                        style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
+                    <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
+                        type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
                         <i class="feather-x"></i>
                     </button>
                 </div>
@@ -168,59 +155,73 @@
                             </thead>
                             <tbody>
                                 @foreach ($arsip as $item)
-                                    @foreach ($item->files as $file)
-                                        @php
-                                            $surat = $item->suratMasuk ?? $item->suratKeluar;
-                                            $noSurat = $surat->nomor_surat ?? '-';
-                                            $perihal = $surat->perihal ?? '-';
-                                            $divisi =
-                                                $item->suratMasuk->penerima_divisi ??
-                                                ($item->suratKeluar->pengirim_divisi ?? '-');
-                                            $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
-                                        @endphp
-                                        <tr data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
-                                            data-divisi="{{ $divisi }}" data-kode="{{ $item->kode_arsip }}"
-                                            data-no="{{ $noSurat }}" data-perihal="{{ $perihal }}"
-                                            data-tanggal="{{ $tanggalDisplay }}" data-files='@json($item->files?->map(fn($f) => ['id' => $f->id, 'nama_file' => $f->nama_file]))'>
-                                            <td>
-                                                {{-- <input type="checkbox" class="row-checkbox" value="{{ $item->id }}"> --}}
-                                                <input type="checkbox" class="row-checkbox" value="{{ $file->id }}">
-                                            </td>
-                                            <td class="text-nowrap">
-                                                <span
-                                                    class="badge bg-light text-dark border">{{ $item->kode_arsip }}</span>
-                                            </td>
-                                            <td class="fw-bold">
-                                                {{ $noSurat }}
-                                            </td>
-                                            <td>
-                                                {{ $perihal }}
-                                            </td>
-                                            <td>
-                                                {{ $divisi }}
-                                            </td>
-                                            <td>
-                                                {{ $tanggalDisplay ?? '-' }}
-                                            </td>
-                                            <td>
-                                                @if ($item->files?->count())
-                                                    <div class="d-flex flex-wrap gap-1">
-                                                        @foreach ($item->files as $f)
-                                                            <a href="{{ route('arsip.download', $f->id) }}"
-                                                                class="badge bg-light text-primary border d-inline-flex align-items-center">
-                                                                <i class="feather-download me-1"
-                                                                    style="font-size: 11px;"></i>
-                                                                <span class="text-truncate"
-                                                                    style="max-width: 140px;">{{ $f->nama_file }}</span>
-                                                            </a>
-                                                        @endforeach
-                                                    </div>
-                                                @else
-                                                    <span class="text-muted">-</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                    @php
+                                        $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
+                                        $pengarsip = $item->pengarsip->name ?? '-';
+                                    @endphp
+
+                                    <tr data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
+                                        data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
+                                        data-tanggal="{{ $tanggalDisplay }}"
+                                        data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
+                                        data-pengarsip="{{ $pengarsip }}" data-files='@json(
+                                            $item->files->map(fn($f) => [
+                                                "id" => $f->id,
+                                                "nama_file" => $f->nama_file
+                                            ])
+                                        )'>
+                                        <td>
+                                            <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
+                                        </td>
+
+                                        <td class="text-nowrap">
+                                            <span class="badge bg-light text-dark border">
+                                                {{ $item->kode_arsip }}
+                                            </span>
+                                        </td>
+
+                                        <td class="fw-bold">
+                                            {{ $item->nomor_surat ?? '-' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $item->perihal ?? '-' }}
+                                        </td>
+
+                                        {{-- <td>
+                                            <span class="badge bg-secondary-subtle text-dark">
+                                                {{ $item->divisi ?? '-' }}
+                                            </span>
+                                        </td> --}}
+
+                                        <td>
+                                            {{ $tanggalDisplay ?? '-' }}
+                                        </td>
+
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ $item->pengarsip->name ?? '-' }}
+                                            </small>
+                                        </td>
+
+                                        <td>
+                                            @if ($item->files->count())
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach ($item->files as $file)
+                                                        <a href="{{ route('arsip.download', $file->id) }}"
+                                                            class="badge bg-light text-primary border d-inline-flex align-items-center">
+                                                            <i class="feather-download me-1" style="font-size: 11px;"></i>
+                                                            <span class="text-truncate" style="max-width: 140px;">
+                                                                {{ $file->nama_file }}
+                                                            </span>
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
 
@@ -271,74 +272,6 @@
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-    {{-- Folder Card Click Handler --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const folderCards = document.querySelectorAll('.folder-card');
-            const rows = document.querySelectorAll('#arsipTable tbody tr');
-
-            folderCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const divisi = this.getAttribute('data-divisi');
-                    showDivisiModal(divisi);
-                });
-            });
-
-            function showDivisiModal(divisi) {
-                const modalTableBody = document.getElementById('modalTableBody');
-                const modalTitle = document.getElementById('modalTitle');
-                const m = new bootstrap.Modal(document.getElementById('folderModal'));
-
-                modalTitle.textContent = `Arsip Divisi: ${divisi}`;
-                modalTableBody.innerHTML = '';
-
-                rows.forEach(row => {
-                    if (row.dataset.divisi !== divisi) return;
-
-                    const kodeArsip = row.dataset.kode || '-';
-                    const noSurat = row.dataset.no || '-';
-                    const perihal = row.dataset.perihal || '-';
-                    const tanggal = row.dataset.tanggal || '-';
-                    const filesData = row.dataset.files ? JSON.parse(row.dataset.files) : [];
-
-                    const tr = document.createElement('tr');
-                    const tdKode = document.createElement('td');
-                    tdKode.innerHTML = `<span class="badge bg-light text-dark">${kodeArsip}</span>`;
-                    const tdNo = document.createElement('td');
-                    tdNo.textContent = noSurat;
-                    const tdPer = document.createElement('td');
-                    tdPer.textContent = perihal;
-                    const tdTgl = document.createElement('td');
-                    tdTgl.textContent = tanggal;
-                    const tdFiles = document.createElement('td');
-
-                    if (filesData.length > 0) {
-                        const btnGroup = document.createElement('div');
-                        btnGroup.className = 'd-flex flex-wrap gap-1';
-                        filesData.forEach(f => {
-                            const a = document.createElement('a');
-                            a.href = `/arsip/download/${f.id}`;
-                            a.className = 'btn btn-sm btn-outline-primary';
-                            a.innerHTML = `<i class="feather-download me-1"></i>${f.nama_file}`;
-                            btnGroup.appendChild(a);
-                        });
-                        tdFiles.appendChild(btnGroup);
-                    } else {
-                        tdFiles.innerHTML = '<span class="text-muted">Tidak ada file</span>';
-                    }
-
-                    tr.appendChild(tdKode);
-                    tr.appendChild(tdNo);
-                    tr.appendChild(tdPer);
-                    tr.appendChild(tdTgl);
-                    tr.appendChild(tdFiles);
-                    modalTableBody.appendChild(tr);
-                });
-
-                m.show();
-            }
-        });
-    </script>
 
     <!-- Search Table -->
     <script>
@@ -356,99 +289,68 @@
         });
     </script>
 
-    <!-- Date Range Picker with Filtering -->
+    @push('styles')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    @endpush
+    <!-- Date Range Picker & Filter -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchTable');
+        document.addEventListener('DOMContentLoaded', function () {
             const dateInput = document.getElementById('dateRange');
+            const clearBtn = document.getElementById('clearDateRange');
+            const rows = document.querySelectorAll('#arsipTable tbody tr');
             const pagination = document.querySelector('.pagination')?.parentElement;
 
-            function togglePagination() {
-                const hasSearch = searchInput && searchInput.value.trim() !== '';
-                const hasDateFilter = dateInput && dateInput.value.trim() !== '';
+            if (!dateInput) return;
 
-                if (pagination) {
-                    pagination.style.display = (hasSearch || hasDateFilter) ? 'none' : 'block';
+            const fp = flatpickr(dateInput, {
+                mode: 'range',
+                dateFormat: 'd M Y',
+                locale: 'id',
+                allowInput: false,
+                onChange: function (selectedDates) {
+                    if (selectedDates.length === 2) {
+                        filterByDate(selectedDates[0], selectedDates[1]);
+                        clearBtn.style.display = 'inline-flex';
+                        hidePagination();
+                    }
                 }
-            }
-
-            if (searchInput) searchInput.addEventListener('keyup', togglePagination);
-            if (dateInput) dateInput.addEventListener('change', togglePagination);
-        });
-
-        $(function() {
-            if (!$.fn.daterangepicker) {
-                console.error('daterangepicker plugin not loaded');
-                return;
-            }
-
-            const $dateInput = $('#dateRange');
-            const $clearBtn = $('#clearDateRange');
-            const $tableRows = $('#arsipTable tbody tr');
-
-            $dateInput.daterangepicker({
-                autoUpdateInput: false,
-                locale: {
-                    format: 'DD MMM YYYY',
-                    applyLabel: 'Terapkan',
-                    cancelLabel: 'Batal',
-                    daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                    monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                    ]
-                },
-                opens: 'left'
             });
 
-            // Fungsi untuk filter berdasarkan tanggal
-            function filterByDateRange() {
-                const dateStr = $dateInput.val();
-                if (!dateStr) {
-                    $tableRows.show();
-                    return;
-                }
-
-                const picker = $dateInput.data('daterangepicker');
-                const startDate = picker.startDate;
-                const endDate = picker.endDate;
-
-                $tableRows.each(function() {
-                    const rowDateStr = $(this).attr('data-date');
-                    if (!rowDateStr) {
-                        $(this).hide();
+            function filterByDate(start, end) {
+                rows.forEach(row => {
+                    const dateStr = row.dataset.date;
+                    if (!dateStr) {
+                        row.style.display = 'none';
                         return;
                     }
 
-                    const rowDate = moment(rowDateStr, 'YYYY-MM-DD');
-                    const isInRange = rowDate.isSameOrAfter(startDate, 'day') &&
-                        rowDate.isSameOrBefore(endDate, 'day');
-                    $(this).toggle(isInRange);
+                    const rowDate = new Date(dateStr);
+                    row.style.display =
+                        rowDate >= start && rowDate <= end ? '' : 'none';
                 });
             }
 
-            $dateInput.on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format(
-                    'DD MMM YYYY'));
-                $clearBtn.show();
-                filterByDateRange();
-                document.getElementById('dateRange').dispatchEvent(new Event('change'));
-            });
+            function hidePagination() {
+                if (pagination) pagination.style.display = 'none';
+            }
 
-            $dateInput.on('cancel.daterangepicker', function() {
-                $(this).val('');
-                $clearBtn.hide();
-                filterByDateRange();
-                document.getElementById('dateRange').dispatchEvent(new Event('change'));
-            });
+            function showPagination() {
+                if (pagination) pagination.style.display = 'block';
+            }
 
-            $clearBtn.on('click', function() {
-                $dateInput.val('');
-                $(this).hide();
-                filterByDateRange();
-                document.getElementById('dateRange').dispatchEvent(new Event('change'));
+            clearBtn.addEventListener('click', function () {
+                fp.clear();
+                dateInput.value = '';
+                clearBtn.style.display = 'none';
+                rows.forEach(row => row.style.display = '');
+                showPagination();
             });
         });
     </script>
+
 
     <!-- Checkbox & Bulk Actions -->
     <script>

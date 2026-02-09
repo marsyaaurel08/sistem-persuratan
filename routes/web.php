@@ -94,6 +94,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
         ->name('surat_keluar.search');
+
+    Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload']) ->name('arsip.bulkDownload');
 });
 
 

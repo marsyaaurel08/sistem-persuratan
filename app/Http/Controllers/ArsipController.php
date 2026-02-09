@@ -156,4 +156,17 @@ class ArsipController extends Controller
             ->download($zipPath, $zipName)
             ->deleteFileAfterSend(true);
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->ids ?? [];
+
+        if (count($ids) === 0) {
+            return response()->json(['message' => 'Tidak ada data'], 400);
+        }
+
+        Arsip::whereIn('id', $ids)->delete();
+
+        return response()->json(['success' => true]);
+    }
 }

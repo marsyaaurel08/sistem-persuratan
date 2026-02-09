@@ -214,18 +214,18 @@
         /* ===============================
            KATEGORI → TOGGLE NOMOR SURAT
         =============================== */
-        function toggleNomorSurat() {
-            if (kategori.value === 'Laporan') {
-                nomorSuratWrapper.style.display = 'none';
-            } else {
-                nomorSuratWrapper.style.display = 'block';
-            }
-        }
+        // function toggleNomorSurat() {
+        //     if (kategori.value === 'Laporan') {
+        //         nomorSuratWrapper.style.display = 'none';
+        //     } else {
+        //         nomorSuratWrapper.style.display = 'block';
+        //     }
+        // }
 
-        if (kategori) {
-            kategori.addEventListener('change', toggleNomorSurat);
-            toggleNomorSurat(); // initial
-        }
+        // if (kategori) {
+        //     kategori.addEventListener('change', toggleNomorSurat);
+        //     toggleNomorSurat(); // initial
+        // }
 
         /* ===============================
            FILE INPUT

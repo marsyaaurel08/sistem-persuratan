@@ -98,6 +98,9 @@ Route::middleware('auth')->group(function () {
         ->name('surat_keluar.search');
 
     Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload']) ->name('arsip.bulkDownload');
+    Route::post('/arsip/bulk-delete', [ArsipController::class, 'bulkDelete'])
+    ->name('arsip.bulkDelete');
+
 });
 
 

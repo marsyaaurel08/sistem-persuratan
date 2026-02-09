@@ -24,78 +24,78 @@ class PenggunaSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-            [
-                'name' => 'Pimpinan 1',
-                'email' => 'pimpinan1@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'Pimpinan',
-                'divisi' => 'Management',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'name' => 'Pimpinan 2',
-                'email' => 'pimpinan2@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'Pimpinan',
-                'divisi' => 'Marketing',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'name' => 'Staff 1',
-                'email' => 'staff1@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'Staff',
-                'divisi' => 'IT',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'name' => 'Staff 2',
-                'email' => 'staff2@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'Staff',
-                'divisi' => 'HR',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'name' => 'Staff 3',
-                'email' => 'staff3@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'Staff',
-                'divisi' => 'Keuangan',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'name' => 'Staff 4',
-                'email' => 'staff4@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'Staff',
-                'divisi' => 'Marketing',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'name' => 'Staff 5',
-                'email' => 'staff5@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'Staff',
-                'divisi' => 'IT',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'name' => 'Staff 6',
-                'email' => 'staff6@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'Staff',
-                'divisi' => 'HR',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
+            // [
+            //     'name' => 'Pimpinan 1',
+            //     'email' => 'pimpinan1@example.com',
+            //     'password' => Hash::make('password123'),
+            //     'role' => 'Pimpinan',
+            //     'divisi' => 'Management',
+            //     'created_at' => now(),
+            //     'updated_at' => now()
+            // ],
+            // [
+            //     'name' => 'Pimpinan 2',
+            //     'email' => 'pimpinan2@example.com',
+            //     'password' => Hash::make('password123'),
+            //     'role' => 'Pimpinan',
+            //     'divisi' => 'Marketing',
+            //     'created_at' => now(),
+            //     'updated_at' => now()
+            // ],
+            // [
+            //     'name' => 'Staff 1',
+            //     'email' => 'staff1@example.com',
+            //     'password' => Hash::make('password123'),
+            //     'role' => 'Staff',
+            //     'divisi' => 'IT',
+            //     'created_at' => now(),
+            //     'updated_at' => now()
+            // ],
+            // [
+            //     'name' => 'Staff 2',
+            //     'email' => 'staff2@example.com',
+            //     'password' => Hash::make('password123'),
+            //     'role' => 'Staff',
+            //     'divisi' => 'HR',
+            //     'created_at' => now(),
+            //     'updated_at' => now()
+            // ],
+            // [
+            //     'name' => 'Staff 3',
+            //     'email' => 'staff3@example.com',
+            //     'password' => Hash::make('password123'),
+            //     'role' => 'Staff',
+            //     'divisi' => 'Keuangan',
+            //     'created_at' => now(),
+            //     'updated_at' => now()
+            // ],
+            // [
+            //     'name' => 'Staff 4',
+            //     'email' => 'staff4@example.com',
+            //     'password' => Hash::make('password123'),
+            //     'role' => 'Staff',
+            //     'divisi' => 'Marketing',
+            //     'created_at' => now(),
+            //     'updated_at' => now()
+            // ],
+            // [
+            //     'name' => 'Staff 5',
+            //     'email' => 'staff5@example.com',
+            //     'password' => Hash::make('password123'),
+            //     'role' => 'Staff',
+            //     'divisi' => 'IT',
+            //     'created_at' => now(),
+            //     'updated_at' => now()
+            // ],
+            // [
+            //     'name' => 'Staff 6',
+            //     'email' => 'staff6@example.com',
+            //     'password' => Hash::make('password123'),
+            //     'role' => 'Staff',
+            //     'divisi' => 'HR',
+            //     'created_at' => now(),
+            //     'updated_at' => now()
+            // ],
             [
                 'name' => 'Admin',
                 'email' => 'adminid@example.com',

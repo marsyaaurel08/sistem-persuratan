@@ -12,25 +12,27 @@
         </div>
 
         <div class="page-header-right ms-auto">
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
+
                 {{-- Search --}}
-                <div class="input-group" style="max-width: 300px;">
-                    <span class="input-group-text bg-white border-end-0 rounded-start-pill">
+                <div class="input-group" style="max-width: 250px; height: 38px;">
+                    <span
+                        class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
                         <i class="feather-search"></i>
                     </span>
-                    <input type="text" id="searchTable" class="form-control rounded-end-pill" placeholder="Cari surat..."
-                        style="font-size: small">
+                    <input type="text" id="searchTable" class="form-control border-start-0 rounded-end-pill"
+                        placeholder="Cari surat..." style="height: 100%;">
                 </div>
 
                 {{-- Date Range --}}
                 <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
-                    style="width: 300px; height: 44px; overflow: hidden; font-size: small;">
+                    style="width: 220px; height: 38px; overflow: hidden; font-size: small;">
                     <span
                         class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
                         <i class="feather-calendar"></i>
                     </span>
                     <input type="text" id="dateRange" class="form-control border-0 px-2 h-100 d-flex align-items-center"
-                        placeholder="Pilih Tanggal"
+                        placeholder="Pilih Tanggal" readonly
                         style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
                     <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
                         type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
@@ -39,9 +41,13 @@
                 </div>
 
                 {{-- Upload --}}
-                <a href="{{ route('arsip.create') }}" class="btn btn-white border shadow-sm rounded-pill px-3">
-                    <i class="feather-upload me-1"></i> Upload
+                <a href="{{ route('arsip.create') }}"
+                    class="btn btn-primary d-flex align-items-center justify-content-center gap-1 rounded-pill"
+                    style="width: 95px; height: 35px;">
+                    <i class="feather-upload"></i>
+                    <span>Upload</span>
                 </a>
+
             </div>
         </div>
     </div>
@@ -99,23 +105,27 @@
                         <div class="d-flex flex-wrap gap-2 align-items-center" id="arsipTab">
                             <span class="fw-semibold me-2">Jenis Arsip :</span>
 
-                            <a href="{{ route('arsip.index') }}" class="badge rounded-pill px-3 py-2
-                                               {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                            <a href="{{ route('arsip.index') }}"
+                                class="badge rounded-pill px-3 py-2
+                                                           {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Semua ({{ $countSemua }})
                             </a>
 
-                            <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}" class="badge rounded-pill px-3 py-2
-                                               {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                            <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}"
+                                class="badge rounded-pill px-3 py-2
+                                                           {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Masuk ({{ $countMasuk }})
                             </a>
 
-                            <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}" class="badge rounded-pill px-3 py-2
-                                               {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                            <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}"
+                                class="badge rounded-pill px-3 py-2
+                                                           {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Keluar ({{ $countKeluar }})
                             </a>
 
-                            <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}" class="badge rounded-pill px-3 py-2
-                                               {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                            <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}"
+                                class="badge rounded-pill px-3 py-2
+                                                           {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Laporan ({{ $countLaporan }})
                             </a>
                         </div>
@@ -142,8 +152,12 @@
                             </button>
                             {{-- <button id="downloadSelected" class="btn btn-sm btn-light"><i class="feather-download"></i>
                                 Unduh</button> --}}
-                            <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i> Pulihkan</button>
-                            <button class="btn btn-sm btn-danger"><i class="feather-trash"></i> Hapus</button>
+                            {{-- <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i> Pulihkan</button>
+                            --}}
+                            <button id="deleteSelected" class="btn btn-sm btn-danger" disabled>
+                                <i class="feather-trash"></i> Hapus
+                            </button>
+
                             <button type="button" id="closeBulkBar" class="btn-close ms-auto"></button>
                         </div>
 
@@ -567,4 +581,64 @@
                 });
             });
         </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const deleteBtn = document.getElementById('deleteSelected');
+                if (!deleteBtn) return;
+
+                function updateDeleteButton() {
+                    const checked = document.querySelectorAll('.row-checkbox:checked').length;
+                    deleteBtn.disabled = checked === 0;
+                }
+
+                document.querySelectorAll('.row-checkbox').forEach(cb => {
+                    cb.addEventListener('change', updateDeleteButton);
+                });
+
+                updateDeleteButton();
+
+                deleteBtn.addEventListener('click', function () {
+                    const ids = Array.from(
+                        document.querySelectorAll('.row-checkbox:checked')
+                    ).map(cb => cb.value);
+
+                    if (ids.length === 0) return;
+
+                    if (!confirm(`Yakin ingin menghapus ${ids.length} arsip?`)) return;
+
+                    deleteBtn.disabled = true;
+
+                    fetch("{{ route('arsip.bulkDelete') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ids })
+                    })
+                        .then(res => {
+                            if (!res.ok) throw new Error('Gagal menghapus data');
+                            return res.json();
+                        })
+                        .then(() => {
+                            // 🧹 hapus baris dari tabel
+                            ids.forEach(id => {
+                                const checkbox = document.querySelector(`.row-checkbox[value="${id}"]`);
+                                if (checkbox) checkbox.closest('tr').remove();
+                            });
+
+                            // reset bulk bar
+                            document.getElementById('selectedCount').textContent = 0;
+                            document.getElementById('bulkActionBar').classList.add('d-none');
+                        })
+                        .catch(err => {
+                            alert(err.message);
+                        })
+                        .finally(() => {
+                            updateDeleteButton();
+                        });
+                });
+            });
+        </script>
+
     @endpush

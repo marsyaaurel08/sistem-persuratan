@@ -90,7 +90,7 @@
                                 <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Laporan</h3>
                             </div>
                         </div>
-                        <div class="display-5 fw-bold text-dark mt-2">0</div>
+                        <div class="display-5 fw-bold text-dark mt-2">{{ $totalLaporan }}</div></div>
                     </div>
                 </div>
             </div>
@@ -235,7 +235,7 @@
                         // 🔹 Update KPI
                         $('.card:contains("Total Surat Masuk") .display-5').text(res.totalMasuk);
                         $('.card:contains("Total Surat Keluar") .display-5').text(res.totalKeluar);
-                        $('.card:contains("Total Surat Laporan") .display-5').text(res.totalLaporan ?? 0);
+                        $('.card:contains("Total Surat Laporan") .display-5').text(res.totalLaporan);
 
                         // 🔹 Update Tabel
                         $tableBody.empty();

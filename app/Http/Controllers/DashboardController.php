@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Arsip;
 use Illuminate\Http\Request;
 use App\Models\SuratMasuk;
 use App\Models\SuratKeluar;
@@ -15,10 +16,10 @@ class DashboardController extends Controller
         // =============================
         // Statistik Card
         // =============================
-        $totalMasuk = SuratMasuk::count();
-        $totalKeluar = SuratKeluar::count();
-        $menungguRespon = SuratMasuk::where('status', 'Pending')->count() +
-            SuratKeluar::where('status', 'Pending')->count();
+        $totalMasuk = Arsip::where('kategori', 'Masuk')->count();
+        $totalKeluar = Arsip::where('kategori', 'Keluar')->count();
+        $totalLaporan = Arsip::where('kategori', 'Laporan')->count();
+
         $waktuRespon = 2; // contoh nilai statis
         $divisiMasuk = DB::table('surat_masuk')->select('penerima_divisi as divisi')->distinct();
         $divisiKeluar = DB::table('surat_keluar')->select('pengirim_divisi as divisi')->distinct();
@@ -39,10 +40,16 @@ class DashboardController extends Controller
             $date = Carbon::now()->subMonths($i);
             $months[] = $date->format('M');
 
-            $countMasuk = SuratMasuk::whereMonth('created_at', $date->month)
+            $countMasuk = Arsip::where('kategori', 'Masuk')
+                ->whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
                 ->count();
-            $countKeluar = SuratKeluar::whereMonth('created_at', $date->month)
+            $countKeluar = Arsip::where('kategori', 'Keluar')
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+            $countLaporan = Arsip::where('kategori', 'Laporan')
+                ->whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
                 ->count();
 
@@ -115,7 +122,8 @@ class DashboardController extends Controller
         return view('main', compact(
             'totalMasuk',
             'totalKeluar',
-            'menungguRespon',
+            'totalLaporan',
+            //'menungguRespon',
             'waktuRespon',
             'months',
             'chartData',

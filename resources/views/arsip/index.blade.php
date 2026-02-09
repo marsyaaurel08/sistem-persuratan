@@ -23,13 +23,8 @@
                     <span class="input-group-text bg-white border-end-0 rounded-start-pill">
                         <i class="feather-search"></i>
                     </span>
-                    <input
-                        type="text"
-                        id="searchTable"
-                        class="form-control rounded-end-pill"
-                        placeholder="Cari surat..."
-                        style="font-size: small"
-                    >
+                    <input type="text" id="searchTable" class="form-control rounded-end-pill" placeholder="Cari surat..."
+                        style="font-size: small">
                 </div>
 
                 {{-- Date Range --}}
@@ -37,21 +32,10 @@
                     <span class="input-group-text bg-white border-end-0 rounded-start-pill">
                         <i class="feather-calendar"></i>
                     </span>
-                    <input
-                        type="text"
-                        id="dateRange"
-                        class="form-control rounded-end-pill"
-                        placeholder="Pilih Rentang Tanggal"
-                        readonly
-                        style="cursor: pointer; font-size: small;"
-                    >
-                    <button
-                        class="btn btn-light border rounded"
-                        type="button"
-                        id="clearDateRange"
-                        title="Reset tanggal"
-                        style="display: none;"
-                    >
+                    <input type="text" id="dateRange" class="form-control rounded-end-pill"
+                        placeholder="Pilih Rentang Tanggal" readonly style="cursor: pointer; font-size: small;">
+                    <button class="btn btn-light border rounded" type="button" id="clearDateRange" title="Reset tanggal"
+                        style="display: none;">
                         <i class="feather-x"></i>
                     </button>
                 </div>
@@ -73,35 +57,33 @@
     @endif
 
     {{-- Division Folder Cards --}}
-    <div class="row g-3 mb-4">
+    {{-- <div class="row g-3 mb-4">
         @if($folders && count($folders) > 0)
-            @foreach($folders as $folder)
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
-                        data-divisi="{{ $folder['name'] }}"
-                        style="cursor: pointer; transition: transform 0.2s;"
-                        onmouseover="this.style.transform='translateY(-5px)'"
-                        onmouseout="this.style.transform='translateY(0)'">
-                        <div class="card-body p-3">
-                            <div class="d-flex justify-content-between mb-3">
-                                <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
-                                    <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 28px;"></i>
-                                </div>
-                            </div>
-                            <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
-                            <small class="text-muted">{{ $folder['count'] }}</small>
+        @foreach($folders as $folder)
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
+                data-divisi="{{ $folder['name'] }}" style="cursor: pointer; transition: transform 0.2s;"
+                onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
+                            <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 28px;"></i>
                         </div>
                     </div>
-                </div>
-            @endforeach
-        @else
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    <i class="feather-info me-2"></i> Belum ada arsip
+                    <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
+                    <small class="text-muted">{{ $folder['count'] }}</small>
                 </div>
             </div>
+        </div>
+        @endforeach
+        @else
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="feather-info me-2"></i> Belum ada arsip
+            </div>
+        </div>
         @endif
-    </div>
+    </div> --}}
 
     {{-- Table Arsip --}}
     <div class="row g-2 mt-4">
@@ -113,11 +95,8 @@
                     </h5>
 
                     {{-- Bulk Action --}}
-                    <div
-                        id="bulkActionBar"
-                        class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
-                        style="display: none;"
-                    >
+                    <div id="bulkActionBar" class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
+                        style="display: none;">
                         <input type="checkbox" id="selectAll">
                         <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
                         <div class="vr"></div>
@@ -136,57 +115,71 @@
                                     <th>Kode Arsip</th>
                                     <th>No. Surat</th>
                                     <th>Perihal</th>
-                                    <th>Divisi</th>
+                                    {{-- <th>Divisi</th> --}}
                                     <th>Tanggal</th>
+                                    <th>Pengarsip</th>
                                     <th>File</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($arsip as $item)
                                     @php
-                                        $surat = $item->suratMasuk ?? $item->suratKeluar;
-                                        $noSurat = $surat->nomor_surat ?? '-';
-                                        $perihal = $surat->perihal ?? '-';
-                                        $divisi = $item->suratMasuk->penerima_divisi ?? $item->suratKeluar->pengirim_divisi ?? '-';
                                         $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
+                                        $pengarsip = $item->pengarsip->nama ?? '-';
                                     @endphp
-                                    <tr
-                                        data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
-                                        data-divisi="{{ $divisi }}"
-                                        data-kode="{{ $item->kode_arsip }}"
-                                        data-no="{{ $noSurat }}"
-                                        data-perihal="{{ $perihal }}"
-                                        data-tanggal="{{ $tanggalDisplay }}"
-                                        data-files='@json($item->files?->map(fn($f) => ["id"=>$f->id,"nama_file"=>$f->nama_file]))'
-                                    >
+
+                                    <tr data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
+                                        data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
+                                        data-tanggal="{{ $tanggalDisplay }}" data-pengarsip="{{ $pengarsip }}" data-files='@json(
+                                            $item->files->map(fn($f) => [
+                                                "id" => $f->id,
+                                                "nama_file" => $f->nama_file
+                                            ])
+                                        )'>
                                         <td>
                                             <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
                                         </td>
+
                                         <td class="text-nowrap">
-                                            <span class="badge bg-light text-dark border">{{ $item->kode_arsip }}</span>
+                                            <span class="badge bg-light text-dark border">
+                                                {{ $item->kode_arsip }}
+                                            </span>
                                         </td>
+
                                         <td class="fw-bold">
-                                            {{ $noSurat }}
+                                            {{ $item->nomor_surat ?? '-' }}
                                         </td>
+
                                         <td>
-                                            {{ $perihal }}
+                                            {{ $item->perihal ?? '-' }}
                                         </td>
-                                        <td>
-                                            {{ $divisi }}
-                                        </td>
+
+                                        {{-- <td>
+                                            <span class="badge bg-secondary-subtle text-dark">
+                                                {{ $item->divisi ?? '-' }}
+                                            </span>
+                                        </td> --}}
+
                                         <td>
                                             {{ $tanggalDisplay ?? '-' }}
                                         </td>
+
                                         <td>
-                                            @if ($item->files?->count())
+                                            <small class="text-muted">
+                                                {{ $item->pengarsip->name ?? '-' }}
+                                            </small>
+                                        </td>
+
+                                        <td>
+                                            @if ($item->files->count())
                                                 <div class="d-flex flex-wrap gap-1">
-                                                    @foreach ($item->files as $f)
-                                                        <a
-                                                            href="{{ route('arsip.download', $f->id) }}"
-                                                            class="badge bg-light text-primary border d-inline-flex align-items-center"
-                                                        >
+                                                    @foreach ($item->files as $file)
+                                                        <a href="{{ route('arsip.download', $file->id) }}"
+                                                            class="badge bg-light text-primary border d-inline-flex align-items-center">
                                                             <i class="feather-download me-1" style="font-size: 11px;"></i>
-                                                            <span class="text-truncate" style="max-width: 140px;">{{ $f->nama_file }}</span>
+                                                            <span class="text-truncate" style="max-width: 140px;">
+                                                                {{ $file->nama_file }}
+                                                            </span>
                                                         </a>
                                                     @endforeach
                                                 </div>
@@ -197,6 +190,7 @@
                                     </tr>
                                 @endforeach
                             </tbody>
+
                         </table>
                     </div>
 

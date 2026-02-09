@@ -79,17 +79,38 @@
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-4">Detail Arsip</h5>
 
-                            <!-- JENIS SURAT -->
+                            <!-- KATEGORI ARSIP -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold small">Jenis Surat *</label>
-                                <select name="jenis_surat" id="jenisSurat" class="form-select" required>
-                                    <option value="">-- Pilih Jenis Surat --</option>
-                                    <option value="Masuk">Surat Masuk</option>
-                                    <option value="Keluar">Surat Keluar</option>
+                                <label class="form-label fw-bold small">Kategori Arsip *</label>
+                                <select name="kategori" id="kategori" class="form-select" required>
+                                    <option value="">-- Pilih Kategori Arsip --</option>
+                                    @foreach (\App\Models\Arsip::KATEGORI as $value => $label)
+                                        <option value="{{ $value }}" {{ old('kategori') == $value ? 'selected' : '' }}>
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
-                            <!-- DIVISI (FILTER) -->
+                            <!-- NOMOR SURAT -->
+                            <div class="mb-3" id="field-nomor-surat">
+                                <label class="form-label fw-bold small">Nomor Surat</label>
+                                <input type="text" name="nomor_surat" class="form-control" placeholder="Contoh: 123/IT/2025"
+                                    value="{{ old('nomor_surat') }}">
+                                <small class="text-muted">
+                                    Wajib untuk Surat Masuk & Keluar, opsional untuk Laporan
+                                </small>
+                            </div>
+
+                            <!-- PERIHAL -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Perihal *</label>
+                                <input type="text" name="perihal" class="form-control"
+                                    placeholder="Contoh: Undangan Rapat Koordinasi" value="{{ old('perihal') }}" required>
+                            </div>
+
+
+                            {{-- <!-- DIVISI (FILTER) -->
                             <div class="mb-3 d-none" id="divisiWrapper">
                                 <label class="form-label fw-bold small">Divisi *</label>
                                 <select id="divisiSelect" class="form-select">
@@ -104,9 +125,9 @@
                                 <select name="surat_masuk_id" id="suratMasukSelect" class="form-select">
                                     <option value="">-- Pilih Surat Masuk --</option>
                                     @foreach ($suratMasuk as $sm)
-                                        <option value="{{ $sm->id }}" data-divisi="{{ $sm->penerima_divisi }}">
-                                            {{ $sm->nomor_surat }} - {{ $sm->penerima_divisi }}
-                                        </option>
+                                    <option value="{{ $sm->id }}" data-divisi="{{ $sm->penerima_divisi }}">
+                                        {{ $sm->nomor_surat }} - {{ $sm->penerima_divisi }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -117,12 +138,12 @@
                                 <select name="surat_keluar_id" id="suratKeluarSelect" class="form-select">
                                     <option value="">-- Pilih Surat Keluar --</option>
                                     @foreach ($suratKeluar as $sk)
-                                        <option value="{{ $sk->id }}" data-divisi="{{ $sk->pengirim_divisi }}">
-                                            {{ $sk->nomor_surat }} - {{ $sk->pengirim_divisi }}
-                                        </option>
+                                    <option value="{{ $sk->id }}" data-divisi="{{ $sk->pengirim_divisi }}">
+                                        {{ $sk->nomor_surat }} - {{ $sk->pengirim_divisi }}
+                                    </option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <div class="row g-3 mb-3">
                                 <div class="col-12">
@@ -132,19 +153,19 @@
                                         value="{{ old('tanggal_arsip', date('Y-m-d')) }}" required>
                                 </div>
 
-                                <div class="col-12">
+                                {{-- <div class="col-12">
                                     <label class="form-label fw-bold small">Nama Pengarsip</label>
                                     <input type="text" name="diarsipkan_nama" class="form-control bg-light border-0 py-2"
                                         placeholder="Nama pengarsip" value="{{ old('diarsipkan_nama') }}">
                                     <small class="text-muted">Opsional: Nama orang yang mengarsipkan</small>
-                                </div>
+                                </div> --}}
 
-                                <div class="col-12">
+                                {{-- <div class="col-12">
                                     <label class="form-label fw-bold small">Lokasi Fisik</label>
                                     <input type="text" name="lokasi_fisik" class="form-control bg-light border-0 py-2"
                                         placeholder="Contoh: Lemari A / Rak 2 / Box 5" value="{{ old('lokasi_fisik') }}">
                                     <small class="text-muted">Opsional: Lokasi penyimpanan fisik dokumen</small>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mb-2" id="submitBtn" disabled>
@@ -174,243 +195,192 @@
 
 @push('scripts')
     <script>
-
         let selectedFiles = [];
+
+        const kategori = document.getElementById('kategori');
+        const nomorSuratWrapper = document.getElementById('field-nomor-surat');
+
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
         const fileList = document.getElementById('fileList');
         const fileListContainer = document.getElementById('fileListContainer');
         const fileCount = document.getElementById('fileCount');
         const submitBtn = document.getElementById('submitBtn');
-        const jenisSurat = document.getElementById('jenisSurat');
-        const suratMasukWrapper = document.getElementById('suratMasukWrapper');
-        const suratKeluarWrapper = document.getElementById('suratKeluarWrapper');
-        const divisiWrapper = document.getElementById('divisiWrapper');
-        const divisiSelect = document.getElementById('divisiSelect');
-        const masukSelect = document.getElementById('suratMasukSelect');
-        const keluarSelect = document.getElementById('suratKeluarSelect');
         const uploadForm = document.getElementById('uploadForm');
 
-        // Form submit handler for debugging
-        if (uploadForm) {
-            uploadForm.addEventListener('submit', function(e) {
-                console.log('Form submitted');
-                console.log('Selected files:', selectedFiles.length);
-                console.log('Jenis surat:', jenisSurat.value);
-                
-                // Let the form submit naturally
-            });
-        }
-        jenisSurat.addEventListener('change', () => {
-            resetAll();
-            if (!jenisSurat.value) return;
-
-            divisiWrapper.classList.remove('d-none');
-            loadDivisi();
-        });
-
-        divisiSelect.addEventListener('change', () => {
-            suratMasukWrapper.classList.add('d-none');
-            suratKeluarWrapper.classList.add('d-none');
-
-            masukSelect.value = '';
-            keluarSelect.value = '';
-
-            if (!divisiSelect.value) return;
-
-            // Sync hidden input for server-side validation
-            document.getElementById('divisiValue').value = divisiSelect.value;
-
-            if (jenisSurat.value === 'Masuk') {
-                suratMasukWrapper.classList.remove('d-none');
-                filterSurat(masukSelect);
-                masukSelect.required = true;
+        /* ===============================
+           KATEGORI → TOGGLE NOMOR SURAT
+        =============================== */
+        function toggleNomorSurat() {
+            if (kategori.value === 'Laporan') {
+                nomorSuratWrapper.style.display = 'none';
             } else {
-                suratKeluarWrapper.classList.remove('d-none');
-                filterSurat(keluarSelect);
-                keluarSelect.required = true;
+                nomorSuratWrapper.style.display = 'block';
             }
+        }
+
+        if (kategori) {
+            kategori.addEventListener('change', toggleNomorSurat);
+            toggleNomorSurat(); // initial
+        }
+
+        /* ===============================
+           FILE INPUT
+        =============================== */
+        fileInput.addEventListener('change', e => {
+            handleFiles(e.target.files);
         });
 
-        function loadDivisi() {
-            const select = jenisSurat.value === 'Masuk' ? masukSelect : keluarSelect;
-            const divisi = new Set();
-
-            [...select.options].forEach(o => {
-                if (o.dataset.divisi) divisi.add(o.dataset.divisi);
-            });
-
-            divisiSelect.innerHTML = '<option value="">-- Pilih Divisi --</option>';
-            divisi.forEach(d => {
-                divisiSelect.innerHTML += `<option value="${d}">${d}</option>`;
-            });
-
-            // Reset hidden input
-            document.getElementById('divisiValue').value = '';
-        }
-
-        function filterSurat(select) {
-            [...select.options].forEach(o => {
-                if (!o.dataset.divisi) return;
-                o.hidden = o.dataset.divisi !== divisiSelect.value;
-            });
-        }
-
-        function resetAll() {
-            divisiWrapper.classList.add('d-none');
-            suratMasukWrapper.classList.add('d-none');
-            suratKeluarWrapper.classList.add('d-none');
-
-            divisiSelect.innerHTML = '';
-            masukSelect.value = '';
-            keluarSelect.value = '';
-        }
-
-        // Trigger on page load if old value exists
-        if (jenisSurat.value) {
-            jenisSurat.dispatchEvent(new Event('change'));
-        }
-
-        // File input change
-        fileInput.addEventListener('change', function (e) {
-            handleFiles(this.files);
-        });
-
-        // Note: Clicking the drop zone is already handled by the overlaid file input.
-        // Avoid adding a separate click handler here to prevent double dialogs.
-
-        // Drag and drop handlers
-        dropZone.addEventListener('dragover', function (e) {
+        dropZone.addEventListener('dragover', e => {
             e.preventDefault();
-            this.style.borderColor = '#4e73df';
-            this.style.backgroundColor = '#e3f2fd';
+            dropZone.classList.add('border-primary');
         });
 
-        dropZone.addEventListener('dragleave', function (e) {
+        dropZone.addEventListener('dragleave', e => {
             e.preventDefault();
-            this.style.borderColor = '#d1d5db';
-            this.style.backgroundColor = '#f8fafc';
+            dropZone.classList.remove('border-primary');
         });
 
-        dropZone.addEventListener('drop', function (e) {
+        dropZone.addEventListener('drop', e => {
             e.preventDefault();
-            this.style.borderColor = '#d1d5db';
-            this.style.backgroundColor = '#f8fafc';
+            dropZone.classList.remove('border-primary');
             handleFiles(e.dataTransfer.files);
         });
 
         function handleFiles(files) {
-            // Combine existing and new valid files
-            const combined = [...selectedFiles];
             for (let file of files) {
-                if (isValidFile(file)) combined.push(file);
+                if (isValidFile(file)) {
+                    selectedFiles.push(file);
+                }
             }
 
-            selectedFiles = combined;
-
-            // Try to sync to input.files when supported
-            try {
-                const dt = new DataTransfer();
-                for (let file of selectedFiles) dt.items.add(file);
-                fileInput.files = dt.files;
-            } catch (err) {
-                // Fallback: some browsers don't support DataTransfer constructor
-                // We'll still render the preview list; the latest selection remains in input
-            }
-
+            syncInputFiles();
             updateFileList();
         }
 
         function isValidFile(file) {
-            const validTypes = ['application/pdf', 'application/msword',
+            const validTypes = [
+                'application/pdf',
+                'application/msword',
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'image/jpeg', 'image/jpg', 'image/png', 'image/tiff'];
-            const maxSize = 50 * 1024 * 1024; // 50MB
+                'image/jpeg',
+                'image/png',
+                'image/tiff'
+            ];
+
+            const maxSize = 50 * 1024 * 1024;
 
             if (!validTypes.includes(file.type)) {
-                alert(`File ${file.name} bukan format yang didukung`);
+                alert(`${file.name} bukan format yang didukung`);
                 return false;
             }
+
             if (file.size > maxSize) {
-                alert(`File ${file.name} terlalu besar (maks 50MB)`);
+                alert(`${file.name} melebihi 50MB`);
                 return false;
             }
+
             return true;
         }
+
+        function syncInputFiles() {
+            try {
+                const dt = new DataTransfer();
+                selectedFiles.forEach(file => dt.items.add(file));
+                fileInput.files = dt.files;
+            } catch (e) { }
+        }
+
+        function getFileIcon(type) {
+            if (!type) return 'feather-file text-secondary';
+
+            if (type.includes('pdf')) return 'feather-file-text text-danger';
+            if (type.includes('word')) return 'feather-file-text text-primary';
+            if (type.includes('image')) return 'feather-image text-success';
+
+            return 'feather-file text-secondary';
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 Bytes';
+
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+            return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+        }
+
 
         function updateFileList() {
             fileList.innerHTML = '';
             fileCount.textContent = selectedFiles.length;
 
-            if (selectedFiles.length > 0) {
-                fileListContainer.style.display = 'block';
-                submitBtn.disabled = false;
-
-                selectedFiles.forEach((file, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'list-group-item rounded-3 border p-3';
-
-                    const icon = getFileIcon(file.type);
-                    const size = formatFileSize(file.size);
-
-                    item.innerHTML = `
-                                                                                <div class="d-flex align-items-center">
-                                                                                    <i class="${icon} fs-4 me-3"></i>
-                                                                                    <div class="flex-grow-1">
-                                                                                        <div class="d-flex justify-content-between align-items-start">
-                                                                                            <span class="fw-bold text-dark small">${file.name}</span>
-                                                                                            <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removeFile(${index})">
-                                                                                                <i class="feather-x"></i>
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <span class="text-muted" style="font-size: 11px;">${size}</span>
-                                                                                    </div>
-                                                                                </div>
-                                                                            `;
-                    fileList.appendChild(item);
-                });
-            } else {
+            if (selectedFiles.length === 0) {
                 fileListContainer.style.display = 'none';
                 submitBtn.disabled = true;
+                return;
             }
+
+            fileListContainer.style.display = 'block';
+            submitBtn.disabled = false;
+
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item rounded-3 border p-3';
+
+                const icon = getFileIcon(file.type);
+                const size = formatFileSize(file.size);
+
+                item.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <i class="${icon} fs-4 me-3"></i>
+
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <span class="fw-bold text-dark small">
+                                        ${file.name}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-link text-danger p-0"
+                                        onclick="removeFile(${index})">
+                                        <i class="feather-x"></i>
+                                    </button>
+                                </div>
+
+                                <span class="text-muted" style="font-size: 11px;">
+                                    ${size}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+
+                fileList.appendChild(item);
+            });
         }
+
 
         function removeFile(index) {
-            selectedFiles = selectedFiles.filter((file, i) => i !== index);
-
-            // Try to sync to input.files when supported
-            try {
-                const dt = new DataTransfer();
-                for (let file of selectedFiles) dt.items.add(file);
-                fileInput.files = dt.files;
-            } catch (err) {
-                // Fallback: cannot update input.files; preview updates only
-            }
-
+            selectedFiles.splice(index, 1);
+            syncInputFiles();
             updateFileList();
-        }
-
-        function getFileIcon(type) {
-            if (type.includes('pdf')) return 'feather-file-text text-danger';
-            if (type.includes('word')) return 'feather-file-text text-primary';
-            if (type.includes('image')) return 'feather-image text-success';
-            return 'feather-file text-secondary';
         }
 
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
             const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+            if (bytes === 0) return '0 Byte';
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
         }
 
-        function resetForm() {
-            selectedFiles = [];
-            fileInput.value = '';
-            updateFileList();
-            jenisSurat.value = '';
-            resetAll();
-        }
+        /* ===============================
+           DEBUG SUBMIT
+        =============================== */
+        uploadForm.addEventListener('submit', () => {
+            console.log('Kategori:', kategori.value);
+            console.log('Files:', selectedFiles.length);
+        });
     </script>
 @endpush

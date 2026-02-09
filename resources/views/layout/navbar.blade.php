@@ -13,7 +13,7 @@
                     <label>Navigation</label>
                 </li>
                 <li class="nxl-item">
-                    <a href="{{ url('/') }}" class="nxl-link">
+                    <a href="{{ url('/dashboard') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-home"></i></span>
                         <span class="nxl-mtext">Dashboard</span><span class="nxl-arrow">
                     </a>

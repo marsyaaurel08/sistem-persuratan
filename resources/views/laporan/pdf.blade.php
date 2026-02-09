@@ -91,7 +91,7 @@
             Klinik Jasa Tirta
         </div>
         <div class="period" style="font-family:'Times New Roman', Times, serif; font-size:12px; margin-top:4px;">
-            @if($request->filled('start') && $request->filled('end'))
+            @if ($request->filled('start') && $request->filled('end'))
                 Periode: {{ \Carbon\Carbon::parse($request->start)->format('d M Y') }}
                 s/d {{ \Carbon\Carbon::parse($request->end)->format('d M Y') }}
             @else
@@ -101,29 +101,29 @@
 
     </div>
 
-    <table>
+    <table border="1" cellspacing="0" cellpadding="5">
         <thead>
             <tr>
+                <th>Kode Arsip</th>
                 <th>No Surat</th>
                 <th>Perihal</th>
-                <th>Divisi</th>
-                <th>Tanggal</th>
-                <th>Status</th>
+                <th>Kategori</th>
+                <th>Tanggal Arsip</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($laporans as $laporan)
+            @foreach ($laporans as $laporan)
                 <tr>
-                    <td>{{ $laporan->no_surat }}</td>
+                    <td>{{ $laporan->kode_arsip }}</td>
+                    <td>{{ $laporan->nomor_surat }}</td>
                     <td>{{ $laporan->perihal }}</td>
-                    <td>{{ $laporan->divisi }}</td>
-                    <td>{{ $laporan->tanggal ? \Carbon\Carbon::parse($laporan->tanggal)->format('d M Y') : '-' }}</td>
-                    <td>{{ $laporan->status }}</td>
+                    <td>{{ $laporan->kategori }}</td>
+                    <td>{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') : '-' }}
+                    </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-
 </body>
 
 </html>

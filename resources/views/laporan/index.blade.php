@@ -33,8 +33,9 @@
                             class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
                             <i class="feather-calendar"></i>
                         </span>
-                        <input type="text" id="dateRange" class="form-control border-0 px-2 h-100 d-flex align-items-center"
-                            placeholder="Pilih Tanggal" readonly
+                        <input type="text" id="dateRange"
+                            class="form-control border-0 px-2 h-100 d-flex align-items-center" placeholder="Pilih Tanggal"
+                            readonly
                             style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
                         <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
                             type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
@@ -88,36 +89,36 @@
                         <table class="table table-hover table-sm align-middle" id="laporanTable">
                             <thead>
                                 <tr>
+                                    <th>Kode Arsip</th>
                                     <th>No. Surat</th>
                                     <th>Perihal</th>
-                                    <th>Divisi</th>
-                                    <th>Tanggal</th>
-                                    <th>Status</th>
+                                    <th>Kategori</th>
+                                    <th>Tanggal Arsip</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($laporans as $laporan)
+                                @foreach ($laporans as $laporan)
                                     <tr
-                                        data-date="{{ $laporan->tanggal ? \Carbon\Carbon::parse($laporan->tanggal)->format('Y-m-d') : '' }}">
-                                        <td>{{ $laporan->no_surat }}</td>
+                                        data-date="{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('Y-m-d') : '' }}">
+                                        <td>{{ $laporan->kode_arsip }}</td>
+                                        <td>{{ $laporan->nomor_surat }}</td>
                                         <td>{{ $laporan->perihal }}</td>
-                                        <td>{{ $laporan->divisi }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($laporan->tanggal)->format('d M Y') }}</td>
                                         <td>
                                             <span
                                                 class="badge-custom 
-                                                                                                                                                                    @if($laporan->status == 'Selesai') badge-success
-                                                                                                                                                                    @elseif($laporan->status == 'Pending') badge-warning
-                                                                                                                                                                    @elseif($laporan->status == 'Ditolak') badge-danger
-                                                                                                                                                                    @else badge-info @endif">
-                                                {{ $laporan->status }}
+        @if ($laporan->kategori == 'Masuk') badge-success
+        @elseif($laporan->kategori == 'Keluar') badge-warning
+        @elseif($laporan->kategori == 'Laporan') badge-info
+        @else badge-secondary @endif">
+                                                {{ $laporan->kategori }}
                                             </span>
                                         </td>
+                                        <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-                        @if($laporans instanceof \Illuminate\Pagination\AbstractPaginator)
+                        @if ($laporans instanceof \Illuminate\Pagination\AbstractPaginator)
                             <div class="mt-2 d-flex justify-content-center">
                                 {{ $laporans->links() }}
                             </div>
@@ -197,7 +198,7 @@
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 const dateInput = document.getElementById('dateRange');
                 const clearBtn = document.getElementById('clearDateRange');
                 const rows = document.querySelectorAll('#laporanTable tbody tr');
@@ -208,7 +209,7 @@
                     mode: 'range',
                     dateFormat: 'd M Y',
                     locale: 'id',
-                    onChange: function (selectedDates) {
+                    onChange: function(selectedDates) {
                         if (selectedDates.length === 2) {
                             const start = selectedDates[0];
                             const end = selectedDates[1];
@@ -234,7 +235,7 @@
                     });
                 }
 
-                clearBtn.addEventListener('click', function () {
+                clearBtn.addEventListener('click', function() {
                     fp.clear();
                     dateInput.value = '';
                     clearBtn.style.display = 'none';
@@ -246,7 +247,7 @@
                     document.getElementById('excelEnd').value = '';
                 });
 
-                searchInput.addEventListener('keyup', function () {
+                searchInput.addEventListener('keyup', function() {
                     const filter = this.value.toLowerCase();
                     let hasFilter = filter.length > 0;
                     let visibleCount = 0;
@@ -261,7 +262,8 @@
                     if (hasFilter) {
                         pagination?.classList.add('d-none'); // sembunyikan pagination
                     } else if (!dateInput.value) {
-                        pagination?.classList.remove('d-none'); // tampilkan pagination lagi kalau tidak ada filter
+                        pagination?.classList.remove(
+                            'd-none'); // tampilkan pagination lagi kalau tidak ada filter
                     }
                 });
             });

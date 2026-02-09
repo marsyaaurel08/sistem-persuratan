@@ -100,26 +100,26 @@
                             <span class="fw-semibold me-2">Jenis Arsip :</span>
 
                             <a href="{{ route('arsip.index') }}" class="badge rounded-pill px-3 py-2
-           {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                   {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Semua ({{ $countSemua }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}" class="badge rounded-pill px-3 py-2
-           {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                   {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Masuk ({{ $countMasuk }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}" class="badge rounded-pill px-3 py-2
-           {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                   {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Keluar ({{ $countKeluar }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}" class="badge rounded-pill px-3 py-2
-           {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                   {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Laporan ({{ $countLaporan }})
                             </a>
                         </div>
-                        
+
 
 
 
@@ -217,13 +217,25 @@
                                                 @if ($item->files->count())
                                                     <div class="d-flex flex-wrap gap-1">
                                                         @foreach ($item->files as $file)
+                                                            <!-- Tombol Download -->
                                                             <a href="{{ route('arsip.download', $file->id) }}"
                                                                 class="badge bg-light text-primary border d-inline-flex align-items-center">
                                                                 <i class="feather-download me-1" style="font-size: 11px;"></i>
-                                                                <span class="text-truncate" style="max-width: 140px;">
+                                                                <span class="text-truncate" style="max-width: 120px;">
                                                                     {{ $file->nama_file }}
                                                                 </span>
                                                             </a>
+
+                                                            <!-- Tombol Preview -->
+                                                            <button type="button"
+                                                                class="badge bg-light text-primary border d-inline-flex align-items-center preview-btn"
+                                                                data-bs-toggle="modal" data-bs-target="#previewModal"
+                                                                data-file="{{ asset('storage/' . $file->path_file) }}" title="Preview">
+                                                                <i class="feather-eye me-1" style="font-size: 11px;"></i>
+                                                                <span class="text-truncate" style="max-width: 120px;">
+                                                                    {{ $file->nama_file }}
+                                                                </span>
+                                                            </button>
                                                         @endforeach
                                                     </div>
                                                 @else
@@ -277,6 +289,24 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Preview -->
+    <!-- Modal Preview -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Preview Dokumen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -515,6 +545,29 @@
                             spinner.classList.add('d-none');
                             updateDownloadButton(); // cek ulang checkbox
                         });
+                });
+            });
+        </script>
+
+        <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const previewButtons = document.querySelectorAll('.preview-btn');
+                const iframe = document.getElementById('previewFrame');
+
+                previewButtons.forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const fileUrl = this.dataset.file;
+                        console.log('Preview file URL:', fileUrl); // cek di console
+                        iframe.src = fileUrl;
+                    });
+                });
+
+                // Clear iframe saat modal ditutup
+                const modal = document.getElementById('previewModal');
+                modal.addEventListener('hidden.bs.modal', function () {
+                    iframe.src = '';
                 });
             });
         </script>

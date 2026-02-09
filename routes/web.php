@@ -20,6 +20,7 @@ use App\Http\Controllers\AuthController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::get('/', function () {
     return auth()->check()
         ? redirect()->route('dashboard')
@@ -74,6 +75,7 @@ Route::middleware('auth')->group(function () {
         ->name('arsip.store');
     Route::get('/arsip/download/{id}', [ArsipController::class, 'download'])
         ->name('arsip.download');
+    Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload'])->name('arsip.bulkDownload');
 
     // surat masuk
     Route::get('/surat_masuk', [SuratMasukController::class, 'index'])

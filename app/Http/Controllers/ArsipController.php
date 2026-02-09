@@ -13,14 +13,29 @@ class ArsipController extends Controller
     /**
      * Tampilkan daftar arsip
      */
-    public function index()
+    public function index(Request $request)
     {
-        $arsip = Arsip::with(['files', 'pengarsip'])
-            ->latest()
-            ->paginate(10);
+        $kategori = $request->get('kategori'); // Masuk | Keluar | Laporan | null
 
-        return view('arsip.index', compact('arsip'));
+        $arsips = Arsip::with(['files', 'pengarsip'])
+            ->when($kategori, function ($query) use ($kategori) {
+                $query->where('kategori', $kategori);
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('arsip.index', [
+            'arsips'        => $arsips,
+            'kategoriAktif'    => $kategori ?? 'semua',
+
+            'countSemua'   => Arsip::count(),
+            'countMasuk'   => Arsip::where('kategori', 'Masuk')->count(),
+            'countKeluar'  => Arsip::where('kategori', 'Keluar')->count(),
+            'countLaporan' => Arsip::where('kategori', 'Laporan')->count(),
+        ]);
     }
+
 
     /**
      * Form upload arsip
@@ -142,4 +157,3 @@ class ArsipController extends Controller
             ->deleteFileAfterSend(true);
     }
 }
-

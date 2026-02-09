@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Arsip;
+use App\Models\Pengguna;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -11,9 +12,9 @@ class ArsipSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = User::pluck('id');
+        $pengguna = Pengguna::pluck('id');
 
-        if ($users->isEmpty()) {
+        if ($pengguna->isEmpty()) {
             $this->command->warn('Seeder Arsip dilewati karena tidak ada user.');
             return;
         }
@@ -43,8 +44,8 @@ class ArsipSeeder extends Seeder
                 'perihal' => $item['perihal'],
                 'tanggal_arsip' => Carbon::now()->subDays(rand(1, 30)),
                 'kode_arsip' => 'ARS/' . date('Y') . '/' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
-                'lokasi_fisik' => 'Lemari A - Rak ' . rand(1, 5),
-                'diarsipkan_oleh' => $users->random(),
+                //'lokasi_fisik' => 'Lemari A - Rak ' . rand(1, 5),
+                'diarsipkan_oleh' => $pengguna->random(),
             ]);
         }
     }

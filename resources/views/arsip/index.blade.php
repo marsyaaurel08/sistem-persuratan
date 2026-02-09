@@ -100,22 +100,22 @@
                             <span class="fw-semibold me-2">Jenis Arsip :</span>
 
                             <a href="{{ route('arsip.index') }}" class="badge rounded-pill px-3 py-2
-                                   {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                               {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Semua ({{ $countSemua }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}" class="badge rounded-pill px-3 py-2
-                                   {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                               {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Masuk ({{ $countMasuk }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}" class="badge rounded-pill px-3 py-2
-                                   {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                               {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Keluar ({{ $countKeluar }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}" class="badge rounded-pill px-3 py-2
-                                   {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                               {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Laporan ({{ $countLaporan }})
                             </a>
                         </div>
@@ -212,29 +212,25 @@
                                                     {{ $item->pengarsip->name ?? '-' }}
                                                 </small>
                                             </td>
-
                                             <td>
                                                 @if ($item->files->count())
                                                     <div class="d-flex flex-wrap gap-1">
+                                                        <!-- Tombol Download -->
                                                         @foreach ($item->files as $file)
-                                                            <!-- Tombol Download -->
                                                             <a href="{{ route('arsip.download', $file->id) }}"
-                                                                class="badge bg-light text-primary border d-inline-flex align-items-center">
-                                                                <i class="feather-download me-1" style="font-size: 11px;"></i>
-                                                                <span class="text-truncate" style="max-width: 120px;">
-                                                                    {{ $file->nama_file }}
-                                                                </span>
+                                                                class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
+                                                                title="Download">
+                                                                <i class="feather-download me-1" style="font-size: 14px;"></i>
+                                                                <span style="font-size: 12px;">Unduh</span>
                                                             </a>
 
                                                             <!-- Tombol Preview -->
                                                             <button type="button"
-                                                                class="badge bg-light text-primary border d-inline-flex align-items-center preview-btn"
+                                                                class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
                                                                 data-bs-toggle="modal" data-bs-target="#previewModal"
                                                                 data-file="{{ asset('storage/' . $file->path_file) }}" title="Preview">
-                                                                <i class="feather-eye me-1" style="font-size: 11px;"></i>
-                                                                <span class="text-truncate" style="max-width: 120px;">
-                                                                    {{ $file->nama_file }}
-                                                                </span>
+                                                                <i class="feather-eye me-1" style="font-size: 14px;"></i>
+                                                                <span style="font-size: 12px;">Preview</span>
                                                             </button>
                                                         @endforeach
                                                     </div>

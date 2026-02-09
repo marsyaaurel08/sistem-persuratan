@@ -99,22 +99,29 @@
                         <div class="d-flex flex-wrap gap-2 align-items-center" id="arsipTab">
                             <span class="fw-semibold me-2">Jenis Arsip :</span>
 
-                            <span class="badge rounded-pill bg-primary px-3 py-2 tab-btn" data-tab="semua">
-                                Semua (25)
-                            </span>
+                            <a href="{{ route('arsip.index') }}" class="badge rounded-pill px-3 py-2
+           {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                Semua ({{ $countSemua }})
+                            </a>
 
-                            <span class="badge rounded-pill bg-primary px-3 py-2 tab-btn" data-tab="masuk">
-                                Surat Masuk (12)
-                            </span>
+                            <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}" class="badge rounded-pill px-3 py-2
+           {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                Surat Masuk ({{ $countMasuk }})
+                            </a>
 
-                            <span class="badge rounded-pill bg-light text-dark px-3 py-2 tab-btn" data-tab="keluar">
-                                Surat Keluar (11)
-                            </span>
+                            <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}" class="badge rounded-pill px-3 py-2
+           {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                Surat Keluar ({{ $countKeluar }})
+                            </a>
 
-                            <span class="badge rounded-pill bg-light text-dark px-3 py-2 tab-btn" data-tab="laporan">
-                                Laporan (2)
-                            </span>
+                            <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}" class="badge rounded-pill px-3 py-2
+           {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                Laporan ({{ $countLaporan }})
+                            </a>
                         </div>
+                        
+
+
 
                     </div>
 
@@ -156,7 +163,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($arsip as $item)
+                                    @foreach ($arsips as $item)
                                         @php
                                             $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
                                             $pengarsip = $item->pengarsip->name ?? '-';
@@ -233,7 +240,7 @@
                         {{-- Pagination --}}
                         @if (!request()->hasAny(['tanggal_arsip', 'search']))
                             <div class="mt-2 d-flex justify-content-center">
-                                {{ $arsip->links() }}
+                                {{ $arsips->links() }}
                             </div>
                         @endif
                     </div>

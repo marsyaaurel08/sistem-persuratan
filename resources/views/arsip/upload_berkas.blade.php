@@ -81,7 +81,8 @@
 
                             <!-- KATEGORI ARSIP -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold small">Kategori Arsip *</label>
+                                <label class="form-label fw-bold small">Kategori Arsip<span
+                                            class="text-danger">*</span></label>
                                 <select name="kategori" id="kategori" class="form-select" required>
                                     <option value="">-- Pilih Kategori Arsip --</option>
                                     @foreach (\App\Models\Arsip::KATEGORI as $value => $label)
@@ -94,9 +95,10 @@
 
                             <!-- NOMOR SURAT -->
                             <div class="mb-3" id="field-nomor-surat">
-                                <label class="form-label fw-bold small">Nomor Surat</label>
+                                <label class="form-label fw-bold small">Nomor Surat<span
+                                            class="text-danger">*</span></label>
                                 <input type="text" name="nomor_surat" class="form-control" placeholder="Contoh: 123/IT/2025"
-                                    value="{{ old('nomor_surat') }}">
+                                    value="{{ old('nomor_surat') }}" required>
                                 <small class="text-muted">
                                     Wajib untuk Surat Masuk & Keluar, opsional untuk Laporan
                                 </small>
@@ -104,7 +106,8 @@
 
                             <!-- PERIHAL -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold small">Perihal *</label>
+                                <label class="form-label fw-bold small">Perihal<span
+                                            class="text-danger">*</span></label>
                                 <input type="text" name="perihal" class="form-control"
                                     placeholder="Contoh: Undangan Rapat Koordinasi" value="{{ old('perihal') }}" required>
                             </div>

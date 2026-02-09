@@ -32,10 +32,21 @@
                     <span class="input-group-text bg-white border-end-0 rounded-start-pill">
                         <i class="feather-calendar"></i>
                     </span>
-                    <input type="text" id="dateRange" class="form-control rounded-end-pill"
-                        placeholder="Pilih Rentang Tanggal" readonly style="cursor: pointer; font-size: small;">
-                    <button class="btn btn-light border rounded" type="button" id="clearDateRange" title="Reset tanggal"
-                        style="display: none;">
+                    <input
+                        type="text"
+                        id="dateRange"
+                        class="form-control rounded-end-pill"
+                        placeholder="Pilih Rentang Tanggal"
+                        readonly
+                        style="cursor: pointer; font-size: small;"
+                    >
+                    <button
+                        class="btn btn-light border rounded"
+                        type="button"
+                        id="clearDateRange"
+                        title="Reset tanggal"
+                        style="display: none;"
+                    >
                         <i class="feather-x"></i>
                     </button>
                 </div>
@@ -79,11 +90,11 @@
                 </div>
             @endforeach
         @else
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    <i class="feather-info me-2"></i> Belum ada arsip
-                </div>
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="feather-info me-2"></i> Belum ada arsip
             </div>
+        </div>
         @endif
     </div> --}}
 
@@ -149,8 +160,9 @@
                                     <th>Kode Arsip</th>
                                     <th>No. Surat</th>
                                     <th>Perihal</th>
-                                    <th>Divisi</th>
+                                    {{-- <th>Divisi</th> --}}
                                     <th>Tanggal</th>
+                                    <th>Pengarsip</th>
                                     <th>File</th>
                                 </tr>
                             </thead>
@@ -211,6 +223,7 @@
                                     @endforeach
                                 @endforeach
                             </tbody>
+
                         </table>
                     </div>
 

@@ -1767,7 +1767,7 @@
                         </div>
                     </div> --}}
                     <div class="dropdown nxl-h-item">
-                        <a class="nxl-head-link me-3" data-bs-toggle="dropdown" href="#" role="button" data-bs-auto-close="outside">
+                        {{-- <a class="nxl-head-link me-3" data-bs-toggle="dropdown" href="#" role="button" data-bs-auto-close="outside">
                             <i class="feather-bell"></i>
                             <span class="badge bg-danger nxl-h-badge">3</span>
                         </a>
@@ -1827,9 +1827,9 @@
                             <div class="text-center notifications-footer">
                                 <a href="javascript:void(0);" class="fs-13 fw-semibold text-dark">Alls Notifications</a>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
-                    <div class="dropdown nxl-h-item">
+                    {{-- <div class="dropdown nxl-h-item">
                         <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button" data-bs-auto-close="outside">
                             <img src="{{ asset('duralux/assets/images/avatar/1.png') }}" alt="user-image" class="img-fluid user-avtar me-0" />
                         </a>
@@ -1967,6 +1967,6 @@
                                 <span>Logout</span>
                             </a>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>

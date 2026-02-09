@@ -3,68 +3,76 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class Arsip extends Model
 {
     protected $table = 'arsip';
 
     protected $fillable = [
-        'kode_arsip',
-        'jenis_surat',
-        'surat_masuk_id',
-        'surat_keluar_id',
+        'kategori',
+        'nomor_surat',
+        'perihal',
         'tanggal_arsip',
-        'lokasi_fisik',
+        'kode_arsip',
+        //'lokasi_fisik',
         'diarsipkan_oleh',
-        'diarsipkan_nama'
     ];
 
     protected $casts = [
         'tanggal_arsip' => 'date',
     ];
 
+    public const KATEGORI = [
+        'Masuk'   => 'Surat Masuk',
+        'Keluar'  => 'Surat Keluar',
+        'Laporan' => 'Laporan',
+    ];
+
+    /**
+     * Auto-generate kode arsip & set user login
+     */
     protected static function booted()
     {
         static::creating(function ($arsip) {
-            if (empty($arsip->diarsipkan_oleh) && Auth::id()) {
+
+            // Set user login otomatis
+            if (empty($arsip->diarsipkan_oleh) && Auth::check()) {
                 $arsip->diarsipkan_oleh = Auth::id();
             }
 
-            // use the year from tanggal_arsip (or now if not set)
-            $tanggal = $arsip->tanggal_arsip ?? Carbon::now()->toDateString();
+            // Jangan override kalau sudah di-set manual
+            if (!empty($arsip->kode_arsip)) {
+                return;
+            }
+
+            // Ambil tahun dari tanggal arsip (atau sekarang)
+            $tanggal = $arsip->tanggal_arsip ?? Carbon::now();
             $tahun = Carbon::parse($tanggal)->year;
 
-            // get current max suffix for that year to avoid duplicates
-            $max = Arsip::where('kode_arsip', 'like', "ARS/{$tahun}/%")
+            // Ambil nomor terakhir di tahun yang sama
+            $max = self::whereYear('tanggal_arsip', $tahun)
                 ->selectRaw('MAX(CAST(RIGHT(kode_arsip,4) AS UNSIGNED)) as maxnum')
                 ->value('maxnum');
 
-            $nomor = $max ? ((int) $max + 1) : 1;
-            $kode = str_pad($nomor, 4, '0', STR_PAD_LEFT);
-            $arsip->kode_arsip = "ARS/{$tahun}/{$kode}";
+            $nomor = $max ? $max + 1 : 1;
+            $urut = str_pad($nomor, 4, '0', STR_PAD_LEFT);
+
+            $arsip->kode_arsip = "ARS/{$tahun}/{$urut}";
         });
     }
 
-    // RELATION
-    public function suratMasuk()
-    {
-        return $this->belongsTo(SuratMasuk::class);
-    }
 
-    public function suratKeluar()
-    {
-        return $this->belongsTo(SuratKeluar::class);
-    }
     public function pengarsip()
     {
-        // Relasi ke tabel pengguna (sesuai constraint migration)
         return $this->belongsTo(Pengguna::class, 'diarsipkan_oleh');
     }
 
     public function files()
     {
-        return $this->hasMany(ArsipFile::class);
+        return $this->hasMany(ArsipFile::class, 'arsip_id');
     }
+
+    
 }

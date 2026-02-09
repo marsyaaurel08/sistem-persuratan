@@ -4,38 +4,47 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Arsip;
-use App\Models\Pengguna;
-use App\Models\SuratMasuk;
-use App\Models\SuratKeluar;
+use App\Models\User;
 use Carbon\Carbon;
 
 class ArsipSeeder extends Seeder
 {
     public function run(): void
     {
-        // === Arsip Surat Masuk ===
-        $suratMasuk = SuratMasuk::take(5)->get();
+        $users = User::pluck('id');
 
-        foreach ($suratMasuk as $sm) {
-            Arsip::create([
-                'jenis_surat' => 'Masuk',
-                'surat_masuk_id' => $sm->id,
-                'surat_keluar_id' => null,
-                'tanggal_arsip' => Carbon::now()->subDays(rand(1, 30)),
-                'diarsipkan_oleh' => Pengguna::inRandomOrder()->first()->id,
-            ]);
+        if ($users->isEmpty()) {
+            $this->command->warn('Seeder Arsip dilewati karena tidak ada user.');
+            return;
         }
 
-        // === Arsip Surat Keluar ===
-        $suratKeluar = SuratKeluar::take(5)->get();
+        $data = [
+            [
+                'kategori' => 'Masuk',
+                'nomor_surat' => 'SM-001/IT/2025',
+                'perihal' => 'Undangan Rapat Koordinasi',
+            ],
+            [
+                'kategori' => 'Keluar',
+                'nomor_surat' => 'SK-015/IT/2025',
+                'perihal' => 'Surat Tugas Dinas',
+            ],
+            [
+                'kategori' => 'Laporan',
+                'nomor_surat' => null,
+                'perihal' => 'Laporan Kegiatan Magang Mahasiswa',
+            ],
+        ];
 
-        foreach ($suratKeluar as $sk) {
+        foreach ($data as $item) {
             Arsip::create([
-                'jenis_surat' => 'Keluar',
-                'surat_masuk_id' => null,
-                'surat_keluar_id' => $sk->id,
+                'kategori' => $item['kategori'],
+                'nomor_surat' => $item['nomor_surat'],
+                'perihal' => $item['perihal'],
                 'tanggal_arsip' => Carbon::now()->subDays(rand(1, 30)),
-                'diarsipkan_oleh' => Pengguna::inRandomOrder()->first()->id,
+                'kode_arsip' => 'ARS/' . date('Y') . '/' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
+                'lokasi_fisik' => 'Lemari A - Rak ' . rand(1, 5),
+                'diarsipkan_oleh' => $users->random(),
             ]);
         }
     }

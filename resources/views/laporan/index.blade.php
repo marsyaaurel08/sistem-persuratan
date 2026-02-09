@@ -106,10 +106,10 @@
                                         <td>
                                             <span
                                                 class="badge-custom 
-                                                                                                                                                            @if($laporan->status == 'Selesai') badge-success
-                                                                                                                                                            @elseif($laporan->status == 'Pending') badge-warning
-                                                                                                                                                            @elseif($laporan->status == 'Ditolak') badge-danger
-                                                                                                                                                            @else badge-info @endif">
+                                                                                                                                                                    @if($laporan->status == 'Selesai') badge-success
+                                                                                                                                                                    @elseif($laporan->status == 'Pending') badge-warning
+                                                                                                                                                                    @elseif($laporan->status == 'Ditolak') badge-danger
+                                                                                                                                                                    @else badge-info @endif">
                                                 {{ $laporan->status }}
                                             </span>
                                         </td>
@@ -201,6 +201,8 @@
                 const dateInput = document.getElementById('dateRange');
                 const clearBtn = document.getElementById('clearDateRange');
                 const rows = document.querySelectorAll('#laporanTable tbody tr');
+                const pagination = document.querySelector('.pagination'); // pagination container
+                const searchInput = document.getElementById('searchLaporan');
 
                 const fp = flatpickr(dateInput, {
                     mode: 'range',
@@ -212,6 +214,9 @@
                             const end = selectedDates[1];
                             filterByDateRange(start, end);
                             clearBtn.style.display = 'inline-flex';
+                            pagination?.classList.add('d-none'); // sembunyikan pagination
+
+                            // isi hidden input untuk export PDF/Excel
                             document.getElementById('pdfStart').value = start.toISOString().split('T')[0];
                             document.getElementById('pdfEnd').value = end.toISOString().split('T')[0];
                             document.getElementById('excelStart').value = start.toISOString().split('T')[0];
@@ -234,18 +239,30 @@
                     dateInput.value = '';
                     clearBtn.style.display = 'none';
                     rows.forEach(row => row.style.display = '');
+                    pagination?.classList.remove('d-none'); // tampilkan kembali pagination
                     document.getElementById('pdfStart').value = '';
                     document.getElementById('pdfEnd').value = '';
                     document.getElementById('excelStart').value = '';
                     document.getElementById('excelEnd').value = '';
                 });
 
-                document.getElementById('searchLaporan').addEventListener('keyup', function () {
+                searchInput.addEventListener('keyup', function () {
                     const filter = this.value.toLowerCase();
+                    let hasFilter = filter.length > 0;
+                    let visibleCount = 0;
+
                     rows.forEach(row => {
                         const text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(filter) ? '' : 'none';
+                        const match = text.includes(filter);
+                        row.style.display = match ? '' : 'none';
+                        if (match) visibleCount++;
                     });
+
+                    if (hasFilter) {
+                        pagination?.classList.add('d-none'); // sembunyikan pagination
+                    } else if (!dateInput.value) {
+                        pagination?.classList.remove('d-none'); // tampilkan pagination lagi kalau tidak ada filter
+                    }
                 });
             });
         </script>

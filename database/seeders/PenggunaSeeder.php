@@ -97,9 +97,9 @@ class PenggunaSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'name' => 'Staff 7',
-                'email' => 'staff7@example.com',
-                'password' => Hash::make('password123'),
+                'name' => 'Admin',
+                'email' => 'adminid@example.com',
+                'password' => Hash::make('12345678'),
                 'role' => 'Staff',
                 'divisi' => 'Keuangan',
                 'created_at' => now(),

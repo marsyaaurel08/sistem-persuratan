@@ -22,7 +22,7 @@
                 <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
                     <!-- Dropdown Semua Divisi -->
-                    <div class="dropdown">
+                    {{-- <div class="dropdown">
                         <button
                             class="btn btn-md btn-light-brand d-flex align-items-center justify-content-between rounded-pill"
                             style="min-width: 180px; height: 38px;" type="button" data-bs-toggle="dropdown"
@@ -62,7 +62,7 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <!-- Dropdown Rentang Tanggal -->
                     <div class="input-group align-items-center border border-secondary-subtle rounded-pill"
@@ -84,11 +84,11 @@
                     </div>
 
                     <!-- Button Perbarui Data -->
-                    <button class="btn d-flex align-items-center rounded-pill"
+                    {{-- <button class="btn d-flex align-items-center rounded-pill"
                         style="background-color: #000B58; color: #fff;" id="refreshDataBtn">
                         <i class="feather-refresh-ccw me-2"></i>
                         <span>Perbarui Data</span>
-                    </button>
+                    </button> --}}
 
                 </div>
             </div>
@@ -98,7 +98,8 @@
 
         <!-- Row Statistik -->
         <div class="row g-3">
-            <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6">
+            <!-- Card 1: Surat Masuk -->
+            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
                 <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 text-center">
                         <div class="d-flex align-items-center gap-3 mb-4">
@@ -115,7 +116,8 @@
                 </div>
             </div>
 
-            <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6">
+            <!-- Card 2: Surat Keluar -->
+            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
                 <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 text-center">
                         <div class="d-flex align-items-center gap-3 mb-4">
@@ -132,39 +134,20 @@
                 </div>
             </div>
 
-            <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
-                    <div class="card-body p-4 text-center">
-                        <div class="d-flex align-items-center gap-3 mb-4">
-                            <div class="avatar-text avatar-lg rounded-3 border-0"
-                                style="background-color: #fffde7; color: #fbc02d; width: 60px; height: 60px; font-size: 28px;">
-                                <i class="feather-clock"></i>
-                            </div>
-                            <div class="text-start">
-                                <h3 class="fs-13 fw-bold text-muted mb-0">Menunggu Respon</h3>
-                            </div>
-                        </div>
-                        <div class="display-5 fw-bold text-dark mt-2">{{ $menungguRespon }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6">
+            <!-- Card 3: Surat Laporan -->
+            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
                 <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 text-center">
                         <div class="d-flex align-items-center gap-3 mb-4">
                             <div class="avatar-text avatar-lg rounded-3 border-0"
                                 style="background-color: #e8f5e9; color: #4caf50; width: 60px; height: 60px; font-size: 28px;">
-                                <i class="feather-activity"></i>
+                                <i class="feather-file-text"></i>
                             </div>
                             <div class="text-start">
-                                <h3 class="fs-13 fw-bold text-muted mb-0">Waktu Respon</h3>
+                                <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Laporan</h3>
                             </div>
                         </div>
-                        <div class="d-flex align-items-baseline justify-content-center gap-2 mt-2">
-                            <span class="display-5 fw-bold text-dark">{{ $waktuRespon }}</span>
-                            <span class="fs-14 fw-bold text-muted">Hari</span>
-                        </div>
+                        <div class="display-5 fw-bold text-dark mt-2">0</div>
                     </div>
                 </div>
             </div>
@@ -173,10 +156,10 @@
         <!-- Row Grafik -->
         <div class="row g-2 mt-3">
             <!-- Line Chart -->
-            <div class="col-xxl-8 col-xl-8 col-lg-12 col-md-12">
-                <div class="card p-2" style="height: 280px;">
+            <div class="col-12">
+                <div class="card p-3" style="height: 420px;">
                     <div class="card-body d-flex flex-column h-100">
-                        <h5 class="fs-14 fw-semibold mb-2">Sales Trend</h5>
+                        <h5 class="fs-16 fw-semibold mb-3">Tren Persuratan Berdasarkan Waktu</h5>
                         <div class="flex-grow-1">
                             <canvas id="lineChart" style="width:100%; height:100%;"></canvas>
                         </div>
@@ -185,7 +168,7 @@
             </div>
 
             <!-- Pie Chart -->
-            <div class="col-xxl-4 col-xl-4 col-lg-12 col-md-12">
+            {{-- <div class="col-xxl-4 col-xl-4 col-lg-12 col-md-12">
                 <div class="card p-2" style="height: 280px;">
                     <div class="card-body d-flex flex-column h-100">
                         <h5 class="fs-14 fw-semibold mb-2">Orders Distribution</h5>
@@ -194,7 +177,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <!-- Row Aktivitas Terbaru -->
@@ -224,7 +207,7 @@
                                         <th>Perihal</th>
                                         <th>Asal / Tujuan</th>
                                         <th>Tanggal</th>
-                                        <th>Status</th>
+                                        {{-- <th>Status</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -235,7 +218,7 @@
                                             <td>{{ $item->perihal }}</td>
                                             <td>{{ $item->lokasi }}</td>
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_surat)->format('d M Y') }}</td>
-                                            <td>
+                                            {{-- <td>
                                                 @php
                                                     $badge = [
                                                         'Selesai' => 'badge-success',
@@ -244,7 +227,7 @@
                                                     ][$item->status] ?? 'badge-secondary';
                                                 @endphp
                                                 <span class="badge-custom {{ $badge }}">{{ $item->status }}</span>
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -396,14 +379,14 @@
                             res.aktivitas.forEach(a => {
                                 const badgeClass = a.status === 'Selesai' ? 'badge-success' : a.status === 'Pending' ? 'badge-warning' : 'badge-info';
                                 $tableBody.append(`
-                                <tr>
-                                    <td>${a.nomor_surat}</td>
-                                    <td>${a.perihal}</td>
-                                    <td>${a.lokasi}</td>
-                                    <td>${moment(a.tanggal_surat).format('DD MMM YYYY')}</td>
-                                    <td><span class="badge-custom ${badgeClass}">${a.status}</span></td>
-                                </tr>
-                            `);
+                                            <tr>
+                                                <td>${a.nomor_surat}</td>
+                                                <td>${a.perihal}</td>
+                                                <td>${a.lokasi}</td>
+                                                <td>${moment(a.tanggal_surat).format('DD MMM YYYY')}</td>
+                                                <td><span class="badge-custom ${badgeClass}">${a.status}</span></td>
+                                            </tr>
+                                        `);
                             });
                         } else {
                             $tableBody.html('<tr><td colspan="5" class="text-center text-muted py-3">Tidak ada data</td></tr>');
@@ -489,9 +472,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const ctxLine = document.getElementById('lineChart');
-            const ctxPie = document.getElementById('pieChart');
 
-            if (ctxLine && ctxPie) {
+            if (ctxLine) {
                 // === LINE CHART (Tren Surat) ===
                 window.lineChart = new Chart(ctxLine, {
                     type: 'line',
@@ -508,39 +490,9 @@
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: { y: { beginAtZero: true } }
-                    }
-                });
-
-                // === PIE CHART (Status Surat) ===
-                window.pieChart = new Chart(ctxPie, {
-                    type: 'pie',
-                    data: {
-                        labels: @json($pieLabels),
-                        datasets: [{
-                            data: @json($pieValues),
-                            backgroundColor: ['#000B58', '#8BBCE7', '#FFEB3B', '#4CAF50', '#F44336']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { usePointStyle: true, font: { size: 12 } }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function (context) {
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const value = context.raw;
-                                        const percent = ((value / total) * 100).toFixed(1);
-                                        return `${context.label}: ${value} (${percent}%)`;
-                                    }
-                                }
-                            }
-                        }
                     }
                 });
             }

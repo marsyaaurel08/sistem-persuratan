@@ -4,9 +4,9 @@
 
 @section('content')
 
-    <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
-    <script src="{{ asset('duralux/assets/vendors/js/moment.min.js') }}"></script>
-    <script src="{{ asset('duralux/assets/vendors/js/daterangepicker.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
         <div class="page-header-left">
             <div class="page-header-title">
@@ -106,10 +106,10 @@
                                         <td>
                                             <span
                                                 class="badge-custom 
-                                                                                                                                    @if($laporan->status == 'Selesai') badge-success
-                                                                                                                                    @elseif($laporan->status == 'Pending') badge-warning
-                                                                                                                                    @elseif($laporan->status == 'Ditolak') badge-danger
-                                                                                                                                    @else badge-info @endif">
+                                                                                                                                                            @if($laporan->status == 'Selesai') badge-success
+                                                                                                                                                            @elseif($laporan->status == 'Pending') badge-warning
+                                                                                                                                                            @elseif($laporan->status == 'Ditolak') badge-danger
+                                                                                                                                                            @else badge-info @endif">
                                                 {{ $laporan->status }}
                                             </span>
                                         </td>
@@ -130,34 +130,29 @@
         </div>
     </div>
     @push('styles')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <style>
             .pagination {
                 color: #000 !important;
-                /* teks hitam */
             }
 
             .pagination .page-item .page-link {
                 color: #000;
-                /* teks link hitam */
                 border: 1px solid #dee2e6;
-                /* optional: border standar */
             }
 
             .pagination .page-item.active .page-link {
                 background-color: #f8f9fa;
-                /* latar active page */
                 border-color: #dee2e6;
                 color: #000;
             }
 
-            /* Pastikan tombol PDF kembali ke warna normal setelah klik */
             .btn-outline-danger {
                 color: #dc3545 !important;
                 border-color: #dc3545 !important;
                 background-color: transparent !important;
             }
 
-            /* Hover dan active: tetap merah normal */
             .btn-outline-danger:hover,
             .btn-outline-danger:active,
             .btn-outline-danger:focus,
@@ -167,7 +162,6 @@
                 border-color: #dc3545 !important;
             }
 
-            /* Setelah klik (hilangkan efek focus putih) */
             .btn-outline-danger:not(:hover):not(:active):focus {
                 color: #dc3545 !important;
                 background-color: transparent !important;
@@ -175,14 +169,12 @@
                 box-shadow: none !important;
             }
 
-            /* Pastikan tombol Excel kembali ke warna normal setelah klik */
             .btn-outline-success {
                 color: #198754 !important;
                 border-color: #198754 !important;
                 background-color: transparent !important;
             }
 
-            /* Hover dan active: tetap hijau normal */
             .btn-outline-success:hover,
             .btn-outline-success:active,
             .btn-outline-success:focus,
@@ -192,7 +184,6 @@
                 border-color: #198754 !important;
             }
 
-            /* Setelah klik (hilangkan efek focus putih) */
             .btn-outline-success:not(:hover):not(:active):focus {
                 color: #198754 !important;
                 background-color: transparent !important;
@@ -201,105 +192,62 @@
             }
         </style>
     @endpush
-    @push('scripts')
-        <!-- Date Range Picker with Filtering -->
-        <script>
-            $(function () {
-                const $dateInput = $('#dateRange');
-                const $clearBtn = $('#clearDateRange');
-                const $tableRows = $('#laporanTable tbody tr');
 
-                // 🔹 Inisialisasi Date Range Picker
-                $dateInput.daterangepicker({
-                    autoUpdateInput: false,
-                    locale: {
-                        format: 'DD MMM YYYY',
-                        applyLabel: 'Terapkan',
-                        cancelLabel: 'Batal',
-                        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                        monthNames: [
-                            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                        ]
-                    },
-                    opens: 'left'
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dateInput = document.getElementById('dateRange');
+                const clearBtn = document.getElementById('clearDateRange');
+                const rows = document.querySelectorAll('#laporanTable tbody tr');
+
+                const fp = flatpickr(dateInput, {
+                    mode: 'range',
+                    dateFormat: 'd M Y',
+                    locale: 'id',
+                    onChange: function (selectedDates) {
+                        if (selectedDates.length === 2) {
+                            const start = selectedDates[0];
+                            const end = selectedDates[1];
+                            filterByDateRange(start, end);
+                            clearBtn.style.display = 'inline-flex';
+                            document.getElementById('pdfStart').value = start.toISOString().split('T')[0];
+                            document.getElementById('pdfEnd').value = end.toISOString().split('T')[0];
+                            document.getElementById('excelStart').value = start.toISOString().split('T')[0];
+                            document.getElementById('excelEnd').value = end.toISOString().split('T')[0];
+                        }
+                    }
                 });
 
-                // 🔹 Fungsi filter tabel berdasarkan tanggal
-                function filterByDateRange() {
-                    const dateStr = $dateInput.val();
-                    if (!dateStr) {
-                        $tableRows.show();
-                        return;
-                    }
-
-                    const picker = $dateInput.data('daterangepicker');
-                    const startDate = picker.startDate;
-                    const endDate = picker.endDate;
-
-                    $tableRows.each(function () {
-                        const rowDateStr = $(this).attr('data-date');
-                        const rowDate = rowDateStr ? moment(rowDateStr, 'YYYY-MM-DD') : null;
-
-                        $(this).toggle(
-                            rowDate &&
-                            rowDate.isSameOrAfter(startDate, 'day') &&
-                            rowDate.isSameOrBefore(endDate, 'day')
-                        );
+                function filterByDateRange(start, end) {
+                    rows.forEach(row => {
+                        const rowDateStr = row.getAttribute('data-date');
+                        if (!rowDateStr) return row.style.display = 'none';
+                        const rowDate = new Date(rowDateStr);
+                        row.style.display = (rowDate >= start && rowDate <= end) ? '' : 'none';
                     });
                 }
 
-                // 🔹 Saat user pilih tanggal
-                $dateInput.on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(
-                        picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY')
-                    );
-                    $clearBtn.show();
-                    filterByDateRange();
-
-                    // 🟢 Simpan nilai ke form PDF & Excel
-                    $('#pdfStart').val(picker.startDate.format('YYYY-MM-DD'));
-                    $('#pdfEnd').val(picker.endDate.format('YYYY-MM-DD'));
-                    $('#excelStart').val(picker.startDate.format('YYYY-MM-DD'));
-                    $('#excelEnd').val(picker.endDate.format('YYYY-MM-DD'));
+                clearBtn.addEventListener('click', function () {
+                    fp.clear();
+                    dateInput.value = '';
+                    clearBtn.style.display = 'none';
+                    rows.forEach(row => row.style.display = '');
+                    document.getElementById('pdfStart').value = '';
+                    document.getElementById('pdfEnd').value = '';
+                    document.getElementById('excelStart').value = '';
+                    document.getElementById('excelEnd').value = '';
                 });
 
-                // 🔹 Saat user klik batal
-                $dateInput.on('cancel.daterangepicker', function () {
-                    $(this).val('');
-                    $clearBtn.hide();
-                    filterByDateRange();
-
-                    // 🟢 Kosongkan hidden input
-                    $('#pdfStart, #pdfEnd, #excelStart, #excelEnd').val('');
-                });
-
-                // 🔹 Tombol reset tanggal
-                $clearBtn.on('click', function () {
-                    $dateInput.val('');
-                    $(this).hide();
-                    filterByDateRange();
-
-                    // 🟢 Reset hidden input
-                    $('#pdfStart, #pdfEnd, #excelStart, #excelEnd').val('');
+                document.getElementById('searchLaporan').addEventListener('keyup', function () {
+                    const filter = this.value.toLowerCase();
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(filter) ? '' : 'none';
+                    });
                 });
             });
-        </script>
-
-        <script>
-            // Search seluruh kolom di tabel
-            document.getElementById('searchLaporan').addEventListener('keyup', function () {
-                const filter = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#laporanTable tbody tr');
-
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(filter) ? '' : 'none';
-                });
-            });
-
-
-            
         </script>
     @endpush
 

@@ -19,6 +19,7 @@
         href="https://eproc.jasatirta1.co.id/assets/images/logo-jasatirta-crop.png" />
     <!--! END: Favicon-->
     <!--! BEGIN: Bootstrap CSS-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/vendors/css/daterangepicker.min.css') }}" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}" />
@@ -35,7 +36,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/badge.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 
-    
+
 
     <!--! END: Custom CSS-->
     <!--! BEGIN: Custom App CSS-->
@@ -409,8 +410,265 @@
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <div id="toastNotif" class="toast-notif">
+        <span class="toast-icon"></span>
+        <span class="toast-message"></span>
+        <button class="toast-close">&times;</button>
+    </div>
+
+
+    @push('scripts')
+        <style>
+            /* ==== Toast Modern ==== */
+            .toast-notif {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 300px;
+                max-width: 360px;
+                padding: 12px 16px;
+                border-radius: 10px;
+                font-size: 0.95rem;
+                background: #fff;
+                color: #333;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                border-left: 6px solid;
+                opacity: 0;
+                transform: translateX(50px);
+                transition: all 0.4s ease;
+                z-index: 9999;
+            }
+
+            .toast-notif.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .toast-success {
+                border-color: #28a745;
+                background-color: #e8f5e9;
+            }
+
+            .toast-info {
+                border-color: #0d6efd;
+                background-color: #e7f0ff;
+            }
+
+            .toast-warning {
+                border-color: #ffc107;
+                background-color: #fff8e1;
+            }
+
+            /* ==== Custom Pagination ==== */
+            .pagination {
+                color: #000 !important;
+            }
+
+            .pagination .page-item .page-link {
+                color: #000;
+                border: 1px solid #dee2e6;
+            }
+
+            .pagination .page-item.active .page-link {
+                background-color: #f8f9fa;
+                border-color: #dee2e6;
+                color: #000;
+            }
+
+            .toast-error {
+                border-color: #dc3545;
+                background-color: #fdecea;
+            }
+
+            .toast-icon {
+                font-size: 1.2rem;
+                flex-shrink: 0;
+            }
+
+            .toast-close {
+                margin-left: auto;
+                background: transparent;
+                border: none;
+                color: #666;
+                font-size: 1.1rem;
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+
+            .toast-close:hover {
+                color: #000;
+            }
+        </style>
+
+        <script>
+            // === Modern Toast Function ===
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toastNotif');
+                const icon = toast.querySelector('.toast-icon');
+                const msg = toast.querySelector('.toast-message');
+                const closeBtn = toast.querySelector('.toast-close');
+
+                toast.className = `toast-notif toast-${type}`;
+                msg.textContent = message;
+
+                switch (type) {
+                    case 'success':
+                        icon.innerHTML = '<i class="feather-check-circle text-success"></i>';
+                        break;
+                    case 'info':
+                        icon.innerHTML = '<i class="feather-info text-primary"></i>';
+                        break;
+                    case 'warning':
+                        icon.innerHTML = '<i class="feather-alert-triangle text-warning"></i>';
+                        break;
+                    case 'error':
+                        icon.innerHTML = '<i class="feather-x-circle text-danger"></i>';
+                        break;
+                }
+
+                toast.classList.add('show');
+
+                setTimeout(() => hideToast(), 3000);
+                closeBtn.onclick = hideToast;
+            }
+
+            function hideToast() {
+                const toast = document.getElementById('toastNotif');
+                toast.classList.remove('show');
+            }
+
+            // === Hapus pengguna AJAX ===
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.btn-hapus-pengguna').forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        const form = btn.closest('form.form-hapus-pengguna');
+                        const nama = form.getAttribute('data-nama') || '';
+                        e.preventDefault();
+                        if (!confirm(`Yakin ingin menghapus pengguna "${nama}"?`)) return;
+
+                        const fd = new FormData(form);
+                        fetch(form.action, {
+                            method: 'POST',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            body: fd
+                        })
+                            .then(async res => {
+                                let data = {};
+                                try {
+                                    data = await res.json();
+                                } catch { }
+                                if (res.ok && data.success) {
+                                    showToast(data.message || 'Berhasil menghapus pengguna');
+                                    setTimeout(() => window.location.reload(), 900);
+                                } else if (res.ok && !data.success) {
+                                    showToast(data.message || 'Gagal menghapus pengguna!');
+                                } else {
+                                    showToast('Gagal menghapus pengguna!');
+                                }
+                            })
+                            .catch(() => showToast('Terjadi kesalahan koneksi.'));
+                    });
+                });
+
+                // Toast dari session (Laravel flash)
+                @if(session('success'))
+                    showToast(@json(session('success')), 'success');
+                @endif
+                @if(session('error'))
+                    showToast(@json(session('error')), 'error');
+                @endif
+                    });
+        </script>
+        <script>
+            // Tampilkan toast jika ada ?success=1 di URL (setelah tambah pengguna)
+            document.addEventListener('DOMContentLoaded', function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('success') === '1') {
+                    showToast('Pengguna baru berhasil ditambahkan!', 'success');
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('success');
+                        window.history.replaceState({}, document.title, url.pathname + url.search);
+                    }
+                } else if (urlParams.get('updated') === '1') {
+                    showToast('Data pengguna berhasil diperbarui!', 'success');
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('updated');
+                        window.history.replaceState({}, document.title, url.pathname + url.search);
+                    }
+                }
+            });
+        </script>
+
+        <script>
+            // === Fungsi filter gabungan (pencarian + divisi) ===
+            document.getElementById('searchPengguna').addEventListener('keyup', filterTable);
+
+            function filterTable() {
+                let filterText = document.getElementById('searchPengguna').value.toLowerCase();
+                let selectedDivisi = Array.from(document.querySelectorAll('.divisi-checkbox:checked')).map(cb => cb.value.toLowerCase());
+                let rows = document.querySelectorAll('#userTable tbody tr');
+
+                rows.forEach(row => {
+                    let text = row.textContent.toLowerCase();
+                    let divisi = row.children[4]?.textContent.trim().toLowerCase() || '';
+                    let matchText = text.includes(filterText);
+                    let matchDivisi = selectedDivisi.length === 0 || selectedDivisi.includes(divisi);
+                    row.style.display = matchText && matchDivisi ? '' : 'none';
+                });
+            }
+
+            document.getElementById('pilihSemuaDivisi').addEventListener('change', function () {
+                document.querySelectorAll('.divisi-checkbox').forEach(cb => cb.checked = this.checked);
+                updateDivisiLabel();
+            });
+
+            document.getElementById('resetDivisi').addEventListener('click', function () {
+                document.querySelectorAll('.divisi-checkbox').forEach(cb => cb.checked = true);
+                document.getElementById('pilihSemuaDivisi').checked = true;
+                updateDivisiLabel();
+                filterTable();
+            });
+
+            document.getElementById('applyDivisi').addEventListener('click', function () {
+                filterTable();
+                updateDivisiLabel();
+                const dropdownToggle = document.getElementById('dropdownDivisiButton');
+                let dropdown = bootstrap.Dropdown.getInstance(dropdownToggle);
+                if (!dropdown) dropdown = new bootstrap.Dropdown(dropdownToggle);
+                dropdown.hide();
+            });
+
+            function updateDivisiLabel() {
+                const totalDivisi = document.querySelectorAll('.divisi-checkbox').length;
+                const selectedDivisi = document.querySelectorAll('.divisi-checkbox:checked').length;
+                const label = document.querySelector('#dropdownDivisiButton span');
+
+                if (selectedDivisi === totalDivisi) {
+                    label.textContent = 'Semua Divisi';
+                } else if (selectedDivisi === 0) {
+                    label.textContent = '0 divisi dipilih';
+                } else if (selectedDivisi === 1) {
+                    label.textContent = '1 divisi dipilih';
+                } else {
+                    label.textContent = `${selectedDivisi} divisi dipilih`;
+                }
+            }
+
+            document.querySelectorAll('.divisi-checkbox').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    const totalDivisi = document.querySelectorAll('.divisi-checkbox').length;
+                    const checkedCount = document.querySelectorAll('.divisi-checkbox:checked').length;
+                    document.getElementById('pilihSemuaDivisi').checked = (checkedCount === totalDivisi);
+                    updateDivisiLabel();
+                });
+            });
+        </script>
+    @endpush
 </body>
-
-
 
 </html>

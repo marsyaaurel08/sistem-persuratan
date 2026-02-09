@@ -18,7 +18,7 @@
                         <span class="nxl-mtext">Dashboards</span><span class="nxl-arrow">
                     </a>
                 </li>
-                <li class="nxl-item">
+                {{-- <li class="nxl-item">
                     <a href="{{ url('/surat_masuk') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-mail"></i></span>
                         <span class="nxl-mtext">Surat Masuk</span><span class="nxl-arrow">
@@ -30,7 +30,7 @@
                         <span class="nxl-mtext">Surat Keluar</span><span class="nxl-arrow">
                     </a>
 
-                </li>
+                </li> --}}
                 <li class="nxl-item">
                     <a href="{{ url('/arsip') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-archive"></i></span>
@@ -40,15 +40,15 @@
                 <li class="nxl-item">
                     <a href="{{ url('/laporan') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-bar-chart-2"></i></span>
-                        <span class="nxl-mtext">Laporan</span><span class="nxl-arrow">
+                        <span class="nxl-mtext">Rekap</span><span class="nxl-arrow">
                     </a>
                 </li>
-                <li class="nxl-item">
+                {{-- <li class="nxl-item">
                     <a href="{{ url('/manajemen-pengguna') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-users"></i></span>
                         <span class="nxl-mtext">Manajemen Pengguna</span><span class="nxl-arrow">
                     </a>
-                </li>
+                </li> --}}
                 <li class="nxl-item">
                     <a href="javascript:void(0);" class="nxl-link" data-bs-toggle="modal" data-bs-target="#modalLogout">
                         <span class="nxl-micon"><i class="feather-log-out"></i></span>

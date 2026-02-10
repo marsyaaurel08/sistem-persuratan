@@ -216,4 +216,11 @@ class ArsipController extends Controller
             'message' => 'Arsip berhasil dihapus'
         ]);
     }
+
+    public function detail($id)
+    {
+        $arsip = Arsip::with(['pengarsip', 'files'])->findOrFail($id);
+
+        return view('arsip.arsip_detail', compact('arsip'));
+    }
 }

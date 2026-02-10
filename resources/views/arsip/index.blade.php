@@ -111,25 +111,25 @@
 
                             <a href="{{ route('arsip.index') }}"
                                 class="badge rounded-pill px-3 py-2
-                                                                                           {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                               {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Semua ({{ $countSemua }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                                                           {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                               {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Masuk ({{ $countMasuk }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                                                           {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                               {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Keluar ({{ $countKeluar }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                                                           {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                               {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Laporan ({{ $countLaporan }})
                             </a>
                         </div>
@@ -185,7 +185,8 @@
                                             $pengarsip = $item->pengarsip->name ?? '-';
                                         @endphp
 
-                                        <tr data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
+                                        <tr class="clickable-row" data-href="{{ route('arsip.arsip_detail', $item->id) }}"
+                                            data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
                                             data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
                                             data-tanggal="{{ $tanggalDisplay }}"
                                             data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
@@ -273,7 +274,7 @@
         </div>
 @endsection
 
-    {{-- Modal Detail Divisi --}}
+    {{-- Modal Detail --}}
     <div class="modal fade" id="folderModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -664,5 +665,27 @@
                 });
             });
         </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.clickable-row').forEach(row => {
+                    row.addEventListener('click', function (e) {
+
+                        // 🚫 cegah redirect jika klik elemen interaktif
+                        if (
+                            e.target.closest('a') ||
+                            e.target.closest('button') ||
+                            e.target.closest('input') ||
+                            e.target.closest('.preview-btn')
+                        ) {
+                            return;
+                        }
+
+                        // ✅ redirect ke detail
+                        window.location.href = this.dataset.href;
+                    });
+                });
+            });
+        </script>
+
 
     @endpush

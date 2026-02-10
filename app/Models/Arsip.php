@@ -63,7 +63,6 @@ class Arsip extends Model
         });
     }
 
-
     public function pengarsip()
     {
         return $this->belongsTo(Pengguna::class, 'diarsipkan_oleh');
@@ -73,6 +72,4 @@ class Arsip extends Model
     {
         return $this->hasMany(ArsipFile::class, 'arsip_id');
     }
-
-    
 }

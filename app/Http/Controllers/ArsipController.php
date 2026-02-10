@@ -192,7 +192,6 @@ class ArsipController extends Controller
             // Kirim ZIP ke client lalu hapus file sementara
             readfile($tmpFile);
             unlink($tmpFile);
-
         }, 200, [
             'Content-Type'        => 'application/zip',
             'Content-Disposition' => 'attachment; filename="' . $zipName . '"',
@@ -212,6 +211,9 @@ class ArsipController extends Controller
 
         Arsip::whereIn('id', $ids)->delete();
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Arsip berhasil dihapus'
+        ]);
     }
 }

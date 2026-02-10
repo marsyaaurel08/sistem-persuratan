@@ -3,6 +3,8 @@
 @section('title', 'Arsip')
 
 @section('content')
+  
+
     {{-- Page Header --}}
     <div class="page-header rounded">
         <div class="page-header-left d-flex align-items-center">
@@ -53,12 +55,14 @@
     </div>
 
     {{-- Alert --}}
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show">
-            <strong>Berhasil!</strong> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+
+
+    {{-- @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show">
+        <strong>Berhasil!</strong> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    @endif --}}
 
     {{-- Division Folder Cards --}}
     {{-- <div class="row g-3 mb-4">
@@ -107,25 +111,25 @@
 
                             <a href="{{ route('arsip.index') }}"
                                 class="badge rounded-pill px-3 py-2
-                                                           {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                           {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Semua ({{ $countSemua }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                           {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                           {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Masuk ({{ $countMasuk }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                           {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                           {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Keluar ({{ $countKeluar }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                           {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                           {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Laporan ({{ $countLaporan }})
                             </a>
                         </div>
@@ -298,6 +302,7 @@
         </div>
     </div>
 
+
     <!-- Modal Preview -->
     <!-- Modal Preview -->
     <div class="modal fade" id="previewModal" tabindex="-1">
@@ -318,7 +323,7 @@
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Search Table -->
         <script>
@@ -579,6 +584,7 @@
         </script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
+
                 const deleteBtn = document.getElementById('deleteSelected');
                 if (!deleteBtn) return;
 
@@ -593,46 +599,68 @@
 
                 updateDeleteButton();
 
+                /* ===============================
+                   BULK DELETE (CONFIRM ONLY)
+                =============================== */
                 deleteBtn.addEventListener('click', function () {
+
                     const ids = Array.from(
                         document.querySelectorAll('.row-checkbox:checked')
                     ).map(cb => cb.value);
 
                     if (ids.length === 0) return;
 
-                    if (!confirm(`Yakin ingin menghapus ${ids.length} arsip?`)) return;
+                    // ✅ SweetAlert hanya untuk KONFIRMASI
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus?',
+                        text: `${ids.length} arsip akan dihapus permanen.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, hapus',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (!result.isConfirmed) return;
 
-                    deleteBtn.disabled = true;
+                        deleteBtn.disabled = true;
 
-                    fetch("{{ route('arsip.bulkDelete') }}", {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ ids })
-                    })
-                        .then(res => {
-                            if (!res.ok) throw new Error('Gagal menghapus data');
-                            return res.json();
+                        fetch("{{ route('arsip.bulkDelete') }}", {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ ids })
                         })
-                        .then(() => {
-                            // 🧹 hapus baris dari tabel
-                            ids.forEach(id => {
-                                const checkbox = document.querySelector(`.row-checkbox[value="${id}"]`);
-                                if (checkbox) checkbox.closest('tr').remove();
+                            .then(res => {
+                                if (!res.ok) throw new Error('Gagal menghapus data');
+                                return res.json();
+                            })
+                            .then(() => {
+
+                                // 🧹 hapus baris tabel
+                                ids.forEach(id => {
+                                    const checkbox = document.querySelector(`.row-checkbox[value="${id}"]`);
+                                    if (checkbox) checkbox.closest('tr').remove();
+                                });
+
+                                // reset bulk bar
+                                document.getElementById('selectedCount').textContent = 0;
+                                document.getElementById('bulkActionBar').classList.add('d-none');
+
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert(err.message || 'Terjadi kesalahan');
+                            })
+                            .finally(() => {
+                                updateDeleteButton();
                             });
 
-                            // reset bulk bar
-                            document.getElementById('selectedCount').textContent = 0;
-                            document.getElementById('bulkActionBar').classList.add('d-none');
-                        })
-                        .catch(err => {
-                            alert(err.message);
-                        })
-                        .finally(() => {
-                            updateDeleteButton();
-                        });
+                            showToast('Arsip berhasil dihapus', 'success');
+                    });
                 });
             });
         </script>

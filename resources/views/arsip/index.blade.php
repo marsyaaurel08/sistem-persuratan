@@ -175,7 +175,7 @@
                                         {{-- <th>Divisi</th> --}}
                                         <th>Tanggal</th>
                                         <th>Pengarsip</th>
-                                        <th>File</th>
+                                        {{-- <th>File</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -229,7 +229,7 @@
                                                     {{ $item->pengarsip->name ?? '-' }}
                                                 </small>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 @if ($item->files->count())
                                                     <div class="d-flex flex-wrap gap-1">
                                                         <!-- Tombol Download -->
@@ -254,7 +254,7 @@
                                                 @else
                                                     <span class="text-muted">-</span>
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>

@@ -124,17 +124,16 @@
 
                     <div class="table-responsive">
                         <table class="table table-hover table-sm align-middle" id="aktivitasTable">
-                            <thead>
+                            <thead class="small">
                                 <tr>
                                     <th>Kode Arsip</th>
                                     <th>No. Surat</th>
                                     <th>Perihal</th>
                                     <th>Tanggal</th>
                                     <th>Pengarsip</th>
-                                    <th>File</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="small">
                                 @foreach ($aktivitas as $item)
                                     <tr data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
                                         <td class="text-nowrap">
@@ -155,32 +154,6 @@
                                             <small class="text-muted">
                                                 {{ $item['pengarsip'] ?? '-' }}
                                             </small>
-                                        </td>
-                                        <td>
-                                            @if (!empty($item['files']) && count($item['files']) > 0)
-                                                <div class="d-flex flex-wrap gap-1">
-                                                    @foreach ($item['files'] as $file)
-                                                        {{-- Tombol Download --}}
-                                                        <a href="{{ route('arsip.download', $file['id']) }}"
-                                                            class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
-                                                            title="Download">
-                                                            <i class="feather-download me-1" style="font-size: 14px;"></i>
-                                                            <span style="font-size: 12px;">Unduh</span>
-                                                        </a>
-
-                                                        {{-- Tombol Preview (sama seperti di arsip.index) --}}
-                                                        <button type="button"
-                                                            class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
-                                                            data-bs-toggle="modal" data-bs-target="#previewModal"
-                                                            data-file="{{ $file['url'] }}" title="Preview">
-                                                            <i class="feather-eye me-1" style="font-size: 14px;"></i>
-                                                            <span style="font-size: 12px;">Preview</span>
-                                                        </button>
-                                                    @endforeach
-                                                </div>
-                                            @else
-                                                <span class="text-muted">-</span>
-                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

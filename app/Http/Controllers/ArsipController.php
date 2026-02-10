@@ -214,4 +214,11 @@ class ArsipController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function detail($id)
+    {
+        $arsip = Arsip::with(['pengarsip', 'files'])->findOrFail($id);
+
+        return view('arsip.arsip_detail', compact('arsip'));
+    }
 }

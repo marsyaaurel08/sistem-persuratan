@@ -68,15 +68,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/manajemen-pengguna', [PenggunaController::class, 'index'])
         ->name('pengguna.index');
 
-    Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
-    Route::get('/arsip/upload', [ArsipController::class, 'create'])
-        ->name('arsip.create');
-    Route::post('/arsip/upload', [ArsipController::class, 'store'])
-        ->name('arsip.store');
-    Route::get('/arsip/download/{id}', [ArsipController::class, 'download'])
-        ->name('arsip.download');
-    Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload'])->name('arsip.bulkDownload');
-
     // surat masuk
     Route::get('/surat_masuk', [SuratMasukController::class, 'index'])
         ->name('surat_masuk.index');
@@ -97,6 +88,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
         ->name('surat_keluar.search');
 
+    // Fitur Arsip  
+    Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
+    Route::get('/arsip/detail/{id}', [ArsipController::class, 'detail'])->name('arsip.arsip_detail');
+    Route::get('/arsip/upload', [ArsipController::class, 'create'])
+        ->name('arsip.create');
+    Route::post('/arsip/upload', [ArsipController::class, 'store'])
+        ->name('arsip.store');
+    Route::get('/arsip/download/{id}', [ArsipController::class, 'download'])
+        ->name('arsip.download');
     Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload']) ->name('arsip.bulkDownload');
     Route::post('/arsip/bulk-delete', [ArsipController::class, 'bulkDelete'])
     ->name('arsip.bulkDelete');

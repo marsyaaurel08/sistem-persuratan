@@ -7,6 +7,7 @@ use App\Models\ArsipFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ArsipController extends Controller
 {
@@ -104,59 +105,103 @@ class ArsipController extends Controller
         return response()->download($path, $file->nama_file);
     }
 
+    /**
+     * Unduh arsip secara massal.
+     *
+     * Aturan:
+     * - 1 arsip dengan 1 file → langsung download file
+     * - 1 arsip dengan banyak file → ZIP
+     * - Banyak arsip → 1 ZIP (per arsip dibuatkan folder)
+     */
     public function bulkDownload(Request $request)
     {
-        $ids = $request->ids;
+        $ids = $request->ids ?? [];
 
-        $files = ArsipFile::whereIn('id', $ids)->get();
-
-        if ($files->isEmpty()) {
-            abort(404, 'File tidak ditemukan');
+        // Validasi: harus ada arsip yang dipilih
+        if (count($ids) === 0) {
+            abort(400, 'Tidak ada arsip dipilih');
         }
 
-        // ✅ 1 FILE
-        if ($files->count() === 1) {
-            $file = $files->first();
-            $path = storage_path('app/public/' . $file->path_file);
+        // Ambil data arsip beserta file-file nya
+        $arsips = Arsip::with('files')
+            ->whereIn('id', $ids)
+            ->get();
 
-            return response()->download($path, $file->nama_file);
+        if ($arsips->isEmpty()) {
+            abort(404, 'Arsip tidak ditemukan');
         }
 
-        // ✅ BANYAK FILE → ZIP
-        $zipName = 'arsip_' . now()->format('Ymd_His') . '.zip';
-        $zipDir = storage_path('app/public/tmp');
+        // Jika hanya 1 arsip dan hanya 1 file, unduh langsung tanpa ZIP
+        if ($arsips->count() === 1) {
+            $arsip = $arsips->first();
 
-        if (!file_exists($zipDir)) {
-            mkdir($zipDir, 0775, true);
-        }
+            if ($arsip->files->count() === 0) {
+                abort(404, 'File arsip tidak ditemukan');
+            }
 
-        $zipPath = $zipDir . '/' . $zipName;
+            if ($arsip->files->count() === 1) {
+                $file = $arsip->files->first();
+                $path = storage_path('app/public/' . $file->path_file);
 
-        $zip = new \ZipArchive;
-        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
-            abort(500, 'Gagal membuat ZIP');
-        }
-
-        $added = 0;
-        foreach ($files as $file) {
-            $filePath = storage_path('app/public/' . $file->path_file);
-            if (file_exists($filePath)) {
-                $zip->addFile($filePath, $file->nama_file);
-                $added++;
+                return response()->download($path, $file->nama_file);
             }
         }
 
-        $zip->close();
+        // Unduh dalam bentuk ZIP (streaming)
+        $zipName = 'arsip_' . now()->format('Ymd_His') . '.zip';
 
-        if ($added === 0) {
-            abort(500, 'Tidak ada file valid untuk di-ZIP');
-        }
+        return new StreamedResponse(function () use ($arsips) {
+            $zip = new \ZipArchive;
 
-        return response()
-            ->download($zipPath, $zipName)
-            ->deleteFileAfterSend(true);
+            // File ZIP sementara
+            $tmpFile = tempnam(sys_get_temp_dir(), 'arsip_zip_');
+
+            if ($zip->open($tmpFile, \ZipArchive::CREATE) !== true) {
+                abort(500, 'Gagal membuat ZIP');
+            }
+
+            // Daftar isi arsip untuk manifest
+            $manifest = [];
+
+            foreach ($arsips as $arsip) {
+                // Nama folder berdasarkan nomor surat (dibuat aman untuk ZIP)
+                $folder = preg_replace('/[^A-Za-z0-9_\-]/', '_', $arsip->nomor_surat);
+
+                foreach ($arsip->files as $file) {
+                    $filePath = storage_path('app/public/' . $file->path_file);
+
+                    if (file_exists($filePath)) {
+                        $zip->addFile(
+                            $filePath,
+                            $folder . '/' . $file->nama_file
+                        );
+
+                        $manifest[] = $arsip->nomor_surat . ' | ' . $file->nama_file;
+                    }
+                }
+            }
+
+            // Tambahkan file manifest ke dalam ZIP
+            $zip->addFromString(
+                'manifest.txt',
+                implode(PHP_EOL, $manifest)
+            );
+
+            $zip->close();
+
+            // Kirim ZIP ke client lalu hapus file sementara
+            readfile($tmpFile);
+            unlink($tmpFile);
+
+        }, 200, [
+            'Content-Type'        => 'application/zip',
+            'Content-Disposition' => 'attachment; filename="' . $zipName . '"',
+        ]);
     }
 
+    /**
+     * Hapus arsip secara massal berdasarkan ID.
+     */
     public function bulkDelete(Request $request)
     {
         $ids = $request->ids ?? [];

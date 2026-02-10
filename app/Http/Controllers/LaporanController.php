@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Arsip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -13,41 +14,38 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = DB::table('surat_masuk')
+        $query = Arsip::query()
             ->select(
-                'nomor_surat as no_surat',
+                'kode_arsip',
+                'nomor_surat',
                 'perihal',
-                'penerima_divisi as divisi',
-                'tanggal_surat as tanggal',
-                'status'
-            )
-            ->unionAll(
-                DB::table('surat_keluar')->select(
-                    'nomor_surat as no_surat',
-                    'perihal',
-                    'pengirim_divisi as divisi',
-                    'tanggal_surat as tanggal',
-                    'status'
-                )
+                'kategori',
+                'tanggal_arsip'
             );
 
+        // 🔍 SEARCH
         if ($request->filled('search')) {
             $search = strtolower($request->search);
-            $query = DB::table(DB::raw("({$query->toSql()}) as t"))
-                ->whereRaw("
-                    LOWER(no_surat) LIKE ? OR 
-                    LOWER(perihal) LIKE ? OR 
-                    LOWER(divisi) LIKE ? OR 
-                    LOWER(status) LIKE ?
-                ", ["%$search%", "%$search%", "%$search%", "%$search%"]);
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(kode_arsip) LIKE ?', ["%$search%"])
+                ->orWhereRaw('LOWER(nomor_surat) LIKE ?', ["%$search%"])
+                ->orWhereRaw('LOWER(perihal) LIKE ?', ["%$search%"])
+                ->orWhereRaw('LOWER(kategori) LIKE ?', ["%$search%"]);
+            });
         }
 
+        // 📅 FILTER TANGGAL ARSIP
         if ($request->filled('start') && $request->filled('end')) {
-            $query = DB::table(DB::raw("({$query->toSql()}) as t"))
-                ->whereBetween('tanggal', [$request->start, $request->end]);
+            $query->whereBetween('tanggal_arsip', [
+                $request->start,
+                $request->end
+            ]);
         }
 
-        $laporans = $query->orderBy('tanggal', 'desc')->paginate(10);
+        $laporans = $query
+            ->orderBy('tanggal_arsip', 'desc')
+            ->paginate(10);
+
         return view('laporan.index', compact('laporans'));
     }
 
@@ -61,14 +59,13 @@ class LaporanController extends Controller
         if ($request->filled('start') && $request->filled('end')) {
             $start = \Carbon\Carbon::parse($request->start)->format('d-m-Y');
             $end   = \Carbon\Carbon::parse($request->end)->format('d-m-Y');
-            $filename = "Laporan PDF Persuratan Periode {$start} s.d {$end}.pdf";
+            $filename = "Laporan PDF Arsip Periode {$start} s.d {$end}.pdf";
         } else {
-            $filename = "Laporan PDF Persuratan Semua Data.pdf";
+            $filename = "Laporan PDF Arsip Semua Data.pdf";
         }
 
         return $pdf->stream($filename);
     }
-
 
     public function exportExcel(Request $request)
     {
@@ -88,13 +85,12 @@ class LaporanController extends Controller
         );
     }
 
-
     public function previewExcel(Request $request)
     {
         $laporans = $this->getFilteredData($request);
 
-        // Header kolom (bisa ubah sesuai kebutuhan)
-        $headers = ['No. Surat', 'Perihal', 'Divisi', 'Tanggal', 'Status'];
+        // Header kolom baru sesuai Arsip
+        $headers = ['Kode Arsip', 'No. Surat', 'Perihal', 'Kategori', 'Tanggal Arsip'];
 
         return view('laporan.preview_excel', compact('laporans', 'headers', 'request'));
     }
@@ -102,40 +98,34 @@ class LaporanController extends Controller
 
     protected function getFilteredData(Request $request)
     {
-        $query = DB::table('surat_masuk')
+        $query = Arsip::query()
             ->select(
-                'nomor_surat as no_surat',
+                'kode_arsip',
+                'nomor_surat',
                 'perihal',
-                'penerima_divisi as divisi',
-                'tanggal_surat as tanggal',
-                'status'
-            )
-            ->unionAll(
-                DB::table('surat_keluar')->select(
-                    'nomor_surat as no_surat',
-                    'perihal',
-                    'pengirim_divisi as divisi',
-                    'tanggal_surat as tanggal',
-                    'status'
-                )
+                'kategori',
+                'tanggal_arsip'
             );
 
+        // 🔍 SEARCH
         if ($request->filled('search')) {
             $search = strtolower($request->search);
-            $query = DB::table(DB::raw("({$query->toSql()}) as t"))
-                ->whereRaw("
-                    LOWER(no_surat) LIKE ? OR 
-                    LOWER(perihal) LIKE ? OR 
-                    LOWER(divisi) LIKE ? OR 
-                    LOWER(status) LIKE ?
-                ", ["%$search%", "%$search%", "%$search%", "%$search%"]);
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(kode_arsip) LIKE ?', ["%$search%"])
+                ->orWhereRaw('LOWER(nomor_surat) LIKE ?', ["%$search%"])
+                ->orWhereRaw('LOWER(perihal) LIKE ?', ["%$search%"])
+                ->orWhereRaw('LOWER(kategori) LIKE ?', ["%$search%"]);
+            });
         }
 
+        // 📅 FILTER TANGGAL ARSIP
         if ($request->filled('start') && $request->filled('end')) {
-            $query = DB::table(DB::raw("({$query->toSql()}) as t"))
-                ->whereBetween('tanggal', [$request->start, $request->end]);
+            $query->whereBetween('tanggal_arsip', [
+                $request->start,
+                $request->end
+            ]);
         }
 
-        return $query->orderBy('tanggal', 'desc')->get();
+        return $query->orderBy('tanggal_arsip', 'desc')->get();
     }
 }

@@ -26,7 +26,7 @@
                 <table class="table table-bordered table-sm align-middle text-center">
                     <thead class="table-success">
                         <tr>
-                            @foreach($headers as $header)
+                            @foreach ($headers as $header)
                                 <th>{{ $header }}</th>
                             @endforeach
                         </tr>
@@ -34,18 +34,11 @@
                     <tbody>
                         @forelse($laporans as $laporan)
                             <tr>
-                                <td>{{ $laporan->no_surat }}</td>
+                                <td>{{ $laporan->kode_arsip }}</td>
+                                <td>{{ $laporan->nomor_surat }}</td>
                                 <td>{{ $laporan->perihal }}</td>
-                                <td>{{ $laporan->divisi }}</td>
-                                <td>{{ \Carbon\Carbon::parse($laporan->tanggal)->format('d M Y') }}</td>
-                                <td>
-                                    <span class="badge 
-                                            @if($laporan->status == 'Selesai') bg-success
-                                            @elseif($laporan->status == 'Pending') bg-warning
-                                            @elseif($laporan->status == 'Ditolak') bg-danger
-                                            @else bg-info @endif">
-                                        {{ $laporan->status }}
-                                    </span>
+                                <td>{{ $laporan->kategori }}</td>
+                                <td>{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') : '-' }}
                                 </td>
                             </tr>
                         @empty

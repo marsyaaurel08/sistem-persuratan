@@ -26,28 +26,17 @@ Route::get('/', function () {
         ? redirect()->route('dashboard')
         : redirect()->route('login');
 });
-// authentication
+
+
+/** AUTHENTICATION */
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
-
-// ------------------------------------------------
-// JANGAN DI HAPUS DULU
-// Route::resource('surat_masuk', SuratMasukController::class);
-
-// Route::get('/surat_keluar', [SuratKeluarController::class, 'index']);
-// Route::resource('surat_keluar', SuratKeluarController::class);
-// ------------------------------------------------
-
 Route::middleware('auth')->group(function () {
+    /** DASHBOARD */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
-
-    Route::get('/arsip', function () {
-        return view('arsip.index');
-    });
 
 
     /** FITUR LAPORAN */
@@ -56,39 +45,35 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.exportExcel');
     Route::get('/laporan/preview-excel', [LaporanController::class, 'previewExcel'])->name('laporan.previewExcel');
 
+
     /** FITUR MANAJEMEN PENGGUNA */
     Route::get('/manajemen-pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
-
     Route::get('/tambah-pengguna', [PenggunaController::class, 'create'])->name('pengguna.create');
     Route::post('/tambah-pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
     Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
     Route::match(['put', 'patch', 'post'], '/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
     Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 
-    Route::get('/manajemen-pengguna', [PenggunaController::class, 'index'])
-        ->name('pengguna.index');
 
-    // surat masuk
+    /** SURAT MASUK */
     Route::get('/surat_masuk', [SuratMasukController::class, 'index'])
         ->name('surat_masuk.index');
-
     Route::get('/surat-masuk/search', [SuratMasukController::class, 'search'])
         ->name('surat_masuk.search');
-
     Route::post('/surat-masuk', [SuratMasukController::class, 'store'])
         ->name('surat-masuk.store');
-
     Route::get('/surat-masuk/create', [SuratMasukController::class, 'create'])
         ->name('surat-masuk.create');
 
-    // surat keluar
+
+    /** SURAT KELUAR */
     Route::get('/surat_keluar', [SuratKeluarController::class, 'index'])
         ->name('surat_keluar.index');
-
     Route::get('/surat_keluar/search', [SuratKeluarController::class, 'search'])
         ->name('surat_keluar.search');
 
-    // Fitur Arsip  
+
+    /** FITUR ARSIP */  
     Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
     Route::get('/arsip/detail/{id}', [ArsipController::class, 'detail'])->name('arsip.arsip_detail');
     Route::get('/arsip/upload', [ArsipController::class, 'create'])
@@ -100,11 +85,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload']) ->name('arsip.bulkDownload');
     Route::post('/arsip/bulk-delete', [ArsipController::class, 'bulkDelete'])
     ->name('arsip.bulkDelete');
-
+    
 });
-
-
-
-// Route::get('/login', function () {
-//     return view('auth.login');
-// });

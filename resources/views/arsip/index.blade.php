@@ -150,6 +150,8 @@
                                 <span class="btn-text">Unduh</span>
                                 <span class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
                             </button>
+                            {{-- <button id="downloadSelected" class="btn btn-sm btn-light"><i class="feather-download"></i>
+                                Unduh</button> --}}
                             {{-- <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i> Pulihkan</button>
                             --}}
                             <button id="deleteSelected" class="btn btn-sm btn-danger" disabled>

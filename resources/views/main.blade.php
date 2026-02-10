@@ -3,12 +3,6 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
-
     <div class="page-header rounded">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
@@ -56,7 +50,7 @@
                                 <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Masuk</h3>
                             </div>
                         </div>
-                        <div class="display-5 fw-bold text-dark mt-2">{{ $totalMasuk }}</div>
+                        <div class="display-5 fw-bold text-dark mt-2" id="totalMasuk">{{ $totalMasuk }}</div>
                     </div>
                 </div>
             </div>
@@ -73,7 +67,7 @@
                                 <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Keluar</h3>
                             </div>
                         </div>
-                        <div class="display-5 fw-bold text-dark mt-2">{{ $totalKeluar }}</div>
+                        <div class="display-5 fw-bold text-dark mt-2" id="totalKeluar">{{ $totalKeluar }}</div>
                     </div>
                 </div>
             </div>
@@ -90,115 +84,137 @@
                                 <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Laporan</h3>
                             </div>
                         </div>
-                        <div class="display-5 fw-bold text-dark mt-2">{{ $totalLaporan }}</div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Grafik -->
-        <div class="row g-2 mt-3">
-            <div class="col-12">
-                <div class="card p-3" style="height: 420px;">
-                    <div class="card-body d-flex flex-column h-100">
-                        <h5 class="fs-16 fw-semibold mb-3">Tren Persuratan Berdasarkan Waktu</h5>
-                        <div class="flex-grow-1">
-                            <canvas id="lineChart" style="width:100%; height:100%;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Aktivitas Terbaru -->
-        <div class="row g-2 mt-3">
-            <div class="col-12">
-                <div class="card stretch stretch-full p-2">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fs-14 fw-semibold mb-0">Aktivitas Terbaru</h5>
-                            <div class="input-group" style="max-width: 250px;">
-                                <span class="input-group-text bg-white border-end-0 rounded-start-pill py-2 ps-3">
-                                    <i class="feather-search text-muted"></i>
-                                </span>
-                                <input type="text" id="searchTable"
-                                    class="form-control border-start-0 rounded-end-pill py-2 shadow-none"
-                                    placeholder="Cari aktivitas..." style="font-size: 13px;">
-                            </div>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm align-middle" id="aktivitasTable">
-                                <thead>
-    <tr>
-        <th>Kode Arsip</th>
-        <th>No. Surat</th>
-        <th>Perihal</th>
-        <th>Tanggal</th>
-        <th>Pengarsip</th>
-        <th>File</th>
-    </tr>
-</thead>
-<tbody>
-    @foreach ($aktivitas as $item)
-        <tr data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
-            <td class="text-nowrap">
-                <span class="badge bg-light text-dark border">
-                    {{ $item['kode_arsip'] }}
-                </span>
-            </td>
-            <td class="fw-bold">
-                {{ $item['nomor_surat'] ?? '-' }}
-            </td>
-            <td>
-                {{ $item['perihal'] ?? '-' }}
-            </td>
-            <td>
-                {{ $item['tanggal_view'] ?? '-' }}
-            </td>
-            <td>
-                <small class="text-muted">
-                    {{ $item['pengarsip'] ?? '-' }}
-                </small>
-            </td>
-            <td>
-                @if (!empty($item['files']) && count($item['files']) > 0)
-                    <div class="d-flex flex-wrap gap-1">
-                        @foreach ($item['files'] as $file)
-                            {{-- Tombol Download --}}
-                            <a href="{{ route('arsip.download', $file['id']) }}"
-                               class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
-                               title="Download">
-                                <i class="feather-download me-1" style="font-size: 14px;"></i>
-                                <span style="font-size: 12px;">Unduh</span>
-                            </a>
-
-                            {{-- Tombol Preview (sama seperti di arsip.index) --}}
-                            <button type="button"
-                                    class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
-                                    data-bs-toggle="modal" data-bs-target="#previewModal"
-                                    data-file="{{ $file['url'] }}" title="Preview">
-                                <i class="feather-eye me-1" style="font-size: 14px;"></i>
-                                <span style="font-size: 12px;">Preview</span>
-                            </button>
-                        @endforeach
-                    </div>
-                @else
-                    <span class="text-muted">-</span>
-                @endif
-            </td>
-        </tr>
-    @endforeach
-</tbody>
-                            </table>
-                        </div>
+                        <div class="display-5 fw-bold text-dark mt-2" id="totalLaporan">{{ $totalLaporan }}</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Grafik -->
+    <div class="row g-2 mt-3">
+        <div class="col-12">
+            <div class="card p-3" style="height: 420px;">
+                <div class="card-body d-flex flex-column h-100">
+                    <h5 class="fs-16 fw-semibold mb-3">Tren Persuratan Berdasarkan Waktu</h5>
+                    <div class="flex-grow-1">
+                        <canvas id="lineChart" style="width:100%; height:100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aktivitas Terbaru -->
+    <div class="row g-2 mt-3">
+        <div class="col-12">
+            <div class="card stretch stretch-full p-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fs-14 fw-semibold mb-0">Aktivitas Terbaru</h5>
+                        <div class="input-group" style="max-width: 250px;">
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill py-2 ps-3">
+                                <i class="feather-search text-muted"></i>
+                            </span>
+                            <input type="text" id="searchTable"
+                                class="form-control border-start-0 rounded-end-pill py-2 shadow-none"
+                                placeholder="Cari aktivitas..." style="font-size: 13px;">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm align-middle" id="aktivitasTable">
+                            <thead>
+                                <tr>
+                                    <th>Kode Arsip</th>
+                                    <th>No. Surat</th>
+                                    <th>Perihal</th>
+                                    <th>Tanggal</th>
+                                    <th>Pengarsip</th>
+                                    <th>File</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($aktivitas as $item)
+                                    <tr data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
+                                        <td class="text-nowrap">
+                                            <span class="badge bg-light text-dark border">
+                                                {{ $item['kode_arsip'] }}
+                                            </span>
+                                        </td>
+                                        <td class="fw-bold">
+                                            {{ $item['nomor_surat'] ?? '-' }}
+                                        </td>
+                                        <td>
+                                            {{ $item['perihal'] ?? '-' }}
+                                        </td>
+                                        <td>
+                                            {{ $item['tanggal_view'] ?? '-' }}
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ $item['pengarsip'] ?? '-' }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            @if (!empty($item['files']) && count($item['files']) > 0)
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach ($item['files'] as $file)
+                                                        {{-- Tombol Download --}}
+                                                        <a href="{{ route('arsip.download', $file['id']) }}"
+                                                            class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
+                                                            title="Download">
+                                                            <i class="feather-download me-1" style="font-size: 14px;"></i>
+                                                            <span style="font-size: 12px;">Unduh</span>
+                                                        </a>
+
+                                                        {{-- Tombol Preview (sama seperti di arsip.index) --}}
+                                                        <button type="button"
+                                                            class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#previewModal"
+                                                            data-file="{{ $file['url'] }}" title="Preview">
+                                                            <i class="feather-eye me-1" style="font-size: 14px;"></i>
+                                                            <span style="font-size: 12px;">Preview</span>
+                                                        </button>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+<!-- Modal Preview -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Preview Dokumen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
+        .main-content {
+            height: auto !important;
+            overflow: visible !important;
+        }
+
         .avatar-lg {
             display: flex;
             align-items: center;
@@ -217,31 +233,21 @@
             padding: 10px 15px;
         }
     </style>
-@endsection
-<!-- Modal Preview -->
-    <div class="modal fade" id="previewModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Preview Dokumen</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
-
+@endpush
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="{{ asset('duralux/assets/vendors/js/moment.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+    <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
 
     <script>
-        $(function () {
+        const downloadBase = "{{ url('arsip/download') }}";
+    </script>
+    <script>
+        $(function() {
             const $dateInput = $('#dateRange');
             const $clearBtn = $('#clearDateRange');
             const $tableBody = $('#aktivitasTable tbody');
@@ -254,7 +260,7 @@
                 mode: "range",
                 locale: "id",
                 dateFormat: "d M Y",
-                onChange: function (selectedDates) {
+                onChange: function(selectedDates) {
                     if (selectedDates.length === 2) {
                         const start = formatDate(selectedDates[0]);
                         const end = formatDate(selectedDates[1]);
@@ -263,6 +269,15 @@
                         applyFilter();
                     }
                 }
+            });
+
+            $('#searchTable').on('keyup', function() {
+                const keyword = $(this).val().toLowerCase();
+
+                $('#aktivitasTable tbody tr').each(function() {
+                    const rowText = $(this).text().toLowerCase();
+                    $(this).toggle(rowText.includes(keyword));
+                });
             });
 
             // Format tanggal YYYY-MM-DD
@@ -274,7 +289,7 @@
             }
 
             // Tombol Reset
-            $clearBtn.on('click', function () {
+            $clearBtn.on('click', function() {
                 fp.clear();
                 $dateInput.val('');
                 $(this).hide();
@@ -287,23 +302,28 @@
                 $.ajax({
                     url: "{{ route('dashboard.filter') }}",
                     type: 'GET',
-                    data: { tanggal: selectedTanggal },
-                    success: function (res) {
+                    data: {
+                        tanggal: selectedTanggal
+                    },
+                    success: function(res) {
                         // 🔹 Update KPI
-                        $('.card:contains("Total Surat Masuk") .display-5').text(res.totalMasuk);
-                        $('.card:contains("Total Surat Keluar") .display-5').text(res.totalKeluar);
-                        $('.card:contains("Total Surat Laporan") .display-5').text(res.totalLaporan);
+                        $('#totalMasuk').text(res.totalMasuk);
+                        $('#totalKeluar').text(res.totalKeluar);
+                        $('#totalLaporan').text(res.totalLaporan);
+                        // $('.card:contains("Total Surat Masuk") .display-5').text(res.totalMasuk);
+                        // $('.card:contains("Total Surat Keluar") .display-5').text(res.totalKeluar);
+                        // $('.card:contains("Total Surat Laporan") .display-5').text(res.totalLaporan);
 
                         // 🔹 Update Tabel
-$tableBody.empty();
-if (res.aktivitas && res.aktivitas.length) {
-    res.aktivitas.forEach(a => {
-        let filesHtml = '';
+                        $tableBody.empty();
+                        if (res.aktivitas && res.aktivitas.length) {
+                            res.aktivitas.forEach(a => {
+                                let filesHtml = '';
 
-        if (a.files && a.files.length) {
-            filesHtml = '<div class="d-flex flex-wrap gap-1">';
-            a.files.forEach(f => {
-                filesHtml += `
+                                if (a.files && a.files.length) {
+                                    filesHtml = '<div class="d-flex flex-wrap gap-1">';
+                                    a.files.forEach(f => {
+                                        filesHtml += `
                     <a href="${downloadBase}/${f.id}"
                        class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
                        title="Download">
@@ -318,13 +338,13 @@ if (res.aktivitas && res.aktivitas.length) {
                         <span style="font-size: 12px;">Preview</span>
                     </button>
                 `;
-            });
-            filesHtml += '</div>';
-        } else {
-            filesHtml = '<span class="text-muted">-</span>';
-        }
+                                    });
+                                    filesHtml += '</div>';
+                                } else {
+                                    filesHtml = '<span class="text-muted">-</span>';
+                                }
 
-        $tableBody.append(`
+                                $tableBody.append(`
             <tr data-date="${a.tanggal_arsip}">
                 <td class="text-nowrap">
                     <span class="badge bg-light text-dark border">
@@ -338,7 +358,7 @@ if (res.aktivitas && res.aktivitas.length) {
                     ${a.perihal ?? '-'}
                 </td>
                 <td>
-                    ${a.tanggal_view ?? '-'}
+                    ${a.tanggal_arsip ?? '-'}
                 </td>
                 <td>
                     <small class="text-muted">
@@ -350,10 +370,12 @@ if (res.aktivitas && res.aktivitas.length) {
                 </td>
             </tr>
         `);
-    });
-} else {
-    $tableBody.html('<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>');
-}
+                            });
+                        } else {
+                            $tableBody.html(
+                                '<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>'
+                            );
+                        }
                         // 🔹 Update Grafik
                         if (window.lineChart) window.lineChart.destroy();
 
@@ -380,8 +402,16 @@ if (res.aktivitas && res.aktivitas.length) {
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
-                                scales: { y: { beginAtZero: true } }
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
                             }
                         });
 
@@ -392,7 +422,7 @@ if (res.aktivitas && res.aktivitas.length) {
                             }
                         }, 300);
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
@@ -420,8 +450,16 @@ if (res.aktivitas && res.aktivitas.length) {
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true } }
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
                     }
                 });
 
@@ -432,24 +470,37 @@ if (res.aktivitas && res.aktivitas.length) {
             }
         });
     </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const previewButtons = document.querySelectorAll('.preview-btn');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(e) {
+                const btn = e.target.closest('.preview-btn');
+                if (!btn) return;
+
                 const iframe = document.getElementById('previewFrame');
+                iframe.src = btn.dataset.file;
+            });
 
-                previewButtons.forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const fileUrl = this.dataset.file;
-                        console.log('Preview file URL:', fileUrl); // cek di console
-                        iframe.src = fileUrl;
-                    });
-                });
+            const modal = document.getElementById('previewModal');
+            modal.addEventListener('hidden.bs.modal', function() {
+                document.getElementById('previewFrame').src = '';
+            });
 
-                // Clear iframe saat modal ditutup
-                const modal = document.getElementById('previewModal');
-                modal.addEventListener('hidden.bs.modal', function () {
-                    iframe.src = '';
+            // const previewButtons = document.querySelectorAll('.preview-btn');
+            // const iframe = document.getElementById('previewFrame');
+
+            previewButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const fileUrl = this.dataset.file;
+                    console.log('Preview file URL:', fileUrl); // cek di console
+                    iframe.src = fileUrl;
                 });
             });
-        </script>
+
+            // Clear iframe saat modal ditutup
+            const modal = document.getElementById('previewModal');
+            modal.addEventListener('hidden.bs.modal', function() {
+                iframe.src = '';
+            });
+        });
+    </script>
 @endpush

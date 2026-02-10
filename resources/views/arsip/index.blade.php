@@ -3,7 +3,6 @@
 @section('title', 'Arsip')
 
 @section('content')
-  
 
     {{-- Page Header --}}
     <div class="page-header rounded">
@@ -133,10 +132,6 @@
                                 Laporan ({{ $countLaporan }})
                             </a>
                         </div>
-
-
-
-
                     </div>
 
                     {{-- Bulk Action --}}
@@ -146,92 +141,85 @@
                         {{-- <div id="bulkActionBar"
                             class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
                             style="display: none;"> --}}
-                            <input type="checkbox" id="selectAll">
-                            <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
-                            <div class="vr"></div>
-                            <button id="downloadSelected" class="btn btn-sm btn-light" disabled>
-                                <i class="feather-download"></i>
-                                <span class="btn-text">Unduh</span>
-                                <span class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
-                            </button>
-                            {{-- <button id="downloadSelected" class="btn btn-sm btn-light"><i class="feather-download"></i>
+                        <input type="checkbox" id="selectAll">
+                        <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
+                        <div class="vr"></div>
+                        <button id="downloadSelected" class="btn btn-sm btn-light" disabled>
+                            <i class="feather-download"></i>
+                            <span class="btn-text">Unduh</span>
+                            <span class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
+                        </button>
+                        {{-- <button id="downloadSelected" class="btn btn-sm btn-light"><i class="feather-download"></i>
                                 Unduh</button> --}}
-                            {{-- <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i> Pulihkan</button>
+                        {{-- <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i> Pulihkan</button>
                             --}}
-                            <button id="deleteSelected" class="btn btn-sm btn-danger" disabled>
-                                <i class="feather-trash"></i> Hapus
-                            </button>
+                        <button id="deleteSelected" class="btn btn-sm btn-danger" disabled>
+                            <i class="feather-trash"></i> Hapus
+                        </button>
 
-                            <button type="button" id="closeBulkBar" class="btn-close ms-auto"></button>
-                        </div>
+                        <button type="button" id="closeBulkBar" class="btn-close ms-auto"></button>
+                    </div>
 
-                        {{-- Table --}}
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm align-middle small" id="arsipTable">
-                                <thead class="text-uppercase text-muted small">
-                                    <tr>
-                                        <th width="40"></th>
-                                        <th>Kode Arsip</th>
-                                        <th>No. Surat</th>
-                                        <th>Perihal</th>
-                                        {{-- <th>Divisi</th> --}}
-                                        <th>Tanggal</th>
-                                        <th>Pengarsip</th>
-                                        {{-- <th>File</th> --}}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($arsips as $item)
-                                        @php
-                                            $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
-                                            $pengarsip = $item->pengarsip->name ?? '-';
-                                        @endphp
+                    {{-- Table --}}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm align-middle small" id="arsipTable">
+                            <thead class="text-uppercase text-muted small">
+                                <tr>
+                                    <th width="40"></th>
+                                    <th>Kode Arsip</th>
+                                    <th>No. Surat</th>
+                                    <th>Perihal</th>
+                                    {{-- <th>Divisi</th> --}}
+                                    <th>Tanggal</th>
+                                    <th>Pengarsip</th>
+                                    {{-- <th>File</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($arsips as $item)
+                                    @php
+                                        $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
+                                        $pengarsip = $item->pengarsip->name ?? '-';
+                                    @endphp
 
-                                        <tr class="clickable-row" data-href="{{ route('arsip.arsip_detail', $item->id) }}"
-                                            data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
-                                            data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
-                                            data-tanggal="{{ $tanggalDisplay }}"
-                                            data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
-                                            data-pengarsip="{{ $pengarsip }}" data-files='@json(
-                                                $item->files->map(fn($f) => [
-                                                    "id" => $f->id,
-                                                    "nama_file" => $f->nama_file
-                                                ])
-                                            )'>
-                                            <td>
-                                                <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
-                                            </td>
+                                    <tr class="clickable-row" data-href="{{ route('arsip.arsip_detail', $item->id) }}"
+                                        data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
+                                        data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
+                                        data-tanggal="{{ $tanggalDisplay }}"
+                                        data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
+                                        data-pengarsip="{{ $pengarsip }}" data-files='@json(
+                                            $item->files->map(fn($f) => [
+                                                    'id' => $f->id,
+                                                    'nama_file' => $f->nama_file,
+                                                ]))'>
+                                        <td>
+                                            <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
+                                        </td>
 
-                                            <td class="text-nowrap">
-                                                <span class="badge bg-light text-dark border">
-                                                    {{ $item->kode_arsip }}
-                                                </span>
-                                            </td>
+                                        <td class="text-nowrap">
+                                            <span class="badge bg-light text-dark border">
+                                                {{ $item->kode_arsip }}
+                                            </span>
+                                        </td>
 
-                                            <td class="fw-bold">
-                                                {{ $item->nomor_surat ?? '-' }}
-                                            </td>
+                                        <td class="fw-bold">
+                                            {{ $item->nomor_surat ?? '-' }}
+                                        </td>
 
-                                            <td>
-                                                {{ $item->perihal ?? '-' }}
-                                            </td>
+                                        <td>
+                                            {{ $item->perihal ?? '-' }}
+                                        </td>
 
-                                            {{-- <td>
-                                                <span class="badge bg-secondary-subtle text-dark">
-                                                    {{ $item->divisi ?? '-' }}
-                                                </span>
-                                            </td> --}}
+                                        <td>
+                                            {{ $tanggalDisplay ?? '-' }}
+                                        </td>
 
-                                            <td>
-                                                {{ $tanggalDisplay ?? '-' }}
-                                            </td>
-
-                                            <td>
-                                                <small class="text-muted">
-                                                    {{ $item->pengarsip->name ?? '-' }}
-                                                </small>
-                                            </td>
-                                            {{-- <td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ $item->pengarsip->name ?? '-' }}
+                                            </small>
+                                        </td>
+                                        {{-- <td>
                                                 @if ($item->files->count())
                                                     <div class="d-flex flex-wrap gap-1">
                                                         <!-- Tombol Download -->
@@ -257,262 +245,259 @@
                                                     <span class="text-muted">-</span>
                                                 @endif
                                             </td> --}}
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-
-                            </table>
-                        </div>
-
-                        {{-- Pagination --}}
-                        @if (!request()->hasAny(['tanggal_arsip', 'search']))
-                            <div class="mt-2 d-flex justify-content-center">
-                                {{ $arsips->links() }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-@endsection
-
-    {{-- Modal Detail --}}
-    <div class="modal fade" id="folderModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Dokumen Divisi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm small">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Kode Arsip</th>
-                                    <th>No. Surat</th>
-                                    <th>Perihal</th>
-                                    <th>Tanggal</th>
-                                    <th>File</th>
-                                </tr>
-                            </thead>
-                            <tbody id="modalTableBody">
+                                    </tr>
+                                @endforeach
                             </tbody>
+
                         </table>
                     </div>
+
+                    {{-- Pagination --}}
+                    @if (!request()->hasAny(['tanggal_arsip', 'search']))
+                        <div class="mt-2 d-flex justify-content-center">
+                            {{ $arsips->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+@endsection
 
-
-    <!-- Modal Preview -->
-    <!-- Modal Preview -->
-    <div class="modal fade" id="previewModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Preview Dokumen</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
+{{-- Modal Detail --}}
+<div class="modal fade" id="folderModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Dokumen Divisi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Kode Arsip</th>
+                                <th>No. Surat</th>
+                                <th>Perihal</th>
+                                <th>Tanggal</th>
+                                <th>File</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<!-- Modal Preview -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Preview Dokumen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
 
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+@endpush
 
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <!-- Search Table -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const searchInput = document.getElementById('searchTable');
-                if (!searchInput) return;
-                searchInput.addEventListener('keyup', function () {
-                    const filter = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('#arsipTable tbody tr');
-                    rows.forEach(row => {
-                        row.style.display = row.textContent.toLowerCase().includes(filter) ? '' :
-                            'none';
-                    });
-                });
-            });
-        </script>
-
-        @push('styles')
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-        @endpush
-        <!-- Date Range Picker & Filter -->
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const dateInput = document.getElementById('dateRange');
-                const clearBtn = document.getElementById('clearDateRange');
+    <!-- Search Table -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchTable');
+            if (!searchInput) return;
+            searchInput.addEventListener('keyup', function() {
+                const filter = this.value.toLowerCase();
                 const rows = document.querySelectorAll('#arsipTable tbody tr');
-                const pagination = document.querySelector('.pagination')?.parentElement;
-
-                if (!dateInput) return;
-
-                const fp = flatpickr(dateInput, {
-                    mode: 'range',
-                    dateFormat: 'd M Y',
-                    locale: 'id',
-                    allowInput: false,
-                    onChange: function (selectedDates) {
-                        if (selectedDates.length === 2) {
-                            filterByDate(selectedDates[0], selectedDates[1]);
-                            clearBtn.style.display = 'inline-flex';
-                            hidePagination();
-                        }
-                    }
-                });
-
-                function filterByDate(start, end) {
-                    rows.forEach(row => {
-                        const dateStr = row.dataset.date;
-                        if (!dateStr) {
-                            row.style.display = 'none';
-                            return;
-                        }
-
-                        const rowDate = new Date(dateStr);
-                        row.style.display =
-                            rowDate >= start && rowDate <= end ? '' : 'none';
-                    });
-                }
-
-                function hidePagination() {
-                    if (pagination) pagination.style.display = 'none';
-                }
-
-                function showPagination() {
-                    if (pagination) pagination.style.display = 'block';
-                }
-
-                clearBtn.addEventListener('click', function () {
-                    fp.clear();
-                    dateInput.value = '';
-                    clearBtn.style.display = 'none';
-                    rows.forEach(row => row.style.display = '');
-                    showPagination();
+                rows.forEach(row => {
+                    row.style.display = row.textContent.toLowerCase().includes(filter) ? '' :
+                        'none';
                 });
             });
-        </script>
+        });
+    </script>
 
+    <!-- Date Range Picker & Filter -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
 
-        <!-- Checkbox & Bulk Actions -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const bulkBar = document.getElementById('bulkActionBar');
-                const selectedCount = document.getElementById('selectedCount');
-                const selectAll = document.getElementById('selectAll');
-                const table = document.getElementById('arsipTable');
-                const closeBulkBtn = document.getElementById('closeBulkBar');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('dateRange');
+            const clearBtn = document.getElementById('clearDateRange');
+            const rows = document.querySelectorAll('#arsipTable tbody tr');
+            const pagination = document.querySelector('.pagination')?.parentElement;
 
-                function getRowCheckboxes() {
-                    return document.querySelectorAll('.row-checkbox');
-                }
+            if (!dateInput) return;
 
-                function showBulkBar() {
-                    bulkBar.classList.remove('d-none');
-                    bulkBar.classList.add('show');
-                }
-
-                function hideBulkBar() {
-                    bulkBar.classList.add('d-none');
-                    bulkBar.classList.remove('show');
-                }
-
-                function updateCount() {
-                    const checked = document.querySelectorAll('.row-checkbox:checked').length;
-                    const total = getRowCheckboxes().length;
-
-                    selectedCount.textContent = checked;
-
-                    if (checked > 0) {
-                        showBulkBar();
-                    } else {
-                        hideBulkBar();
-                    }
-
-                    if (selectAll) {
-                        selectAll.checked = checked === total && total > 0;
-                        selectAll.indeterminate = checked > 0 && checked < total;
+            const fp = flatpickr(dateInput, {
+                mode: 'range',
+                dateFormat: 'd M Y',
+                locale: 'id',
+                allowInput: false,
+                onChange: function(selectedDates) {
+                    if (selectedDates.length === 2) {
+                        filterByDate(selectedDates[0], selectedDates[1]);
+                        clearBtn.style.display = 'inline-flex';
+                        hidePagination();
                     }
                 }
+            });
 
-                // checkbox row
-                table.addEventListener('change', function (e) {
-                    if (e.target.classList.contains('row-checkbox')) {
-                        updateCount();
+            function filterByDate(start, end) {
+                rows.forEach(row => {
+                    const dateStr = row.dataset.date;
+                    if (!dateStr) {
+                        row.style.display = 'none';
+                        return;
                     }
+
+                    const rowDate = new Date(dateStr);
+                    row.style.display =
+                        rowDate >= start && rowDate <= end ? '' : 'none';
                 });
+            }
 
-                // select all
-                selectAll.addEventListener('change', function () {
-                    getRowCheckboxes().forEach(cb => cb.checked = this.checked);
-                    updateCount();
-                });
+            function hidePagination() {
+                if (pagination) pagination.style.display = 'none';
+            }
 
-                // ❌ tombol silang
-                closeBulkBtn.addEventListener('click', function () {
-                    getRowCheckboxes().forEach(cb => cb.checked = false);
+            function showPagination() {
+                if (pagination) pagination.style.display = 'block';
+            }
 
-                    selectAll.checked = false;
-                    selectAll.indeterminate = false;
+            clearBtn.addEventListener('click', function() {
+                fp.clear();
+                dateInput.value = '';
+                clearBtn.style.display = 'none';
+                rows.forEach(row => row.style.display = '');
+                showPagination();
+            });
+        });
+    </script>
 
-                    selectedCount.textContent = 0;
+
+    <!-- Checkbox & Bulk Actions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bulkBar = document.getElementById('bulkActionBar');
+            const selectedCount = document.getElementById('selectedCount');
+            const selectAll = document.getElementById('selectAll');
+            const table = document.getElementById('arsipTable');
+            const closeBulkBtn = document.getElementById('closeBulkBar');
+
+            function getRowCheckboxes() {
+                return document.querySelectorAll('.row-checkbox');
+            }
+
+            function showBulkBar() {
+                bulkBar.classList.remove('d-none');
+                bulkBar.classList.add('show');
+            }
+
+            function hideBulkBar() {
+                bulkBar.classList.add('d-none');
+                bulkBar.classList.remove('show');
+            }
+
+            function updateCount() {
+                const checked = document.querySelectorAll('.row-checkbox:checked').length;
+                const total = getRowCheckboxes().length;
+
+                selectedCount.textContent = checked;
+
+                if (checked > 0) {
+                    showBulkBar();
+                } else {
                     hideBulkBar();
-                });
-
-                hideBulkBar(); // initial
-            });
-        </script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const downloadBtn = document.getElementById('downloadSelected');
-                if (!downloadBtn) return;
-
-                const btnText = downloadBtn.querySelector('.btn-text');
-                const spinner = downloadBtn.querySelector('.spinner-border');
-
-                const checkboxes = document.querySelectorAll('.row-checkbox');
-
-                // 🔄 fungsi enable / disable tombol
-                function updateDownloadButton() {
-                    const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
-                    downloadBtn.disabled = checkedCount === 0;
                 }
 
-                // pantau checkbox
-                checkboxes.forEach(cb => {
-                    cb.addEventListener('change', updateDownloadButton);
-                });
+                if (selectAll) {
+                    selectAll.checked = checked === total && total > 0;
+                    selectAll.indeterminate = checked > 0 && checked < total;
+                }
+            }
 
-                // set kondisi awal
-                updateDownloadButton();
+            // checkbox row
+            table.addEventListener('change', function(e) {
+                if (e.target.classList.contains('row-checkbox')) {
+                    updateCount();
+                }
+            });
 
-                downloadBtn.addEventListener('click', function () {
-                    const ids = Array.from(
-                        document.querySelectorAll('.row-checkbox:checked')
-                    ).map(cb => cb.value);
+            // select all
+            selectAll.addEventListener('change', function() {
+                getRowCheckboxes().forEach(cb => cb.checked = this.checked);
+                updateCount();
+            });
 
-                    if (ids.length === 0) return; // safety
+            // ❌ tombol silang
+            closeBulkBtn.addEventListener('click', function() {
+                getRowCheckboxes().forEach(cb => cb.checked = false);
 
-                    // 🔒 AKTIFKAN LOADING
-                    downloadBtn.disabled = true;
-                    btnText.textContent = 'Menyiapkan file...';
-                    spinner.classList.remove('d-none');
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
 
-                    fetch("{{ route('arsip.bulkDownload') }}", {
+                selectedCount.textContent = 0;
+                hideBulkBar();
+            });
+
+            hideBulkBar(); // initial
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadBtn = document.getElementById('downloadSelected');
+            if (!downloadBtn) return;
+
+            const btnText = downloadBtn.querySelector('.btn-text');
+            const spinner = downloadBtn.querySelector('.spinner-border');
+
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+
+            // 🔄 fungsi enable / disable tombol
+            function updateDownloadButton() {
+                const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+                downloadBtn.disabled = checkedCount === 0;
+            }
+
+            // pantau checkbox
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateDownloadButton);
+            });
+
+            // set kondisi awal
+            updateDownloadButton();
+
+            downloadBtn.addEventListener('click', function() {
+                const ids = Array.from(
+                    document.querySelectorAll('.row-checkbox:checked')
+                ).map(cb => cb.value);
+
+                if (ids.length === 0) return; // safety
+
+                // 🔒 AKTIFKAN LOADING
+                downloadBtn.disabled = true;
+                btnText.textContent = 'Menyiapkan file...';
+                spinner.classList.remove('d-none');
+
+                fetch("{{ route('arsip.bulkDownload') }}", {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -522,172 +507,173 @@
                             ids
                         })
                     })
-                        .then(response => {
-                            if (!response.ok) throw new Error('Gagal mengunduh');
+                    .then(response => {
+                        if (!response.ok) throw new Error('Gagal mengunduh');
 
-                            const disposition = response.headers.get('Content-Disposition');
-                            let filename = 'download';
+                        const disposition = response.headers.get('Content-Disposition');
+                        let filename = 'download';
 
-                            if (disposition && disposition.includes('filename=')) {
-                                filename = disposition.split('filename=')[1].replace(/"/g, '');
-                            }
+                        if (disposition && disposition.includes('filename=')) {
+                            filename = disposition.split('filename=')[1].replace(/"/g, '');
+                        }
 
-                            return response.blob().then(blob => ({
-                                blob,
-                                filename
-                            }));
-                        })
-                        .then(({
+                        return response.blob().then(blob => ({
                             blob,
                             filename
-                        }) => {
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = filename;
-                            document.body.appendChild(a);
-                            a.click();
-                            a.remove();
-                            window.URL.revokeObjectURL(url);
-                        })
-                        .catch(err => {
-                            alert(err.message);
-                        })
-                        .finally(() => {
-                            // 🔓 KEMBALIKAN KE NORMAL
-                            btnText.textContent = 'Unduh';
-                            spinner.classList.add('d-none');
-                            updateDownloadButton(); // cek ulang checkbox
-                        });
-                });
-            });
-        </script>
-
-        <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const previewButtons = document.querySelectorAll('.preview-btn');
-                const iframe = document.getElementById('previewFrame');
-
-                previewButtons.forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const fileUrl = this.dataset.file;
-                        console.log('Preview file URL:', fileUrl); // cek di console
-                        iframe.src = fileUrl;
+                        }));
+                    })
+                    .then(({
+                        blob,
+                        filename
+                    }) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(err => {
+                        alert(err.message);
+                    })
+                    .finally(() => {
+                        // 🔓 KEMBALIKAN KE NORMAL
+                        btnText.textContent = 'Unduh';
+                        spinner.classList.add('d-none');
+                        updateDownloadButton(); // cek ulang checkbox
                     });
-                });
+            });
+        });
+    </script>
 
-                // Clear iframe saat modal ditutup
-                const modal = document.getElementById('previewModal');
-                modal.addEventListener('hidden.bs.modal', function () {
-                    iframe.src = '';
+    {{-- <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const previewButtons = document.querySelectorAll('.preview-btn');
+            const iframe = document.getElementById('previewFrame');
+
+            previewButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const fileUrl = this.dataset.file;
+                    console.log('Preview file URL:', fileUrl); // cek di console
+                    iframe.src = fileUrl;
                 });
             });
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
 
-                const deleteBtn = document.getElementById('deleteSelected');
-                if (!deleteBtn) return;
+            // Clear iframe saat modal ditutup
+            const modal = document.getElementById('previewModal');
+            modal.addEventListener('hidden.bs.modal', function() {
+                iframe.src = '';
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-                function updateDeleteButton() {
-                    const checked = document.querySelectorAll('.row-checkbox:checked').length;
-                    deleteBtn.disabled = checked === 0;
-                }
+            const deleteBtn = document.getElementById('deleteSelected');
+            if (!deleteBtn) return;
 
-                document.querySelectorAll('.row-checkbox').forEach(cb => {
-                    cb.addEventListener('change', updateDeleteButton);
-                });
+            function updateDeleteButton() {
+                const checked = document.querySelectorAll('.row-checkbox:checked').length;
+                deleteBtn.disabled = checked === 0;
+            }
 
-                updateDeleteButton();
+            document.querySelectorAll('.row-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateDeleteButton);
+            });
 
-                /* ===============================
-                   BULK DELETE (CONFIRM ONLY)
-                =============================== */
-                deleteBtn.addEventListener('click', function () {
+            updateDeleteButton();
 
-                    const ids = Array.from(
-                        document.querySelectorAll('.row-checkbox:checked')
-                    ).map(cb => cb.value);
+            /* ===============================
+               BULK DELETE (CONFIRM ONLY)
+            =============================== */
+            deleteBtn.addEventListener('click', function() {
 
-                    if (ids.length === 0) return;
+                const ids = Array.from(
+                    document.querySelectorAll('.row-checkbox:checked')
+                ).map(cb => cb.value);
 
-                    // ✅ SweetAlert hanya untuk KONFIRMASI
-                    Swal.fire({
-                        title: 'Yakin ingin menghapus?',
-                        text: `${ids.length} arsip akan dihapus permanen.`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, hapus',
-                        cancelButtonText: 'Batal',
-                        confirmButtonColor: '#dc3545',
-                        cancelButtonColor: '#6c757d',
-                        reverseButtons: true
-                    }).then((result) => {
-                        if (!result.isConfirmed) return;
+                if (ids.length === 0) return;
 
-                        deleteBtn.disabled = true;
+                // ✅ SweetAlert hanya untuk KONFIRMASI
+                Swal.fire({
+                    title: 'Yakin ingin menghapus?',
+                    text: `${ids.length} arsip akan dihapus permanen.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, hapus',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
 
-                        fetch("{{ route('arsip.bulkDelete') }}", {
+                    deleteBtn.disabled = true;
+
+                    fetch("{{ route('arsip.bulkDelete') }}", {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ ids })
+                            body: JSON.stringify({
+                                ids
+                            })
                         })
-                            .then(res => {
-                                if (!res.ok) throw new Error('Gagal menghapus data');
-                                return res.json();
-                            })
-                            .then(() => {
+                        .then(res => {
+                            if (!res.ok) throw new Error('Gagal menghapus data');
+                            return res.json();
+                        })
+                        .then(() => {
 
-                                // 🧹 hapus baris tabel
-                                ids.forEach(id => {
-                                    const checkbox = document.querySelector(`.row-checkbox[value="${id}"]`);
-                                    if (checkbox) checkbox.closest('tr').remove();
-                                });
-
-                                // reset bulk bar
-                                document.getElementById('selectedCount').textContent = 0;
-                                document.getElementById('bulkActionBar').classList.add('d-none');
-
-                            })
-                            .catch(err => {
-                                console.error(err);
-                                alert(err.message || 'Terjadi kesalahan');
-                            })
-                            .finally(() => {
-                                updateDeleteButton();
+                            // 🧹 hapus baris tabel
+                            ids.forEach(id => {
+                                const checkbox = document.querySelector(
+                                    `.row-checkbox[value="${id}"]`);
+                                if (checkbox) checkbox.closest('tr').remove();
                             });
 
-                            showToast('Arsip berhasil dihapus', 'success');
-                    });
+                            // reset bulk bar
+                            document.getElementById('selectedCount').textContent = 0;
+                            document.getElementById('bulkActionBar').classList.add('d-none');
+
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert(err.message || 'Terjadi kesalahan');
+                        })
+                        .finally(() => {
+                            updateDeleteButton();
+                        });
+
+                    showToast('Arsip berhasil dihapus', 'success');
                 });
             });
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                document.querySelectorAll('.clickable-row').forEach(row => {
-                    row.addEventListener('click', function (e) {
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.clickable-row').forEach(row => {
+                row.addEventListener('click', function(e) {
 
-                        // 🚫 cegah redirect jika klik elemen interaktif
-                        if (
-                            e.target.closest('a') ||
-                            e.target.closest('button') ||
-                            e.target.closest('input') ||
-                            e.target.closest('.preview-btn')
-                        ) {
-                            return;
-                        }
+                    // 🚫 cegah redirect jika klik elemen interaktif
+                    if (
+                        e.target.closest('a') ||
+                        e.target.closest('button') ||
+                        e.target.closest('input') ||
+                        e.target.closest('.preview-btn')
+                    ) {
+                        return;
+                    }
 
-                        // ✅ redirect ke detail
-                        window.location.href = this.dataset.href;
-                    });
+                    // ✅ redirect ke detail
+                    window.location.href = this.dataset.href;
                 });
             });
-        </script>
-
-
-    @endpush
+        });
+    </script>
+@endpush

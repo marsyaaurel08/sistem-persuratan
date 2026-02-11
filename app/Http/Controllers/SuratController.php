@@ -50,10 +50,14 @@ class SuratController extends Controller
             $data['logo_kanan'] = $request->file('logo_kanan')->store('temp', 'public');
         }
 
-        // Simpan ke session
+        // Simpan ke session (kalau mau dipakai untuk download PDF)
         session(['surat_preview' => $data]);
 
-        return view('surat.preview', $data);
+        // 💡 Render langsung ke PDF Viewer (stream), bukan view HTML biasa
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('surat.preview', $data)->setPaper('A4');
+
+        // tampilkan di browser (bukan download)
+        return $pdf->stream('preview-surat.pdf');
     }
 
     /**

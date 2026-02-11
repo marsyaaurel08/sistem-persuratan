@@ -25,16 +25,16 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 70px;
-            height: auto;
+            width: auto;
+            height: 65px;
         }
 
         .header img.logo-right {
             position: absolute;
             top: 0;
             right: 0;
-            width: 70px;
-            height: auto;
+            width: auto;
+            height: 55px;
         }
 
         .title {
@@ -55,7 +55,7 @@
 
         .line-bold {
             border-top: 3px solid #000;
-            margin-top: 8px;
+            margin-top: 12px;
         }
 
         .line-thin {

@@ -82,11 +82,12 @@
                             <!-- KATEGORI ARSIP -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold small">Kategori Arsip<span
-                                            class="text-danger">*</span></label>
+                                        class="text-danger">*</span></label>
                                 <select name="kategori" id="kategori" class="form-select" required>
                                     <option value="">-- Pilih Kategori Arsip --</option>
                                     @foreach (\App\Models\Arsip::KATEGORI as $value => $label)
-                                        <option value="{{ $value }}" {{ old('kategori') == $value ? 'selected' : '' }}>
+                                        <option value="{{ $value }}"
+                                            {{ old('kategori') == $value ? 'selected' : '' }}>
                                             {{ $label }}
                                         </option>
                                     @endforeach
@@ -94,20 +95,28 @@
                             </div>
 
                             <!-- NOMOR SURAT -->
-                            <div class="mb-3" id="field-nomor-surat">
-                                <label class="form-label fw-bold small">Nomor Surat<span
-                                            class="text-danger">*</span></label>
-                                <input type="text" name="nomor_surat" class="form-control" placeholder="Contoh: 123/IT/2025"
-                                    value="{{ old('nomor_surat') }}" required>
-                                <small class="text-muted">
+                            <div class="mb-3 position-relative" id="field-nomor-surat">
+                                <label class="form-label fw-bold small">
+                                    Nomor Surat <span class="text-danger" id="nomorRequired">*</span>
+                                </label>
+
+                                <div class="position-relative">
+                                    <input type="text" name="nomor_surat" id="nomor_surat" class="form-control pe-5"
+                                        placeholder="Contoh: 123/IT/2025" value="{{ old('nomor_surat') }}">
+                                    <!-- ICON STATUS (spinner / check) -->
+                                    <div id="nomorIcon" class="position-absolute top-50 end-0 translate-middle-y me-3">
+                                    </div>
+                                </div>
+
+                                <!-- FEEDBACK TEXT -->
+                                <small id="nomorFeedback" class="text-muted">
                                     Wajib untuk Surat Masuk & Keluar, opsional untuk Laporan
                                 </small>
                             </div>
-
+                            
                             <!-- PERIHAL -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold small">Perihal<span
-                                            class="text-danger">*</span></label>
+                                <label class="form-label fw-bold small">Perihal<span class="text-danger">*</span></label>
                                 <input type="text" name="perihal" class="form-control"
                                     placeholder="Contoh: Undangan Rapat Koordinasi" value="{{ old('perihal') }}" required>
                             </div>
@@ -174,7 +183,8 @@
                             <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mb-2" id="submitBtn" disabled>
                                 <i class="feather-archive me-2"></i> Arsipkan Sekarang
                             </button>
-                            <button type="reset" class="btn btn-light w-100 py-2 fw-bold text-muted" onclick="resetForm()">
+                            <button type="reset" class="btn btn-light w-100 py-2 fw-bold text-muted"
+                                onclick="resetForm()">
                                 Bersihkan Form
                             </button>
 
@@ -198,192 +208,231 @@
 
 @push('scripts')
     <script>
-        let selectedFiles = [];
+        document.addEventListener('DOMContentLoaded', function() {
 
-        const kategori = document.getElementById('kategori');
-        const nomorSuratWrapper = document.getElementById('field-nomor-surat');
+            /* ===============================
+               VARIABLE
+            =============================== */
+            let selectedFiles = [];
+            let nomorValid = false;
+            let typingTimer;
+            const delay = 500;
 
-        const fileInput = document.getElementById('fileInput');
-        const dropZone = document.getElementById('dropZone');
-        const fileList = document.getElementById('fileList');
-        const fileListContainer = document.getElementById('fileListContainer');
-        const fileCount = document.getElementById('fileCount');
-        const submitBtn = document.getElementById('submitBtn');
-        const uploadForm = document.getElementById('uploadForm');
+            const kategori = document.getElementById('kategori');
+            const nomorInput = document.getElementById('nomor_surat');
+            const nomorIcon = document.getElementById('nomorIcon');
+            const nomorFeedback = document.getElementById('nomorFeedback');
 
-        /* ===============================
-           KATEGORI → TOGGLE NOMOR SURAT
-        =============================== */
-        // function toggleNomorSurat() {
-        //     if (kategori.value === 'Laporan') {
-        //         nomorSuratWrapper.style.display = 'none';
-        //     } else {
-        //         nomorSuratWrapper.style.display = 'block';
-        //     }
-        // }
+            const perihal = document.querySelector('input[name="perihal"]');
+            const tanggal = document.querySelector('input[name="tanggal_arsip"]');
 
-        // if (kategori) {
-        //     kategori.addEventListener('change', toggleNomorSurat);
-        //     toggleNomorSurat(); // initial
-        // }
+            const fileInput = document.getElementById('fileInput');
+            const dropZone = document.getElementById('dropZone');
+            const fileList = document.getElementById('fileList');
+            const fileListContainer = document.getElementById('fileListContainer');
+            const fileCount = document.getElementById('fileCount');
 
-        /* ===============================
-           FILE INPUT
-        =============================== */
-        fileInput.addEventListener('change', e => {
-            handleFiles(e.target.files);
-        });
+            const submitBtn = document.getElementById('submitBtn');
+            const uploadForm = document.getElementById('uploadForm');
 
-        dropZone.addEventListener('dragover', e => {
-            e.preventDefault();
-            dropZone.classList.add('border-primary');
-        });
+            const nomorRequired = document.getElementById('nomorRequired');
 
-        dropZone.addEventListener('dragleave', e => {
-            e.preventDefault();
-            dropZone.classList.remove('border-primary');
-        });
-
-        dropZone.addEventListener('drop', e => {
-            e.preventDefault();
-            dropZone.classList.remove('border-primary');
-            handleFiles(e.dataTransfer.files);
-        });
-
-        function handleFiles(files) {
-            for (let file of files) {
-                if (isValidFile(file)) {
-                    selectedFiles.push(file);
+            function toggleNomorSurat() {
+                if (kategori.value === 'Laporan') {
+                    nomorInput.removeAttribute('required');
+                    nomorRequired.style.display = 'none';
+                } else {
+                    nomorInput.setAttribute('required', 'required');
+                    nomorRequired.style.display = 'inline';
                 }
             }
 
-            syncInputFiles();
-            updateFileList();
-        }
 
-        function isValidFile(file) {
-            const validTypes = [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'image/jpeg',
-                'image/png',
-                'image/tiff'
-            ];
-
-            const maxSize = 50 * 1024 * 1024;
-
-            if (!validTypes.includes(file.type)) {
-                alert(`${file.name} bukan format yang didukung`);
-                return false;
+            /* ===============================
+               TOGGLE REQUIRED NOMOR
+            =============================== */
+            function toggleNomorSurat() {
+                if (kategori.value === 'Laporan') {
+                    nomorInput.removeAttribute('required');
+                } else {
+                    nomorInput.setAttribute('required', 'required');
+                }
             }
 
-            if (file.size > maxSize) {
-                alert(`${file.name} melebihi 50MB`);
-                return false;
+
+            /* ===============================
+               VALIDATE FORM
+            =============================== */
+            function validateForm() {
+                let valid = true;
+
+                if (!kategori.value) valid = false;
+                if (!perihal.value.trim()) valid = false;
+                if (!tanggal.value) valid = false;
+
+                if (kategori.value !== 'Laporan') {
+                    if (!nomorValid) valid = false;
+                } else {
+                    if (nomorInput.value.trim() !== '' && !nomorValid) {
+                        valid = false;
+                    }
+                }
+
+                if (selectedFiles.length === 0) valid = false;
+
+                submitBtn.disabled = !valid;
             }
 
-            return true;
-        }
+            /* ===============================
+               REALTIME NOMOR CHECK
+            =============================== */
+            nomorInput.addEventListener('input', function() {
 
-        function syncInputFiles() {
-            try {
+                clearTimeout(typingTimer);
+                const value = this.value.trim();
+
+                nomorInput.classList.remove('is-valid', 'is-invalid');
+                nomorIcon.innerHTML = '';
+                nomorValid = false;
+
+                if (value === '') {
+                    nomorFeedback.className = 'text-muted';
+                    nomorFeedback.innerText =
+                        'Wajib untuk Surat Masuk & Keluar, opsional untuk Laporan';
+                    validateForm();
+                    return;
+                }
+
+                nomorIcon.innerHTML =
+                    '<div class="spinner-border spinner-border-sm text-secondary"></div>';
+
+                typingTimer = setTimeout(() => {
+
+                    fetch(`/arsip/check-nomor?nomor=${encodeURIComponent(value)}`)
+                        .then(res => res.json())
+                        .then(data => {
+
+                            nomorIcon.innerHTML = '';
+
+                            if (data.exists) {
+                                nomorInput.classList.add('is-invalid');
+                                nomorFeedback.className = 'text-danger';
+                                nomorFeedback.innerText = 'Nomor surat sudah ada';
+                                nomorValid = false;
+                            } else {
+                                nomorInput.classList.add('is-valid');
+                                nomorFeedback.className = 'text-success';
+                                nomorFeedback.innerText = 'Nomor tersedia';
+                                nomorValid = true;
+                            }
+
+                            validateForm();
+                        });
+
+                }, delay);
+            });
+
+
+            /* ===============================
+               FILE HANDLING
+            =============================== */
+            fileInput.addEventListener('change', e => {
+                handleFiles(e.target.files);
+            });
+
+            dropZone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropZone.classList.add('border-primary');
+            });
+
+            dropZone.addEventListener('dragleave', e => {
+                dropZone.classList.remove('border-primary');
+            });
+
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            function handleFiles(files) {
+                for (let file of files) {
+                    selectedFiles.push(file);
+                }
+
+                syncInputFiles();
+                updateFileList();
+                validateForm();
+            }
+
+            function syncInputFiles() {
                 const dt = new DataTransfer();
                 selectedFiles.forEach(file => dt.items.add(file));
                 fileInput.files = dt.files;
-            } catch (e) { }
-        }
-
-        function getFileIcon(type) {
-            if (!type) return 'feather-file text-secondary';
-
-            if (type.includes('pdf')) return 'feather-file-text text-danger';
-            if (type.includes('word')) return 'feather-file-text text-primary';
-            if (type.includes('image')) return 'feather-image text-success';
-
-            return 'feather-file text-secondary';
-        }
-
-        function formatFileSize(bytes) {
-            if (!bytes) return '0 Bytes';
-
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-            return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
-        }
-
-
-        function updateFileList() {
-            fileList.innerHTML = '';
-            fileCount.textContent = selectedFiles.length;
-
-            if (selectedFiles.length === 0) {
-                fileListContainer.style.display = 'none';
-                submitBtn.disabled = true;
-                return;
             }
 
-            fileListContainer.style.display = 'block';
-            submitBtn.disabled = false;
+            function updateFileList() {
+                console.log("Selected files:", selectedFiles.length);
 
-            selectedFiles.forEach((file, index) => {
-                const item = document.createElement('div');
-                item.className = 'list-group-item rounded-3 border p-3';
+                fileList.innerHTML = '';
+                fileCount.textContent = selectedFiles.length;
 
-                const icon = getFileIcon(file.type);
-                const size = formatFileSize(file.size);
+                if (selectedFiles.length === 0) {
+                    fileListContainer.style.display = 'none';
+                } else {
+                    fileListContainer.style.display = 'block';
+                }
 
-                item.innerHTML = `
-                        <div class="d-flex align-items-center">
-                            <i class="${icon} fs-4 me-3"></i>
+                selectedFiles.forEach((file, index) => {
 
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <span class="fw-bold text-dark small">
-                                        ${file.name}
-                                    </span>
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item rounded-3 border p-3';
 
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-link text-danger p-0"
-                                        onclick="removeFile(${index})">
-                                        <i class="feather-x"></i>
-                                    </button>
-                                </div>
+                    item.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <span class="fw-bold small">${file.name}</span>
+                    <button type="button"
+                        class="btn btn-sm btn-link text-danger p-0"
+                        onclick="removeFile(${index})">
+                        ✖
+                    </button>
+                </div>
+                <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
+            `;
 
-                                <span class="text-muted" style="font-size: 11px;">
-                                    ${size}
-                                </span>
-                            </div>
-                        </div>
-                    `;
+                    fileList.appendChild(item);
+                });
+            }
 
-                fileList.appendChild(item);
+            window.removeFile = function(index) {
+                selectedFiles.splice(index, 1);
+                syncInputFiles();
+                updateFileList();
+                validateForm();
+            }
+
+
+            /* ===============================
+               EVENTS
+            =============================== */
+            kategori.addEventListener('change', () => {
+                toggleNomorSurat();
+                validateForm();
             });
-        }
+
+            perihal.addEventListener('input', validateForm);
+            tanggal.addEventListener('change', validateForm);
+
+            uploadForm.addEventListener('submit', () => {
+                console.log('Kategori:', kategori.value);
+                console.log('Files:', selectedFiles.length);
+            });
 
 
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            syncInputFiles();
-            updateFileList();
-        }
+            /* INIT */
+            toggleNomorSurat();
+            validateForm();
 
-        function formatFileSize(bytes) {
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            if (bytes === 0) return '0 Byte';
-            const i = Math.floor(Math.log(bytes) / Math.log(1024));
-            return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-        }
-
-        /* ===============================
-           DEBUG SUBMIT
-        =============================== */
-        uploadForm.addEventListener('submit', () => {
-            console.log('Kategori:', kategori.value);
-            console.log('Files:', selectedFiles.length);
         });
     </script>
 @endpush

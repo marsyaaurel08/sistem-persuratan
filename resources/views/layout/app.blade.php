@@ -128,7 +128,7 @@
     <!--! ================================================================ !-->
     <!--! BEGIN: Theme Customizer !-->
     <!--! ================================================================ !-->
-    <div class="theme-customizer">
+    {{-- <div class="theme-customizer">
         <div class="customizer-handle">
             <a href="javascript:void(0);" class="cutomizer-open-trigger bg-primary">
                 <i class="feather-settings"></i>
@@ -386,7 +386,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <!--! ================================================================ !-->
     <!--! [End] Theme Customizer !-->
     <!--! ================================================================ !-->

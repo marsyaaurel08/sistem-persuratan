@@ -51,27 +51,33 @@ class ArsipController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
             'kategori'       => 'required|in:Masuk,Keluar,Laporan',
-            'nomor_surat'    => 'nullable|string|max:100',
             'perihal'        => 'required|string|max:255',
             'tanggal_arsip'  => 'required|date',
-            //'lokasi_fisik'   => 'nullable|string|max:100',
 
             'files'          => 'required',
             'files.*'        => 'file|max:51200|mimes:pdf,doc,docx,jpg,jpeg,png,tiff',
-        ]);
+        ];
 
-        // Simpan arsip (kode_arsip & user di-handle model)
+        // Validasi nomor_surat berdasarkan kategori
+        if ($request->kategori != 'Laporan') {
+            $rules['nomor_surat'] = 'required|string|max:100|unique:arsip,nomor_surat';
+        } else {
+            $rules['nomor_surat'] = 'nullable|string|max:100|unique:arsip,nomor_surat';
+        }
+
+        $request->validate($rules);
+
+        // Simpan arsip
         $arsip = Arsip::create([
             'kategori'        => $request->kategori,
             'nomor_surat'     => $request->nomor_surat,
             'perihal'         => $request->perihal,
             'tanggal_arsip'   => $request->tanggal_arsip,
-            //'lokasi_fisik'    => $request->lokasi_fisik,
         ]);
 
-        // Upload file arsip
+        // Upload file
         foreach ($request->file('files') as $file) {
             $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('arsip', $filename, 'public');

@@ -8,6 +8,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SuratController;
 use Illuminate\Http\Request;
 
 /*
@@ -73,7 +74,7 @@ Route::middleware('auth')->group(function () {
         ->name('surat_keluar.search');
 
 
-    /** FITUR ARSIP */  
+    /** FITUR ARSIP */
     Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
     Route::get('/arsip/detail/{id}', [ArsipController::class, 'detail'])->name('arsip.arsip_detail');
     Route::get('/arsip/upload', [ArsipController::class, 'create'])
@@ -88,8 +89,13 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/arsip/download/{id}', [ArsipController::class, 'download'])
         ->name('arsip.download');
-    Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload']) ->name('arsip.bulkDownload');
+    Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload'])->name('arsip.bulkDownload');
     Route::post('/arsip/bulk-delete', [ArsipController::class, 'bulkDelete'])
-    ->name('arsip.bulkDelete');
-    
+        ->name('arsip.bulkDelete');
+
+    /** FITUR BUAT SURAT */
+    Route::get('/surat/buat', [SuratController::class, 'index'])->name('surat.create');
+    Route::post('/surat/preview', [SuratController::class, 'preview'])->name('surat.preview');
+    Route::post('/surat/pdf', [SuratController::class, 'pdf'])->name('surat.pdf');
+    Route::post('/surat/clear-draft', [SuratController::class, 'clearDraft'])->name('surat.clear');
 });

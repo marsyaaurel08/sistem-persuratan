@@ -1,5 +1,11 @@
 <nav class="nxl-navigation custom-sidebar">
     <div class="navbar-wrapper">
+        <div class="m-header" style="background-color: #000B58;">
+            <a href="index.html" class="b-brand">
+                <!-- ========   change your logo hear   ============ -->
+                <img src="{{ asset('assets/images/logo-full-pjt.png') }}" alt="" class="logo logo-lg"
+                    style="max-width: 200px;" />
+                <img src="{{ asset('assets/images/logo-pjt.png') }}" alt="" class="logo logo-sm" style="width: 70px;" />
         <div class="m-header d-flex align-items-center justify-content-center"
             style="background-color: #000B58; height: 90px;">
             <a href="/dashboard" class="b-brand d-flex align-items-center justify-content-start w-100 ps-1">
@@ -35,7 +41,15 @@
                     </a>
 
                 </li> --}}
-                
+
+                <li class="nxl-item {{ request()->routeIs('surat.*') ? 'active' : '' }}">
+                    <a href="{{ route('surat.create') }}" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-send"></i></span>
+                        <span class="nxl-mtext">Buat Surat</span>
+                    </a>
+                </li>
+
+
                 <li class="nxl-item {{ request()->routeIs('arsip.*') ? 'active' : '' }}">
                     <a href="{{ route('arsip.index') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-archive"></i></span>

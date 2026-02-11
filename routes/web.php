@@ -9,6 +9,7 @@ use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SuratController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,12 @@ Route::middleware('auth')->group(function () {
         ->name('arsip.create');
     Route::post('/arsip/upload', [ArsipController::class, 'store'])
         ->name('arsip.store');
+    Route::get('/arsip/check-nomor', function (Request $request) {
+        $exists = \App\Models\Arsip::where('nomor_surat', $request->nomor)->exists();
+        return response()->json([
+            'exists' => $exists
+        ]);
+    });
     Route::get('/arsip/download/{id}', [ArsipController::class, 'download'])
         ->name('arsip.download');
     Route::post('/arsip/bulk-download', [ArsipController::class, 'bulkDownload'])->name('arsip.bulkDownload');

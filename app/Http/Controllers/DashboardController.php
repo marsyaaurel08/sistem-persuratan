@@ -56,7 +56,8 @@ class DashboardController extends Controller
             ->map(function ($a) {
                 return [
                     'kode_arsip'    => $a->kode_arsip,
-                    'nomor_surat'   => $a->nomor_surat,
+                    'nomor_surat'   => $a->nomor_surat ?? '-',
+                    // 'nomor_surat'   => $a->nomor_surat,
                     'perihal'       => $a->perihal,
                     'tanggal_arsip' => $a->tanggal_arsip?->format('Y-m-d'),
                     'tanggal_view'  => $a->tanggal_arsip?->format('d M Y'),
@@ -156,7 +157,8 @@ class DashboardController extends Controller
             ->map(function ($a) {
                 return [
                     'kode_arsip'    => $a->kode_arsip,
-                    'nomor_surat'   => $a->nomor_surat,
+                    'nomor_surat'   => $a->nomor_surat ?? '-',
+                    // 'nomor_surat'   => $a->nomor_surat,
                     'perihal'       => $a->perihal,
                     'tanggal_arsip' => $a->tanggal_arsip?->format('Y-m-d'),
                     'tanggal_view'  => $a->tanggal_arsip?->format('d M Y'),

@@ -6,8 +6,17 @@
                 <img src="{{ asset('assets/images/logo-full-pjt.png') }}" alt="" class="logo logo-lg"
                     style="max-width: 200px;" />
                 <img src="{{ asset('assets/images/logo-pjt.png') }}" alt="" class="logo logo-sm" style="width: 70px;" />
+        <div class="m-header d-flex align-items-center justify-content-center"
+            style="background-color: #000B58; height: 90px;">
+            <a href="/dashboard" class="b-brand d-flex align-items-center justify-content-start w-100 ps-1">
+                <img src="{{ asset('assets/images/SIP-LOGO1.png') }}" alt="Logo Besar" class="logo logo-lg"
+                    style="max-height: 55px; object-fit: contain;" />
+            
+            <img src="{{ asset('assets/images/jtm.png') }}" alt="Logo Kecil" class="logo logo-sm"
+                style="max-height: 45px; object-fit: contain;" />
             </a>
         </div>
+
         <div class="navbar-content">
             <ul class="nxl-navbar">
                 <li class="nxl-item nxl-caption">

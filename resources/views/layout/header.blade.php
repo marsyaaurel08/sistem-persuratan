@@ -1727,7 +1727,7 @@
                             </div>
                         </div>
                     </div> --}}
-                    <div class="nxl-h-item d-none d-sm-flex">
+                    {{-- <div class="nxl-h-item d-none d-sm-flex">
                         <div class="full-screen-switcher">
                             <a href="javascript:void(0);" class="nxl-head-link me-0" onclick="$('body').fullScreenHelper('toggle');">
                                 <i class="feather-maximize maximize"></i>
@@ -1742,7 +1742,7 @@
                         <a href="javascript:void(0);" class="nxl-head-link me-0 light-button" style="display: none">
                             <i class="feather-sun"></i>
                         </a>
-                    </div>
+                    </div> --}}
                     {{-- <div class="dropdown nxl-h-item">
                         <a href="javascript:void(0);" class="nxl-head-link me-0" data-bs-toggle="dropdown" role="button" data-bs-auto-close="outside">
                             <i class="feather-clock"></i>

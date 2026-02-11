@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sistem Persuratan || Login</title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="https://eproc.jasatirta1.co.id/assets/images/logo-jasatirta-crop.png">
+    <link rel="shortcut icon" type="image/x-icon"
+        href="https://eproc.jasatirta1.co.id/assets/images/logo-jasatirta-crop.png">
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/vendors/css/vendors.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('duralux/assets/css/theme.min.css') }}">
@@ -20,22 +21,30 @@
                 <div class="card my-4 overflow-hidden" style="z-index: 1">
                     <div class="row flex-1 g-0">
                         <div class="col-lg-6 h-100 my-auto order-1 order-lg-0">
-                            <div class="bg-white shadow-lg position-absolute translate-middle top-50 start-50 d-none d-lg-flex align-items-center justify-content-center rounded-circle"
+                            {{-- <div class="bg-white shadow-lg position-absolute translate-middle top-50 start-50 d-none d-lg-flex align-items-center justify-content-center rounded-circle"
                                 style="width: 80px; height: 80px; z-index: 10; padding: 10px;">
                                 <img src="https://eproc.jasatirta1.co.id/assets/images/logo-jasatirta-crop.png" alt=""
                                     class="img-fluid">
-                            </div>
+                            </div> --}}
                             <div class="creative-card-body card-body p-sm-5">
-                                <h2 class="fs-20 fw-bolder mb-4">Masuk ke akun Anda</h2>
-                                <p class="fs-12 fw-medium text-muted">Silakan masukkan akun Anda untuk mengakses sistem.</p>
+                                <div class="mb-4 text-center">
+                                    <img src="{{ asset('assets/images/logo-login.png') }}" alt="Logo" class="img-fluid"
+                                        style="width: 180px;">
+                                </div>
+
+                                <h2 class="fs-20 fw-bolder mb-1">Masuk ke akun Anda</h2>
+                                <p class="fs-12 fw-medium text-muted">Silakan masukkan akun Anda untuk mengakses sistem.
+                                </p>
 
                                 <form action="{{ route('login.process') }}" method="POST" class="w-100 mt-4 pt-2">
                                     @csrf
                                     <div class="mb-4">
-                                        <input type="email" name="email" class="form-control" placeholder="Email" required>
+                                        <input type="email" name="email" class="form-control" placeholder="Email"
+                                            required>
                                     </div>
                                     <div class="mb-3">
-                                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                                        <input type="password" name="password" class="form-control"
+                                            placeholder="Password" required>
                                     </div>
                                     <div class="mt-5">
                                         <button type="submit" class="btn btn-lg btn-primary w-100">Login</button>
@@ -171,4 +180,5 @@
         });
     </script>
 </body>
+
 </html>

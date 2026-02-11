@@ -16,13 +16,12 @@
             <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
                 {{-- Search --}}
-                <div class="input-group" style="max-width: 250px; height: 38px;">
-                    <span
-                        class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
+                <div class="input-group search-group" style="max-width: 250px; height: 38px;">
+                    <span class="input-group-text rounded-start-pill d-flex align-items-center justify-content-center">
                         <i class="feather-search"></i>
                     </span>
-                    <input type="text" id="searchTable" class="form-control border-start-0 rounded-end-pill"
-                        placeholder="Cari surat..." style="height: 100%;">
+                    <input type="text" id="searchTable" class="form-control rounded-end-pill" placeholder="Cari surat..."
+                        style="height: 100%;">
                 </div>
 
                 {{-- Date Range --}}
@@ -52,7 +51,6 @@
             </div>
         </div>
     </div>
-
     {{-- Alert --}}
 
 
@@ -246,6 +244,12 @@
                                                 @endif
                                             </td> --}}
                                     </tr>
+                                    <tr id="noDataRow" style="display: none;">
+                                        <td colspan="100%" class="text-center text-muted py-3">
+                                            {{-- Data tidak ditemukan --}}
+                                            Tidak ada arsip yang sesuai dengan pencarian.
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
 
@@ -310,6 +314,56 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .form-control:focus {
+            border-color: #ced4da !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .input-group-text,
+        .input-group .form-control {
+            border: 1px solid #ced4da;
+        }
+
+        .input-group .form-control:focus {
+            box-shadow: none;
+        }
+
+        .input-group {
+            border-radius: 50px;
+            overflow: hidden;
+        }
+
+        .input-group-text {
+            background-color: #fff;
+            /* samakan dengan input */
+            border-right: none;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+        }
+
+        /* Focus effect satu kesatuan */
+        .input-group:focus-within {
+            border-color: #3473d8;
+            box-shadow: 0 0 0 2px rgba(10, 59, 139, 0.514);
+        }
+
+        .badge.bg-primary:focus,
+        .badge.bg-primary:active,
+        .badge.bg-primary:focus-visible {
+            color: #fff !important;
+            text-decoration: none;
+            outline: none;
+        }
+
+        .badge.bg-primary:hover {
+            color: #fff;
+            background-color: #cddaee;
+        }
+    </style>
 @endpush
 
 @push('scripts')
@@ -319,17 +373,30 @@
     <!-- Search Table -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchTable');
-            if (!searchInput) return;
-            searchInput.addEventListener('keyup', function() {
-                const filter = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#arsipTable tbody tr');
-                rows.forEach(row => {
-                    row.style.display = row.textContent.toLowerCase().includes(filter) ? '' :
-                        'none';
-                });
-            });
-        });
+                    const searchInput = document.getElementById('searchTable');
+                    if (!searchInput) return;
+
+                    const noDataRow = document.getElementById('noDataRow');
+
+                    searchInput.addEventListener('keyup', function() {
+                        const filter = this.value.toLowerCase();
+                        const rows = document.querySelectorAll('#arsipTable tbody tr:not(#noDataRow)');
+
+                        let visibleCount = 0;
+
+                        rows.forEach(row => {
+                            const match = row.textContent.toLowerCase().includes(filter);
+                            row.style.display = match ? '' : 'none';
+                            if (match) visibleCount++;
+                        });
+
+                        // Kalau tidak ada yang cocok
+                        if (visibleCount === 0) {
+                            noDataRow.style.display = '';
+                        } else {
+                            noDataRow.style.display = 'none';
+                        }
+                    });
     </script>
 
     <!-- Date Range Picker & Filter -->
@@ -340,9 +407,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const dateInput = document.getElementById('dateRange');
             const clearBtn = document.getElementById('clearDateRange');
-            const rows = document.querySelectorAll('#arsipTable tbody tr');
-            const pagination = document.querySelector('.pagination')?.parentElement;
-
             if (!dateInput) return;
 
             const fp = flatpickr(dateInput, {
@@ -350,43 +414,23 @@
                 dateFormat: 'd M Y',
                 locale: 'id',
                 allowInput: false,
-                onChange: function(selectedDates) {
+                onClose: function(selectedDates) {
                     if (selectedDates.length === 2) {
-                        filterByDate(selectedDates[0], selectedDates[1]);
-                        clearBtn.style.display = 'inline-flex';
-                        hidePagination();
+                        const start = selectedDates[0].toISOString().split('T')[0];
+                        const end = selectedDates[1].toISOString().split('T')[0];
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('start_date', start);
+                        url.searchParams.set('end_date', end);
+                        window.location.href = url.toString(); // reload page
                     }
                 }
             });
 
-            function filterByDate(start, end) {
-                rows.forEach(row => {
-                    const dateStr = row.dataset.date;
-                    if (!dateStr) {
-                        row.style.display = 'none';
-                        return;
-                    }
-
-                    const rowDate = new Date(dateStr);
-                    row.style.display =
-                        rowDate >= start && rowDate <= end ? '' : 'none';
-                });
-            }
-
-            function hidePagination() {
-                if (pagination) pagination.style.display = 'none';
-            }
-
-            function showPagination() {
-                if (pagination) pagination.style.display = 'block';
-            }
-
             clearBtn.addEventListener('click', function() {
-                fp.clear();
-                dateInput.value = '';
-                clearBtn.style.display = 'none';
-                rows.forEach(row => row.style.display = '');
-                showPagination();
+                const url = new URL(window.location.href);
+                url.searchParams.delete('start_date');
+                url.searchParams.delete('end_date');
+                window.location.href = url.toString();
             });
         });
     </script>

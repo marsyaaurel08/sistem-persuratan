@@ -69,7 +69,7 @@
                                     type="button"
                                     id="downloadAll"
                                     class="btn btn-primary rounded-pill"
-                                    data-ids='@json($arsip->files->pluck("id"))'
+                                    data-ids='@json([$arsip->id])'
                                 >
                                     <span class="btn-text">
                                         <i class="feather-download me-1"></i> Download Semua
@@ -119,6 +119,8 @@
                 <button
                     type="button"
                     class="btn btn-sm btn-outline-success preview-btn"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#previewModal"
                     data-file="{{ asset('storage/' . $file->path_file) }}">
                     <i class="feather-eye"></i>
                 </button>
@@ -143,240 +145,195 @@
     </div>
 @endsection
 
+@push('modals')
 <!-- Modal Preview -->
-<div class="modal fade" id="previewModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    
+    <!-- Tombol Close Floating di Luar Modal Content -->
+    <button 
+        type="button" 
+        onclick="
+            const m = document.getElementById('previewModal');
+            const f = document.getElementById('previewFrame');
+            m.classList.remove('show');
+            m.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            const bd = document.querySelectorAll('.modal-backdrop');
+            bd.forEach(b => b.remove());
+            if(f) f.src = 'about:blank';
+        "
+        style="
+            position: fixed;
+            top: 50px;
+            right: 50px;
+            z-index: 99999;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: #dc3545;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        "
+        onmouseover="this.style.transform='scale(1.1)'"
+        onmouseout="this.style.transform='scale(1)'"
+        >
+        ×
+    </button>
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
+            
+            <div class="modal-header border-bottom">
                 <h5 class="modal-title">Preview Dokumen</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame"></iframe>
+            
+            <div class="modal-body p-0" style="background: #f8f9fa;">
+                <iframe src="" frameborder="0" width="100%" height="600px" id="previewFrame" style="display: block;"></iframe>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="
+                    const m = document.getElementById('previewModal');
+                    const f = document.getElementById('previewFrame');
+                    m.classList.remove('show');
+                    m.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                    const bd = document.querySelectorAll('.modal-backdrop');
+                    bd.forEach(b => b.remove());
+                    if(f) f.src = 'about:blank';
+                ">Tutup</button>
             </div>
         </div>
     </div>
 </div>
-
+@endpush
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-
-            const fileInput = document.getElementById('fileInput');
-            const dropZone = document.getElementById('dropZone');
-            const fileList = document.getElementById('fileList');
-            const fileListContainer = document.getElementById('fileListContainer');
-            const fileCount = document.getElementById('fileCount');
-            const submitBtn = document.getElementById('submitBtn');
-            const uploadForm = document.getElementById('uploadForm');
-
-            // 👉 Jika halaman ini bukan halaman upload, hentikan script
-            if (!fileInput || !uploadForm) return;
-
-            let selectedFiles = [];
-
-            /* ===============================
-               FILE INPUT & DRAG DROP
-            =============================== */
-            fileInput.addEventListener('change', e => {
-                handleFiles(e.target.files);
-            });
-
-            if (dropZone) {
-                dropZone.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    dropZone.classList.add('border-primary');
-                });
-
-                dropZone.addEventListener('dragleave', () => {
-                    dropZone.classList.remove('border-primary');
-                });
-
-                dropZone.addEventListener('drop', e => {
-                    e.preventDefault();
-                    dropZone.classList.remove('border-primary');
-                    handleFiles(e.dataTransfer.files);
-                });
-            }
-
-            function handleFiles(files) {
-                for (const file of files) {
-                    if (isValidFile(file)) {
-                        selectedFiles.push(file);
-                    }
-                }
-                syncInputFiles();
-                updateFileList();
-            }
-
-            function isValidFile(file) {
-                const validTypes = [
-                    'application/pdf',
-                    'application/msword',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'image/jpeg',
-                    'image/png',
-                    'image/tiff'
-                ];
-
-                const maxSize = 50 * 1024 * 1024;
-
-                if (!validTypes.includes(file.type)) {
-                    alert(`${file.name} bukan format yang didukung`);
-                    return false;
-                }
-
-                if (file.size > maxSize) {
-                    alert(`${file.name} melebihi 50MB`);
-                    return false;
-                }
-
-                return true;
-            }
-
-            function syncInputFiles() {
-                const dt = new DataTransfer();
-                selectedFiles.forEach(file => dt.items.add(file));
-                fileInput.files = dt.files;
-            }
-
-            function updateFileList() {
-                if (!fileList || !fileListContainer || !submitBtn) return;
-
-                fileList.innerHTML = '';
-                fileCount.textContent = selectedFiles.length;
-
-                if (selectedFiles.length === 0) {
-                    fileListContainer.style.display = 'none';
-                    submitBtn.disabled = true;
-                    return;
-                }
-
-                fileListContainer.style.display = 'block';
-                submitBtn.disabled = false;
-
-                selectedFiles.forEach((file, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'list-group-item border rounded p-3';
-
-                    item.innerHTML = `
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="fw-semibold">${file.name}</div>
-                                    <small class="text-muted">${formatFileSize(file.size)}</small>
-                                </div>
-                                <button type="button"
-                                    class="btn btn-sm btn-link text-danger"
-                                    onclick="window.removeFile(${index})">
-                                    <i class="feather-x"></i>
-                                </button>
-                            </div>
-                        `;
-
-                    fileList.appendChild(item);
-                });
-            }
-
-            window.removeFile = function (index) {
-                selectedFiles.splice(index, 1);
-                syncInputFiles();
-                updateFileList();
-            };
-
-            function formatFileSize(bytes) {
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(1024));
-                return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
-            }
-
-        });
-    </script>
-    <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // === MODAL PREVIEW ===
             const iframe = document.getElementById('previewFrame');
             const modalEl = document.getElementById('previewModal');
-            const modal = new bootstrap.Modal(modalEl);
 
+            // Handler tombol preview
             document.querySelectorAll('.preview-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
                     const fileUrl = this.dataset.file;
-                    const ext = fileUrl.split('.').pop().toLowerCase();
+                    if (!fileUrl) return;
 
-                    // hanya preview PDF & image
+                    const ext = fileUrl.split('.').pop().toLowerCase();
                     const allowed = ['pdf', 'jpg', 'jpeg', 'png'];
 
                     if (!allowed.includes(ext)) {
                         alert('File ini tidak bisa dipratinjau');
+                        e.stopPropagation();
                         return;
                     }
 
-                    iframe.src = fileUrl;
-                    modal.show();
+                    if(iframe) iframe.src = fileUrl;
                 });
             });
 
-            modalEl.addEventListener('hidden.bs.modal', function () {
-                iframe.src = '';
-            });
+            // Reset iframe saat modal ditutup
+            if (modalEl) {
+                modalEl.addEventListener('hidden.bs.modal', function () {
+                    if(iframe) iframe.src = 'about:blank';
+                });
+            }
+
+            // === DOWNLOAD SEMUA ===
+            const btn = document.getElementById('downloadAll');
+            if (btn) {
+                const spinner = btn.querySelector('.spinner-border');
+                const btnText = btn.querySelector('.btn-text');
+
+                btn.addEventListener('click', function () {
+                    const ids = JSON.parse(this.dataset.ids);
+
+                    if (!ids || !ids.length) {
+                        alert('Tidak ada file untuk diunduh');
+                        return;
+                    }
+
+                    btn.disabled = true;
+                    btnText.textContent = 'Menyiapkan ZIP...';
+                    spinner.classList.remove('d-none');
+
+                    fetch("{{ route('arsip.bulkDownload') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ids })
+                    })
+                    .then(res => {
+                        console.log('Response status:', res.status);
+                        
+                        if (!res.ok) {
+                            return res.text().then(text => {
+                                console.error('Error response:', text);
+                                throw new Error('Server error: ' + res.status);
+                            });
+                        }
+
+                        const disposition = res.headers.get('Content-Disposition');
+                        let filename = 'arsip_{{ now()->format("Ymd_His") }}.zip';
+
+                        if (disposition && disposition.includes('filename=')) {
+                            const matches = disposition.match(/filename="?(.+?)"?$/);
+                            if (matches && matches[1]) {
+                                filename = matches[1];
+                            }
+                        }
+
+                        return res.blob().then(blob => {
+                            console.log('Blob size:', blob.size);
+                            if (blob.size === 0) {
+                                throw new Error('File kosong');
+                            }
+                            return { blob, filename };
+                        });
+                    })
+                    .then(({ blob, filename }) => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        
+                        setTimeout(() => {
+                            a.remove();
+                            URL.revokeObjectURL(url);
+                        }, 100);
+                        
+                        console.log('Download started:', filename);
+                    })
+                    .catch(err => {
+                        console.error('Download error:', err);
+                        alert('Gagal mengunduh: ' + err.message);
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btnText.innerHTML = '<i class="feather-download me-1"></i> Download Semua';
+                        spinner.classList.add('d-none');
+                    });
+                });
+            }
         });
     </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const btn = document.getElementById('downloadAll');
-        if (!btn) return;
-
-        const spinner = btn.querySelector('.spinner-border');
-        const btnText = btn.querySelector('.btn-text');
-
-        btn.addEventListener('click', function () {
-            const ids = JSON.parse(this.dataset.ids);
-
-            if (!ids.length) return;
-
-            btn.disabled = true;
-            btnText.textContent = 'Menyiapkan ZIP...';
-            spinner.classList.remove('d-none');
-
-            fetch("{{ route('arsip.bulkDownload') }}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ ids })
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('Gagal mengunduh');
-
-                const disposition = res.headers.get('Content-Disposition');
-                let filename = 'arsip.zip';
-
-                if (disposition && disposition.includes('filename=')) {
-                    filename = disposition.split('filename=')[1].replace(/"/g, '');
-                }
-
-                return res.blob().then(blob => ({ blob, filename }));
-            })
-            .then(({ blob, filename }) => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                URL.revokeObjectURL(url);
-            })
-            .catch(err => alert(err.message))
-            .finally(() => {
-                btn.disabled = false;
-                btnText.innerHTML = '<i class="feather-download me-1"></i> Download Semua';
-                spinner.classList.add('d-none');
-            });
-        });
-    });
-</script>
-
-
 @endpush

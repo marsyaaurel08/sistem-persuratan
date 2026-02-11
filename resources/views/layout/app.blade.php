@@ -121,7 +121,6 @@
             </div>
         </div>
     </div>
-    <script src="path/to/bootstrap.bundle.min.js"></script>
     <!--! ================================================================ !-->
     <!--! [End] Main Content !-->
     <!--! ================================================================ !-->
@@ -390,10 +389,15 @@
     <!--! ================================================================ !-->
     <!--! [End] Theme Customizer !-->
     <!--! ================================================================ !-->
+    
+    @stack('modals')
+
     <!--! ================================================================ !-->
     <!--! Footer Script !-->
     <!--! ================================================================ !-->
     <!--! BEGIN: Vendors JS !-->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('duralux/assets/vendors/js/vendors.min.js') }}"></script>
     <!-- vendors.min.js {always must need to be top} -->
     <script src="{{ asset('duralux/assets/vendors/js/daterangepicker.min.js') }}"></script>
@@ -407,7 +411,6 @@
     <!--! BEGIN: Theme Customizer  !-->
     <script src="{{ asset('duralux/assets/js/theme-customizer-init.min.js') }}"></script>
     <!--! END: Theme Customizer !-->
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

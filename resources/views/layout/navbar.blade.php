@@ -35,12 +35,14 @@
                     </a>
 
                 </li> --}}
-                <li class="nxl-item">
-                    <a href="{{ url('/arsip') }}" class="nxl-link">
+                
+                <li class="nxl-item {{ request()->routeIs('arsip.*') ? 'active' : '' }}">
+                    <a href="{{ route('arsip.index') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-archive"></i></span>
-                        <span class="nxl-mtext">Arsip</span><span class="nxl-arrow">
+                        <span class="nxl-mtext">Arsip</span>
                     </a>
                 </li>
+
                 <li class="nxl-item">
                     <a href="{{ url('/laporan') }}" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-bar-chart-2"></i></span>

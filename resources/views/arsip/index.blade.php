@@ -51,6 +51,7 @@
             </div>
         </div>
     </div>
+
     {{-- Alert --}}
 
 
@@ -373,30 +374,31 @@
     <!-- Search Table -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-                    const searchInput = document.getElementById('searchTable');
-                    if (!searchInput) return;
+            const searchInput = document.getElementById('searchTable');
+            if (!searchInput) return;
 
-                    const noDataRow = document.getElementById('noDataRow');
+            const noDataRow = document.getElementById('noDataRow');
 
-                    searchInput.addEventListener('keyup', function() {
-                        const filter = this.value.toLowerCase();
-                        const rows = document.querySelectorAll('#arsipTable tbody tr:not(#noDataRow)');
+            searchInput.addEventListener('keyup', function() {
+                const filter = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#arsipTable tbody tr:not(#noDataRow)');
 
-                        let visibleCount = 0;
+                let visibleCount = 0;
 
-                        rows.forEach(row => {
-                            const match = row.textContent.toLowerCase().includes(filter);
-                            row.style.display = match ? '' : 'none';
-                            if (match) visibleCount++;
-                        });
+                rows.forEach(row => {
+                    const match = row.textContent.toLowerCase().includes(filter);
+                    row.style.display = match ? '' : 'none';
+                    if (match) visibleCount++;
+                });
 
-                        // Kalau tidak ada yang cocok
-                        if (visibleCount === 0) {
-                            noDataRow.style.display = '';
-                        } else {
-                            noDataRow.style.display = 'none';
-                        }
-                    });
+                // Kalau tidak ada yang cocok
+                if (visibleCount === 0) {
+                    noDataRow.style.display = '';
+                } else {
+                    noDataRow.style.display = 'none';
+                }
+            });
+        });
     </script>
 
     <!-- Date Range Picker & Filter -->
@@ -425,6 +427,16 @@
                     }
                 }
             });
+
+            // Set nilai input dari query string jika ada
+            const params = new URLSearchParams(window.location.search);
+            const start = params.get('start_date');
+            const end = params.get('end_date');
+            if (start && end) {
+                dateInput.value =
+                    `${fp.formatDate(new Date(start), "d M Y")} - ${fp.formatDate(new Date(end), "d M Y")}`;
+                clearBtn.style.display = "flex";
+            }
 
             clearBtn.addEventListener('click', function() {
                 const url = new URL(window.location.href);

@@ -104,28 +104,56 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@5/tinymce.min.js"></script>
 
 <script>
-    tinymce.init({
-        selector: '#isi_surat',
-        height: 450,
-        menubar: false,
-        plugins: 'lists link table code',
-        toolbar: `
-            undo redo |
-            bold italic underline |
-            alignleft aligncenter alignright alignjustify |
-            bullist numlist |
-            table link |
-            code
-        `,
-        content_style: `
-            body {
-                font-family: "Times New Roman", serif;
-                font-size: 14px;
-            }
-        `
-    });
+tinymce.init({
+    selector: '#isi_surat',
+    height: 600,
+
+    menubar: 'file edit view insert format tools table help',
+
+    plugins: `
+        advlist autolink lists link image charmap preview anchor
+        searchreplace visualblocks code fullscreen
+        insertdatetime media table code help wordcount
+        pagebreak
+    `,
+
+    toolbar: `
+        undo redo | blocks | 
+        fontfamily fontsize |
+        bold italic underline strikethrough |
+        alignleft aligncenter alignright alignjustify |
+        outdent indent |
+        bullist numlist |
+        lineheight |
+        forecolor backcolor |
+        table link image |
+        removeformat |
+        code fullscreen
+    `,
+
+    font_family_formats: `
+        Times New Roman=Times New Roman,times;
+        Arial=Arial,Helvetica,sans-serif;
+        Calibri=Calibri,sans-serif;
+        Cambria=Cambria,serif;
+    `,
+
+    fontsize_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 24pt 36pt',
+
+    line_height_formats: '1 1.15 1.5 2 2.5 3',
+
+    content_style: `
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
+            padding: 40px;
+        }
+    `
+});
+</script>
+
 </script>
 @endsection

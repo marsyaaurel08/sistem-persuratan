@@ -16,26 +16,61 @@ class ArsipController extends Controller
      */
     public function index(Request $request)
     {
-        $kategori = $request->get('kategori'); // Masuk | Keluar | Laporan | null
+        $kategori   = $request->get('kategori');
+        $search     = $request->get('search');
+        $startDate  = $request->get('start_date');
+        $endDate    = $request->get('end_date');
 
-        $arsips = Arsip::with(['files', 'pengarsip'])
-            ->when($kategori, function ($query) use ($kategori) {
-                $query->where('kategori', $kategori);
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends($request->query());
+        $query = Arsip::with(['files', 'pengarsip'])
+            ->when($kategori, fn($q) => $q->where('kategori', $kategori))
+            ->when($search, fn($q) => $q->where(function($sub) use ($search) {
+                $sub->where('nomor_surat', 'like', "%{$search}%")
+                    ->orWhere('perihal', 'like', "%{$search}%")
+                    ->orWhere('kategori', 'like', "%{$search}%");
+            }))
+            ->when($startDate && $endDate, fn($q) => $q->whereBetween('tanggal_arsip', [$startDate, $endDate]));
+
+        $arsips = $query->latest()->paginate(10)
+                    ->appends([
+                        'kategori'   => $kategori,
+                        'search'     => $search,
+                        'start_date' => $startDate,
+                        'end_date'   => $endDate
+                    ]);
 
         return view('arsip.index', [
             'arsips'        => $arsips,
-            'kategoriAktif'    => $kategori ?? 'semua',
-
-            'countSemua'   => Arsip::count(),
-            'countMasuk'   => Arsip::where('kategori', 'Masuk')->count(),
-            'countKeluar'  => Arsip::where('kategori', 'Keluar')->count(),
-            'countLaporan' => Arsip::where('kategori', 'Laporan')->count(),
+            'kategoriAktif' => $kategori ?? 'semua',
+            'countSemua'    => Arsip::count(),
+            'countMasuk'    => Arsip::where('kategori', 'Masuk')->count(),
+            'countKeluar'   => Arsip::where('kategori', 'Keluar')->count(),
+            'countLaporan'  => Arsip::where('kategori', 'Laporan')->count(),
         ]);
     }
+    
+    //-- JANGAN DI HAPUS DULU --
+    // public function index(Request $request)
+    // {
+    //     $kategori = $request->get('kategori'); // Masuk | Keluar | Laporan | null
+
+    //     $arsips = Arsip::with(['files', 'pengarsip'])
+    //         ->when($kategori, function ($query) use ($kategori) {
+    //             $query->where('kategori', $kategori);
+    //         })
+    //         ->latest()
+    //         ->paginate(10)
+    //         ->appends($request->query());
+
+    //     return view('arsip.index', [
+    //         'arsips'        => $arsips,
+    //         'kategoriAktif'    => $kategori ?? 'semua',
+
+    //         'countSemua'   => Arsip::count(),
+    //         'countMasuk'   => Arsip::where('kategori', 'Masuk')->count(),
+    //         'countKeluar'  => Arsip::where('kategori', 'Keluar')->count(),
+    //         'countLaporan' => Arsip::where('kategori', 'Laporan')->count(),
+    //     ]);
+    // }
 
 
     /**

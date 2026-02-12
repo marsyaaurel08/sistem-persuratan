@@ -115,6 +115,12 @@
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
                                     </tr>
+                                    <tr id="noDataRow" style="display: none;">
+                                        <td colspan="100%" class="text-center text-muted py-3">
+                                            {{-- Data tidak ditemukan --}}
+                                            Tidak ada data laporan yang sesuai dengan pencarian.
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -191,6 +197,35 @@
                 border-color: #198754 !important;
                 box-shadow: none !important;
             }
+
+            .input-group .form-control:focus {
+                border-color: #ced4da !important;
+                box-shadow: none !important;
+                outline: none !important;
+            }
+
+            /* Satukan border input + icon */
+            .input-group {
+                border: 1px solid #ced4da;
+                border-radius: 50px;
+                overflow: hidden;
+                transition: all 0.2s ease-in-out;
+            }
+
+            /* Hilangkan double border */
+            .input-group-text {
+                border: none;
+            }
+
+            .input-group .form-control {
+                border: none;
+            }
+
+            /* EFFECT AKTIF SATU KESATUAN */
+            .input-group:focus-within {
+                border-color: #3473d8;
+                box-shadow: 0 0 0 2px rgba(10, 59, 139, 0.514);
+            }
         </style>
     @endpush
 
@@ -204,6 +239,7 @@
                 const rows = document.querySelectorAll('#laporanTable tbody tr');
                 const pagination = document.querySelector('.pagination'); // pagination container
                 const searchInput = document.getElementById('searchLaporan');
+                const noDataRow = document.getElementById('noDataRow');
 
                 const fp = flatpickr(dateInput, {
                     mode: 'range',
@@ -227,20 +263,42 @@
                 });
 
                 function filterByDateRange(start, end) {
-                    rows.forEach(row => {
-                        const rowDateStr = row.getAttribute('data-date');
-                        if (!rowDateStr) return row.style.display = 'none';
-                        const rowDate = new Date(rowDateStr);
-                        row.style.display = (rowDate >= start && rowDate <= end) ? '' : 'none';
-                    });
-                }
+                    let visibleCount = 0;
 
+                    rows.forEach(row => {
+                        if (row.id === 'noDataRow') return;
+
+                        const rowDateStr = row.getAttribute('data-date');
+                        if (!rowDateStr) {
+                            row.style.display = 'none';
+                            return;
+                        }
+
+                        const rowDate = new Date(rowDateStr);
+                        const match = (rowDate >= start && rowDate <= end);
+                        row.style.display = match ? '' : 'none';
+
+                        if (match) visibleCount++;
+                    });
+
+                    noDataRow.style.display = visibleCount === 0 ? '' : 'none';
+                }
+                
                 clearBtn.addEventListener('click', function() {
                     fp.clear();
                     dateInput.value = '';
                     clearBtn.style.display = 'none';
-                    rows.forEach(row => row.style.display = '');
-                    pagination?.classList.remove('d-none'); // tampilkan kembali pagination
+
+                    rows.forEach(row => {
+                        if (row.id === 'noDataRow') {
+                            row.style.display = 'none'; // pastikan pesan disembunyikan
+                        } else {
+                            row.style.display = '';
+                        }
+                    });
+
+                    pagination?.classList.remove('d-none');
+
                     document.getElementById('pdfStart').value = '';
                     document.getElementById('pdfEnd').value = '';
                     document.getElementById('excelStart').value = '';
@@ -253,17 +311,28 @@
                     let visibleCount = 0;
 
                     rows.forEach(row => {
+                        // Jangan ikutkan baris noDataRow dalam filtering
+                        if (row.id === 'noDataRow') return;
+
                         const text = row.textContent.toLowerCase();
                         const match = text.includes(filter);
                         row.style.display = match ? '' : 'none';
+
                         if (match) visibleCount++;
                     });
 
+                    // Tampilkan pesan jika tidak ada hasil
+                    if (visibleCount === 0 && hasFilter) {
+                        noDataRow.style.display = '';
+                    } else {
+                        noDataRow.style.display = 'none';
+                    }
+
+                    // Atur pagination
                     if (hasFilter) {
-                        pagination?.classList.add('d-none'); // sembunyikan pagination
+                        pagination?.classList.add('d-none');
                     } else if (!dateInput.value) {
-                        pagination?.classList.remove(
-                            'd-none'); // tampilkan pagination lagi kalau tidak ada filter
+                        pagination?.classList.remove('d-none');
                     }
                 });
             });

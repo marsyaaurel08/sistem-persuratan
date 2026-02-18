@@ -33,9 +33,8 @@
                             class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
                             <i class="feather-calendar"></i>
                         </span>
-                        <input type="text" id="dateRange"
-                            class="form-control border-0 px-2 h-100 d-flex align-items-center" placeholder="Pilih Tanggal"
-                            readonly
+                        <input type="text" id="dateRange" class="form-control border-0 px-2 h-100 d-flex align-items-center"
+                            placeholder="Pilih Tanggal" readonly
                             style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
                         <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
                             type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
@@ -98,29 +97,28 @@
                             </thead>
                             <tbody>
                                 @foreach ($laporans as $laporan)
-                                    <tr
-                                        data-date="{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('Y-m-d') : '' }}">
-                                        <td>{{ $laporan->kode_arsip }}</td>
-                                        <td>{{ $laporan->nomor_surat }}</td>
-                                        <td>{{ $laporan->perihal }}</td>
-                                        <td>
-                                            <span
-                                                class="badge-custom 
-        @if ($laporan->kategori == 'Masuk') badge-success
-        @elseif($laporan->kategori == 'Keluar') badge-warning
-        @elseif($laporan->kategori == 'Laporan') badge-info
-        @else badge-secondary @endif">
-                                                {{ $laporan->kategori }}
-                                            </span>
-                                        </td>
-                                        <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
-                                    </tr>
-                                    <tr id="noDataRow" style="display: none;">
-                                        <td colspan="100%" class="text-center text-muted py-3">
-                                            {{-- Data tidak ditemukan --}}
-                                            Tidak ada data laporan yang sesuai dengan pencarian.
-                                        </td>
-                                    </tr>
+                                                        <tr
+                                                            data-date="{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('Y-m-d') : '' }}">
+                                                            <td>{{ $laporan->kode_arsip }}</td>
+                                                            <td>{{ $laporan->nomor_surat }}</td>
+                                                            <td>{{ $laporan->perihal }}</td>
+                                                            <td>
+                                                                <span class="badge-custom 
+                                    @if ($laporan->kategori == 'Masuk') badge-success
+                                    @elseif($laporan->kategori == 'Keluar') badge-warning
+                                    @elseif($laporan->kategori == 'Laporan') badge-info
+                                    @else badge-secondary @endif">
+                                                                    {{ $laporan->kategori }}
+                                                                </span>
+                                                            </td>
+                                                            <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
+                                                        </tr>
+                                                        <tr id="noDataRow" style="display: none;">
+                                                            <td colspan="100%" class="text-center text-muted py-3">
+                                                                {{-- Data tidak ditemukan --}}
+                                                                Tidak ada data laporan yang sesuai dengan pencarian.
+                                                            </td>
+                                                        </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -233,7 +231,7 @@
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const dateInput = document.getElementById('dateRange');
                 const clearBtn = document.getElementById('clearDateRange');
                 const rows = document.querySelectorAll('#laporanTable tbody tr');
@@ -245,19 +243,26 @@
                     mode: 'range',
                     dateFormat: 'd M Y',
                     locale: 'id',
-                    onChange: function(selectedDates) {
+                    onChange: function (selectedDates) {
                         if (selectedDates.length === 2) {
                             const start = selectedDates[0];
                             const end = selectedDates[1];
                             filterByDateRange(start, end);
                             clearBtn.style.display = 'inline-flex';
-                            pagination?.classList.add('d-none'); // sembunyikan pagination
+                            pagination?.classList.add('d-none');
 
-                            // isi hidden input untuk export PDF/Excel
-                            document.getElementById('pdfStart').value = start.toISOString().split('T')[0];
-                            document.getElementById('pdfEnd').value = end.toISOString().split('T')[0];
-                            document.getElementById('excelStart').value = start.toISOString().split('T')[0];
-                            document.getElementById('excelEnd').value = end.toISOString().split('T')[0];
+                            
+                            function formatDateLocal(date) {
+                                const year = date.getFullYear();
+                                const month = String(date.getMonth() + 1).padStart(2, '0');
+                                const day = String(date.getDate()).padStart(2, '0');
+                                return `${year}-${month}-${day}`;
+                            }
+
+                            document.getElementById('pdfStart').value = formatDateLocal(start);
+                            document.getElementById('pdfEnd').value = formatDateLocal(end);
+                            document.getElementById('excelStart').value = formatDateLocal(start);
+                            document.getElementById('excelEnd').value = formatDateLocal(end);
                         }
                     }
                 });
@@ -283,8 +288,8 @@
 
                     noDataRow.style.display = visibleCount === 0 ? '' : 'none';
                 }
-                
-                clearBtn.addEventListener('click', function() {
+
+                clearBtn.addEventListener('click', function () {
                     fp.clear();
                     dateInput.value = '';
                     clearBtn.style.display = 'none';
@@ -305,7 +310,7 @@
                     document.getElementById('excelEnd').value = '';
                 });
 
-                searchInput.addEventListener('keyup', function() {
+                searchInput.addEventListener('keyup', function () {
                     const filter = this.value.toLowerCase();
                     let hasFilter = filter.length > 0;
                     let visibleCount = 0;

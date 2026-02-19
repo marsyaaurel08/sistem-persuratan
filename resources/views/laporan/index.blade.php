@@ -18,14 +18,21 @@
             <div class="page-header-right-items">
                 <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                    <div class="input-group" style="max-width: 250px; height: 38px;">
-                        <span
-                            class="input-group-text bg-white border-end-0 rounded-start-pill d-flex align-items-center justify-content-center">
-                            <i class="feather-search"></i>
-                        </span>
-                        <input type="text" id="searchLaporan" class="form-control border-start-0 rounded-end-pill"
-                            placeholder="Cari laporan..." style="height: 100%;">
-                    </div>
+                    <form method="GET" action="{{ route('laporan.index') }}" id="searchForm">
+
+                        <div class="input-group" style="max-width: 250px; height: 40px; margin-top: 2px;">
+
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill">
+                                <i class="feather-search"></i>
+                            </span>
+
+                            <input type="text" name="search" id="searchInput"
+                                class="form-control border-start-0 rounded-end-pill" placeholder="Cari..."
+                                value="{{ request('search') }}" style="height: 100%;">
+
+                        </div>
+
+                    </form>
 
                     <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
                         style="width: 220px; height: 38px; overflow: hidden; font-size: small;">
@@ -97,28 +104,28 @@
                             </thead>
                             <tbody>
                                 @foreach ($laporans as $laporan)
-                                                        <tr
-                                                            data-date="{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('Y-m-d') : '' }}">
-                                                            <td>{{ $laporan->kode_arsip }}</td>
-                                                            <td>{{ $laporan->nomor_surat }}</td>
-                                                            <td>{{ $laporan->perihal }}</td>
-                                                            <td>
-                                                                <span class="badge-custom 
-                                    @if ($laporan->kategori == 'Masuk') badge-success
-                                    @elseif($laporan->kategori == 'Keluar') badge-warning
-                                    @elseif($laporan->kategori == 'Laporan') badge-info
-                                    @else badge-secondary @endif">
-                                                                    {{ $laporan->kategori }}
-                                                                </span>
-                                                            </td>
-                                                            <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
-                                                        </tr>
-                                                        <tr id="noDataRow" style="display: none;">
-                                                            <td colspan="100%" class="text-center text-muted py-3">
-                                                                {{-- Data tidak ditemukan --}}
-                                                                Tidak ada data laporan yang sesuai dengan pencarian.
-                                                            </td>
-                                                        </tr>
+                                    <tr
+                                        data-date="{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('Y-m-d') : '' }}">
+                                        <td>{{ $laporan->kode_arsip }}</td>
+                                        <td>{{ $laporan->nomor_surat }}</td>
+                                        <td>{{ $laporan->perihal }}</td>
+                                        <td>
+                                            <span class="badge-custom 
+                                            @if ($laporan->kategori == 'Masuk') badge-success
+                                            @elseif($laporan->kategori == 'Keluar') badge-warning
+                                            @elseif($laporan->kategori == 'Laporan') badge-info
+                                            @else badge-secondary @endif">
+                                                {{ $laporan->kategori }}
+                                            </span>
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
+                                    </tr>
+                                    <tr id="noDataRow" style="display: none;">
+                                        <td colspan="100%" class="text-center text-muted py-3">
+                                            {{-- Data tidak ditemukan --}}
+                                            Tidak ada data laporan yang sesuai dengan pencarian.
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -251,7 +258,7 @@
                             clearBtn.style.display = 'inline-flex';
                             pagination?.classList.add('d-none');
 
-                            
+
                             function formatDateLocal(date) {
                                 const year = date.getFullYear();
                                 const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -310,37 +317,61 @@
                     document.getElementById('excelEnd').value = '';
                 });
 
-                searchInput.addEventListener('keyup', function () {
-                    const filter = this.value.toLowerCase();
-                    let hasFilter = filter.length > 0;
-                    let visibleCount = 0;
+                // searchInput.addEventListener('keyup', function () {
+                //     const filter = this.value.toLowerCase();
+                //     let hasFilter = filter.length > 0;
+                //     let visibleCount = 0;
 
-                    rows.forEach(row => {
-                        // Jangan ikutkan baris noDataRow dalam filtering
-                        if (row.id === 'noDataRow') return;
+                //     rows.forEach(row => {
+                //         // Jangan ikutkan baris noDataRow dalam filtering
+                //         if (row.id === 'noDataRow') return;
 
-                        const text = row.textContent.toLowerCase();
-                        const match = text.includes(filter);
-                        row.style.display = match ? '' : 'none';
+                //         const text = row.textContent.toLowerCase();
+                //         const match = text.includes(filter);
+                //         row.style.display = match ? '' : 'none';
 
-                        if (match) visibleCount++;
-                    });
+                //         if (match) visibleCount++;
+                //     });
 
-                    // Tampilkan pesan jika tidak ada hasil
-                    if (visibleCount === 0 && hasFilter) {
-                        noDataRow.style.display = '';
-                    } else {
-                        noDataRow.style.display = 'none';
-                    }
+                //     // Tampilkan pesan jika tidak ada hasil
+                //     if (visibleCount === 0 && hasFilter) {
+                //         noDataRow.style.display = '';
+                //     } else {
+                //         noDataRow.style.display = 'none';
+                //     }
 
-                    // Atur pagination
-                    if (hasFilter) {
-                        pagination?.classList.add('d-none');
-                    } else if (!dateInput.value) {
-                        pagination?.classList.remove('d-none');
-                    }
-                });
+                //     // Atur pagination
+                //     if (hasFilter) {
+                //         pagination?.classList.add('d-none');
+                //     } else if (!dateInput.value) {
+                //         pagination?.classList.remove('d-none');
+                //     }
+                // });
             });
+        </script>
+        <script>
+
+            document.addEventListener('DOMContentLoaded', function () {
+
+                let timer;
+
+                const input = document.getElementById('searchInput');
+                const form = document.getElementById('searchForm');
+
+                input.addEventListener('keyup', function () {
+
+                    clearTimeout(timer);
+
+                    timer = setTimeout(function () {
+
+                        form.submit();
+
+                    }, 500);
+
+                });
+
+            });
+
         </script>
     @endpush
 

@@ -220,34 +220,37 @@
         const downloadBase = "{{ url('arsip/download') }}";
     </script>
     <script>
-        $(function() {
+        $(function () {
             const $dateInput = $('#dateRange');
             const $clearBtn = $('#clearDateRange');
             const $tableBody = $('#aktivitasTable tbody');
             const ctxLine = document.getElementById('lineChart');
 
             let selectedTanggal = [];
+            let fp; // simpan instance supaya bisa destroy & reinit
 
             // === Inisialisasi Flatpickr (Range Mode) ===
-            const fp = flatpickr($dateInput[0], {
-                mode: "range",
-                locale: "id",
-                dateFormat: "d M Y",
-                onChange: function(selectedDates) {
-                    if (selectedDates.length === 2) {
-                        const start = formatDate(selectedDates[0]);
-                        const end = formatDate(selectedDates[1]);
-                        selectedTanggal = [start, end];
-                        $clearBtn.show();
-                        applyFilter();
+            function initFlatpickr() {
+                fp = flatpickr($dateInput[0], {
+                    mode: "range",
+                    locale: "id",
+                    dateFormat: "d M Y",
+                    onChange: function (selectedDates) {
+                        if (selectedDates.length === 2) {
+                            const start = formatDate(selectedDates[0]);
+                            const end = formatDate(selectedDates[1]);
+                            selectedTanggal = [start, end];
+                            $clearBtn.show();
+                            applyFilter();
+                        }
                     }
-                }
-            });
+                });
+            }
+            initFlatpickr();
 
-            $('#searchTable').on('keyup', function() {
+            $('#searchTable').on('keyup', function () {
                 const keyword = $(this).val().toLowerCase();
-
-                $('#aktivitasTable tbody tr').each(function() {
+                $('#aktivitasTable tbody tr').each(function () {
                     const rowText = $(this).text().toLowerCase();
                     $(this).toggle(rowText.includes(keyword));
                 });
@@ -261,103 +264,59 @@
                 return `${d.getFullYear()}-${m}-${day}`;
             }
 
-            // Tombol Reset
-            $clearBtn.on('click', function() {
-                fp.clear();
+            // === PERBAIKAN: Tombol Reset Tanggal ===
+            $clearBtn.on('click', function () {
+                // Hapus input dan sembunyikan tombol X
                 $dateInput.val('');
                 $(this).hide();
                 selectedTanggal = [];
-                applyFilter();
-            });
 
-            // === Fungsi Filter dengan AJAX ===
-            function applyFilter() {
+                // Hancurkan flatpickr lama dan buat ulang biar highlight hilang
+                if (fp) {
+                    fp.destroy();
+                }
+                initFlatpickr();
+
+                // Ambil ulang data dashboard tanpa filter
                 $.ajax({
                     url: "{{ route('dashboard.filter') }}",
                     type: 'GET',
-                    data: {
-                        tanggal: selectedTanggal
-                    },
-                    success: function(res) {
-                        // 🔹 Update KPI
+                    data: {}, // kosong total, jangan kirim tanggal
+                    success: function (res) {
+                        // Update statistik dan grafik
                         $('#totalMasuk').text(res.totalMasuk);
                         $('#totalKeluar').text(res.totalKeluar);
                         $('#totalLaporan').text(res.totalLaporan);
-                        // $('.card:contains("Total Surat Masuk") .display-5').text(res.totalMasuk);
-                        // $('.card:contains("Total Surat Keluar") .display-5').text(res.totalKeluar);
-                        // $('.card:contains("Total Surat Laporan") .display-5').text(res.totalLaporan);
 
-                        // 🔹 Update Tabel
+                        // Update tabel aktivitas
+                        const $tableBody = $('#aktivitasTable tbody');
                         $tableBody.empty();
+
                         if (res.aktivitas && res.aktivitas.length) {
                             res.aktivitas.forEach(a => {
-                                let filesHtml = '';
-
-                                if (a.files && a.files.length) {
-                                    filesHtml = '<div class="d-flex flex-wrap gap-1">';
-                                    a.files.forEach(f => {
-                                        filesHtml += `
-                    <a href="${downloadBase}/${f.id}"
-                       class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
-                       title="Download">
-                        <i class="feather-download me-1" style="font-size: 14px;"></i>
-                        <span style="font-size: 12px;">Unduh</span>
-                    </a>
-                    <button type="button"
-                            class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
-                            data-bs-toggle="modal" data-bs-target="#previewModal"
-                            data-file="${f.url}" title="Preview">
-                        <i class="feather-eye me-1" style="font-size: 14px;"></i>
-                        <span style="font-size: 12px;">Preview</span>
-                    </button>
-                `;
-                                    });
-                                    filesHtml += '</div>';
-                                } else {
-                                    filesHtml = '<span class="text-muted">-</span>';
-                                }
-
                                 $tableBody.append(`
-            <tr data-date="${a.tanggal_arsip}">
-                <td class="text-nowrap">
-                    <span class="badge bg-light text-dark border">
-                        ${a.kode_arsip}
-                    </span>
-                </td>
-                <td class="fw-bold">
-                    ${a.nomor_surat ?? '-'}
-                </td>
-                <td>
-                    ${a.perihal ?? '-'}
-                </td>
-                <td>
-                    ${a.tanggal_arsip ?? '-'}
-                </td>
-                <td>
-                    <small class="text-muted">
-                        ${a.pengarsip ?? '-'}
-                    </small>
-                </td>
-                <td>
-                    ${filesHtml}
-                </td>
-            </tr>
-        `);
+                                    <tr data-date="${a.tanggal_arsip}">
+                                        <td class="text-nowrap">
+                                            <span class="badge bg-light text-dark border">${a.kode_arsip}</span>
+                                        </td>
+                                        <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                                        <td>${a.perihal ?? '-'}</td>
+                                        <td>${a.tanggal_view ?? '-'}</td>
+                                        <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                                    </tr>
+                                `);
                             });
                         } else {
-                            $tableBody.html(
-                                '<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>'
-                            );
+                            $tableBody.html('<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>');
                         }
-                        // 🔹 Update Grafik
+
+                        // Update chart
                         if (window.lineChart) window.lineChart.destroy();
 
+                        const ctxLine = document.getElementById('lineChart');
                         const parentCard = $(ctxLine).closest('.card')[0];
-                        const chartWidth = parentCard.clientWidth;
-                        const chartHeight = parentCard.clientHeight - 60; // biar proporsional
-
-                        ctxLine.width = chartWidth;
-                        ctxLine.height = chartHeight;
+                        ctxLine.width = parentCard.clientWidth;
+                        ctxLine.height = parentCard.clientHeight - 60;
 
                         window.lineChart = new Chart(ctxLine, {
                             type: 'line',
@@ -375,27 +334,88 @@
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: false
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true } }
                             }
                         });
-
-                        // 🔹 Paksa resize setelah DOM reflow selesai
-                        setTimeout(() => {
-                            if (window.lineChart) {
-                                window.lineChart.resize();
-                            }
-                        }, 300);
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
+                        console.error('Error:', xhr.responseText);
+                    }
+                });
+            });
+
+            // === Fungsi Filter dengan AJAX ===
+            function applyFilter() {
+                $.ajax({
+                    url: "{{ route('dashboard.filter') }}",
+                    type: 'GET',
+                    data: selectedTanggal.length ? { tanggal: selectedTanggal } : {},
+                    success: function (res) {
+                        // 🔹 Update KPI
+                        $('#totalMasuk').text(res.totalMasuk);
+                        $('#totalKeluar').text(res.totalKeluar);
+                        $('#totalLaporan').text(res.totalLaporan);
+
+                        // 🔹 Update Tabel
+                        $tableBody.empty();
+                        if (res.aktivitas && res.aktivitas.length) {
+                            res.aktivitas.forEach(a => {
+                                let filesHtml = '';
+                                if (a.files && a.files.length) {
+                                    filesHtml = '<div class="d-flex flex-wrap gap-1"></div>';
+                                } else {
+                                    filesHtml = '<span class="text-muted">-</span>';
+                                }
+
+                                $tableBody.append(`
+                                    <tr data-date="${a.tanggal_arsip}">
+                                        <td class="text-nowrap">
+                                            <span class="badge bg-light text-dark border">
+                                                ${a.kode_arsip}
+                                            </span>
+                                        </td>
+                                        <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                                        <td>${a.perihal ?? '-'}</td>
+                                        <td>${a.tanggal_view ?? '-'}</td>
+                                        <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                                        <td>${filesHtml}</td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            $tableBody.html('<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>');
+                        }
+
+                        // 🔹 Update Grafik
+                        if (window.lineChart) window.lineChart.destroy();
+
+                        const parentCard = $(ctxLine).closest('.card')[0];
+                        ctxLine.width = parentCard.clientWidth;
+                        ctxLine.height = parentCard.clientHeight - 60;
+
+                        window.lineChart = new Chart(ctxLine, {
+                            type: 'line',
+                            data: {
+                                labels: res.months,
+                                datasets: [{
+                                    label: 'Total Surat',
+                                    data: res.chartData,
+                                    borderColor: '#000B58',
+                                    backgroundColor: 'rgba(0,11,88,0.2)',
+                                    tension: 0.4,
+                                    fill: true
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true } }
+                            }
+                        });
+                    },
+                    error: function (xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
@@ -423,20 +443,11 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true } }
                     }
                 });
 
-                // Auto-resize saat window berubah ukuran
                 window.addEventListener('resize', () => {
                     if (window.lineChart) window.lineChart.resize();
                 });
@@ -444,8 +455,8 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.addEventListener('click', function(e) {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('click', function (e) {
                 const btn = e.target.closest('.preview-btn');
                 if (!btn) return;
 
@@ -454,7 +465,7 @@
             });
 
             const modal = document.getElementById('previewModal');
-            modal.addEventListener('hidden.bs.modal', function() {
+            modal.addEventListener('hidden.bs.modal', function () {
                 document.getElementById('previewFrame').src = '';
             });
 
@@ -462,7 +473,7 @@
             // const iframe = document.getElementById('previewFrame');
 
             previewButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     const fileUrl = this.dataset.file;
                     console.log('Preview file URL:', fileUrl); // cek di console
                     iframe.src = fileUrl;
@@ -471,7 +482,7 @@
 
             // Clear iframe saat modal ditutup
             const modal = document.getElementById('previewModal');
-            modal.addEventListener('hidden.bs.modal', function() {
+            modal.addEventListener('hidden.bs.modal', function () {
                 iframe.src = '';
             });
         });

@@ -8,67 +8,122 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Carbon\Carbon;
 
 class LaporanExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
 {
     protected $laporans;
+    protected $periode;
 
-    public function __construct(Collection $laporans)
+    /**
+     * @param \Illuminate\Support\Collection $laporans
+     * @param string $periode
+     */
+    public function __construct(Collection $laporans, string $periode = 'Periode: Semua Data')
     {
         $this->laporans = $laporans;
+        $this->periode = $periode;
     }
 
+    /**
+     * Data yang akan diexport ke Excel
+     */
     public function collection()
     {
         return $this->laporans->map(function ($item) {
             return [
-                'No. Surat' => $item->no_surat,
-                'Perihal' => $item->perihal,
-                'Divisi' => $item->divisi,
-                'Tanggal' => Carbon::parse($item->tanggal)->format('d M Y'),
-                'Status' => $item->status,
+                'Kode Arsip'    => $item->kode_arsip,
+                'No. Surat'     => $item->nomor_surat,
+                'Perihal'       => $item->perihal,
+                'Kategori'      => $item->kategori,
+                'Tanggal Arsip' => $item->tanggal_arsip
+                    ? Carbon::parse($item->tanggal_arsip)->format('d M Y')
+                    : '-',
             ];
         });
     }
 
+    /**
+     * Header (judul + periode + kolom tabel)
+     */
     public function headings(): array
     {
-        return ['No. Surat', 'Perihal', 'Divisi', 'Tanggal', 'Status'];
+        return [
+            ['LAPORAN PERSURATAN KLINIK JASA TIRTA'], // Judul
+            [$this->periode],                         // Periode
+            [],                                       // Baris kosong
+            ['Kode Arsip', 'No. Surat', 'Perihal', 'Kategori', 'Tanggal Arsip'], // Header tabel
+        ];
     }
 
+    /**
+     * Styling Excel
+     */
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:E1')->applyFromArray([
+        // Merge judul & periode
+        $sheet->mergeCells('A1:E1');
+        $sheet->mergeCells('A2:E2');
+
+        // Style Judul
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 14,
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // Style Periode
+        $sheet->getStyle('A2')->applyFromArray([
+            'font' => [
+                'italic' => true,
+                'size' => 11,
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // Header tabel
+        $sheet->getStyle('A4:E4')->applyFromArray([
             'font' => [
                 'bold' => true,
                 'color' => ['rgb' => 'FFFFFF'],
             ],
             'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '28A745'],
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '28A745'], // Hijau
             ],
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
             ],
         ]);
 
-        $sheet->getStyle('A:A')->getFont()->setBold(true);
-
+        // Tambahkan border
         $lastRow = $sheet->getHighestRow();
-        $lastColumn = $sheet->getHighestColumn();
-        $sheet->getStyle("A1:{$lastColumn}{$lastRow}")->applyFromArray([
+        $sheet->getStyle("A4:E{$lastRow}")->applyFromArray([
             'borders' => [
                 'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => ['rgb' => 'DDDDDD']
-                ]
-            ]
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '999999'],
+                ],
+            ],
         ]);
 
-        return [
-            1 => ['font' => ['bold' => true]],
-        ];
+        // Auto-size semua kolom
+        foreach (range('A', 'E') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        return [];
     }
 }

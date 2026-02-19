@@ -1,6 +1,6 @@
 @extends('layout.app')
 
-@section('title', 'Laporan')
+@section('title', 'Rekap')
 
 @section('content')
 

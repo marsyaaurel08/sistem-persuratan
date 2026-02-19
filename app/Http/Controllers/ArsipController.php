@@ -31,12 +31,8 @@ class ArsipController extends Controller
             ->when($startDate && $endDate, fn($q) => $q->whereBetween('tanggal_arsip', [$startDate, $endDate]));
 
         $arsips = $query->latest()->paginate(10)
-                    ->appends([
-                        'kategori'   => $kategori,
-                        'search'     => $search,
-                        'start_date' => $startDate,
-                        'end_date'   => $endDate
-                    ]);
+                    ->appends($request->only(['kategori', 'search', 'start_date', 'end_date']));
+
 
         return view('arsip.index', [
             'arsips'        => $arsips,

@@ -107,11 +107,19 @@
             {{ $kop_alamat }}
         </div>
 
-        <div class="contact">
-            Telp: {{ $kop_telp ?? '-' }} |
-            Email: {{ $kop_email ?? '-' }} |
-            Web: {{ $kop_web ?? '-' }}
-        </div>
+        @php
+            $contacts = array_filter([
+                !empty($kop_telp) ? 'Telp: ' . $kop_telp : null,
+                !empty($kop_email) ? 'Email: ' . $kop_email : null,
+                !empty($kop_web) ? 'Web: ' . $kop_web : null,
+            ]);
+        @endphp
+
+        @if(count($contacts))
+            <div class="contact">
+                {{ implode(' | ', $contacts) }}
+            </div>
+        @endif
 
         <div class="line-bold"></div>
         <div class="line-thin"></div>
@@ -119,10 +127,18 @@
     </div>
 
     {{-- ================= INFO SURAT ================= --}}
-    <div class="info-surat">
-        <p><strong>Nomor :</strong> {{ $nomor_surat }}</p>
-        <p><strong>Perihal :</strong> {{ $perihal }}</p>
-    </div>
+    @if(!empty($nomor_surat) || !empty($perihal))
+        <div class="info-surat">
+            @if(!empty($nomor_surat))
+                <p><strong>Nomor :</strong> {{ $nomor_surat }}</p>
+            @endif
+
+            @if(!empty($perihal))
+                <p><strong>Perihal :</strong> {{ $perihal }}</p>
+            @endif
+        </div>
+    @endif
+
 
     {{-- ================= ISI SURAT ================= --}}
     <div class="isi-surat">

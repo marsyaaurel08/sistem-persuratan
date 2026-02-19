@@ -62,7 +62,7 @@ class DashboardController extends Controller
                     'tanggal_arsip' => $a->tanggal_arsip?->format('Y-m-d'),
                     'tanggal_view'  => $a->tanggal_arsip?->format('d M Y'),
                     'pengarsip'     => $a->pengarsip->name ?? '-',
-                    'files'         => $a->files->map(fn ($f) => [
+                    'files'         => $a->files->map(fn($f) => [
                         'id'        => $f->id,
                         'nama_file' => $f->nama_file,
                         'url'       => asset('storage/' . $f->path_file),
@@ -88,101 +88,120 @@ class DashboardController extends Controller
 
     public function filter(Request $request)
     {
-        $tanggal = $request->input('tanggal', []);
+        // Ambil input tanggal, bisa berupa array atau string kosong
+        $tanggal = $request->input('tanggal', null);
 
-        $start = null;
-        $end   = null;
-
-        if (!empty($tanggal) && count($tanggal) === 2) {
-            $start = Carbon::parse($tanggal[0])->startOfDay();
-            $end   = Carbon::parse($tanggal[1])->endOfDay();
+        // Jika tidak ada parameter tanggal sama sekali -> tampilkan semua data
+        if (!$tanggal || (is_array($tanggal) && count($tanggal) === 0)) {
+            return $this->defaultDashboardData();
         }
 
-        // =============================
-        // Base Query Arsip (Filter Tanggal)
-        // =============================
-        $baseQuery = Arsip::query()
-            ->when($start && $end, fn ($q) =>
-                $q->whereBetween('tanggal_arsip', [$start, $end])
-            );
+        // Pastikan parameter valid (array dengan 2 tanggal)
+        if (!is_array($tanggal) || count($tanggal) < 2) {
+            return $this->defaultDashboardData();
+        }
+
+        $start = Carbon::parse($tanggal[0])->startOfDay();
+        $end   = Carbon::parse($tanggal[1])->endOfDay();
 
         // =============================
-        // Statistik Card
+        // Jika ada tanggal (Filter aktif)
         // =============================
+        $baseQuery = Arsip::query()
+            ->whereBetween('tanggal_arsip', [$start, $end]);
+
         $totalMasuk   = (clone $baseQuery)->where('kategori', 'Masuk')->count();
         $totalKeluar  = (clone $baseQuery)->where('kategori', 'Keluar')->count();
         $totalLaporan = (clone $baseQuery)->where('kategori', 'Laporan')->count();
 
-        // =============================
-        // Line Chart (6 Bulan Terakhir)
-        // =============================
         $months = [];
         $chartData = [];
 
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-
             $months[] = $date->format('M');
-
             $chartData[] = Arsip::query()
-                ->when($start && $end, fn ($q) =>
-                    $q->whereBetween('tanggal_arsip', [$start, $end])
-                )
+                ->whereBetween('tanggal_arsip', [$start, $end])
                 ->whereYear('tanggal_arsip', $date->year)
                 ->whereMonth('tanggal_arsip', $date->month)
                 ->count();
         }
 
-        // =============================
-        // Pie Chart (Kategori Arsip)
-        // =============================
-        $pieData = (clone $baseQuery)
-            ->select('kategori', DB::raw('count(*) as total'))
-            ->groupBy('kategori')
-            ->get();
-
-        $pieLabels = $pieData->pluck('kategori')->toArray();
-        $pieValues = $pieData->pluck('total')->toArray();
-
-        // =============================
-        // Aktivitas Terbaru
-        // =============================
         $aktivitas = Arsip::with(['files', 'pengarsip'])
-            ->when($start && $end, fn ($q) =>
-                $q->whereBetween('tanggal_arsip', [$start, $end])
-            )
+            ->whereBetween('tanggal_arsip', [$start, $end])
             ->orderByDesc('tanggal_arsip')
             ->limit(10)
             ->get()
-            ->map(function ($a) {
-                return [
-                    'kode_arsip'    => $a->kode_arsip,
-                    'nomor_surat'   => $a->nomor_surat ?? '-',
-                    // 'nomor_surat'   => $a->nomor_surat,
-                    'perihal'       => $a->perihal,
-                    'tanggal_arsip' => $a->tanggal_arsip?->format('Y-m-d'),
-                    'tanggal_view'  => $a->tanggal_arsip?->format('d M Y'),
-                    'pengarsip'     => $a->pengarsip->name ?? '-',
-                    'files'         => $a->files->map(fn ($f) => [
-                        'id'        => $f->id,
-                        'nama_file' => $f->nama_file,
-                        'url'       => asset('storage/' . $f->path_file),
-                    ])->values(),
-                ];
-            })
+            ->map(fn($a) => [
+                'kode_arsip'    => $a->kode_arsip,
+                'nomor_surat'   => $a->nomor_surat ?? '-',
+                'perihal'       => $a->perihal,
+                'tanggal_arsip' => $a->tanggal_arsip?->format('Y-m-d'),
+                'tanggal_view'  => $a->tanggal_arsip?->format('d M Y'),
+                'pengarsip'     => $a->pengarsip->name ?? '-',
+                'files'         => $a->files->map(fn($f) => [
+                    'id' => $f->id,
+                    'nama_file' => $f->nama_file,
+                    'url' => asset('storage/' . $f->path_file),
+                ])->values(),
+            ])
             ->values();
 
-        // =============================
-        // Response JSON
-        // =============================
         return response()->json([
             'totalMasuk'   => $totalMasuk,
             'totalKeluar'  => $totalKeluar,
             'totalLaporan' => $totalLaporan,
             'months'       => $months,
             'chartData'    => $chartData,
-            'pieLabels'    => $pieLabels,
-            'pieValues'    => $pieValues,
+            'aktivitas'    => $aktivitas,
+        ]);
+    }
+
+    /**
+     * Fungsi helper untuk load data default dashboard
+     */
+    private function defaultDashboardData()
+    {
+        $totalMasuk   = Arsip::where('kategori', 'Masuk')->count();
+        $totalKeluar  = Arsip::where('kategori', 'Keluar')->count();
+        $totalLaporan = Arsip::where('kategori', 'Laporan')->count();
+
+        $months = [];
+        $chartData = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $months[] = $date->format('M');
+            $chartData[] = Arsip::whereYear('tanggal_arsip', $date->year)
+                ->whereMonth('tanggal_arsip', $date->month)
+                ->count();
+        }
+
+        $aktivitas = Arsip::with(['files', 'pengarsip'])
+            ->orderByDesc('tanggal_arsip')
+            ->limit(10)
+            ->get()
+            ->map(fn($a) => [
+                'kode_arsip'    => $a->kode_arsip,
+                'nomor_surat'   => $a->nomor_surat ?? '-',
+                'perihal'       => $a->perihal,
+                'tanggal_arsip' => $a->tanggal_arsip?->format('Y-m-d'),
+                'tanggal_view'  => $a->tanggal_arsip?->format('d M Y'),
+                'pengarsip'     => $a->pengarsip->name ?? '-',
+                'files'         => $a->files->map(fn($f) => [
+                    'id' => $f->id,
+                    'nama_file' => $f->nama_file,
+                    'url' => asset('storage/' . $f->path_file),
+                ])->values(),
+            ])
+            ->values();
+
+        return response()->json([
+            'totalMasuk'   => $totalMasuk,
+            'totalKeluar'  => $totalKeluar,
+            'totalLaporan' => $totalLaporan,
+            'months'       => $months,
+            'chartData'    => $chartData,
             'aktivitas'    => $aktivitas,
         ]);
     }

@@ -28,9 +28,9 @@ class LaporanController extends Controller
             $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(kode_arsip) LIKE ?', ["%$search%"])
-                ->orWhereRaw('LOWER(nomor_surat) LIKE ?', ["%$search%"])
-                ->orWhereRaw('LOWER(perihal) LIKE ?', ["%$search%"])
-                ->orWhereRaw('LOWER(kategori) LIKE ?', ["%$search%"]);
+                    ->orWhereRaw('LOWER(nomor_surat) LIKE ?', ["%$search%"])
+                    ->orWhereRaw('LOWER(perihal) LIKE ?', ["%$search%"])
+                    ->orWhereRaw('LOWER(kategori) LIKE ?', ["%$search%"]);
             });
         }
 
@@ -53,8 +53,14 @@ class LaporanController extends Controller
     {
         $laporans = $this->getFilteredData($request);
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('laporan.pdf', compact('laporans', 'request'))
-            ->setPaper('a4', 'portrait');
+        // Cek apakah data kosong
+        $isEmpty = $laporans->isEmpty();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('laporan.pdf', [
+            'laporans' => $laporans,
+            'request' => $request,
+            'isEmpty' => $isEmpty, // kirim status kosong
+        ])->setPaper('a4', 'portrait');
 
         if ($request->filled('start') && $request->filled('end')) {
             $start = \Carbon\Carbon::parse($request->start)->format('d-m-Y');
@@ -74,13 +80,16 @@ class LaporanController extends Controller
         if ($request->filled('start') && $request->filled('end')) {
             $start = \Carbon\Carbon::parse($request->start)->format('d-m-Y');
             $end   = \Carbon\Carbon::parse($request->end)->format('d-m-Y');
+            $periode = "Periode: {$start} s.d {$end}";
             $filename = "Laporan Excel Persuratan Periode {$start} s.d {$end}.xlsx";
         } else {
+            $periode = "Periode: Semua Data";
             $filename = "Laporan Excel Persuratan Semua Data.xlsx";
         }
 
+        // ✅ Pastikan di sini argumen kedua adalah string, bukan array
         return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\LaporanExport($laporans),
+            new \App\Exports\LaporanExport($laporans, $periode),
             $filename
         );
     }
@@ -112,9 +121,9 @@ class LaporanController extends Controller
             $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(kode_arsip) LIKE ?', ["%$search%"])
-                ->orWhereRaw('LOWER(nomor_surat) LIKE ?', ["%$search%"])
-                ->orWhereRaw('LOWER(perihal) LIKE ?', ["%$search%"])
-                ->orWhereRaw('LOWER(kategori) LIKE ?', ["%$search%"]);
+                    ->orWhereRaw('LOWER(nomor_surat) LIKE ?', ["%$search%"])
+                    ->orWhereRaw('LOWER(perihal) LIKE ?', ["%$search%"])
+                    ->orWhereRaw('LOWER(kategori) LIKE ?', ["%$search%"]);
             });
         }
 

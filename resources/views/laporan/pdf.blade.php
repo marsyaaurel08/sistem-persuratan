@@ -112,16 +112,32 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($laporans as $laporan)
+            @if ($isEmpty)
                 <tr>
-                    <td>{{ $laporan->kode_arsip }}</td>
-                    <td>{{ $laporan->nomor_surat }}</td>
-                    <td>{{ $laporan->perihal }}</td>
-                    <td>{{ $laporan->kategori }}</td>
-                    <td>{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') : '-' }}
+                    <td colspan="5" style="text-align:center; font-style:italic; padding:10px;">
+                        @if ($request->filled('start') && $request->filled('end'))
+                            Data laporan untuk periode
+                            {{ \Carbon\Carbon::parse($request->start)->format('d M Y') }}
+                            s/d {{ \Carbon\Carbon::parse($request->end)->format('d M Y') }}
+                            belum tersedia.
+                        @else
+                            Data laporan belum tersedia.
+                        @endif
                     </td>
                 </tr>
-            @endforeach
+            @else
+                @foreach ($laporans as $laporan)
+                    <tr>
+                        <td>{{ $laporan->kode_arsip }}</td>
+                        <td>{{ $laporan->nomor_surat }}</td>
+                        <td>{{ $laporan->perihal }}</td>
+                        <td>{{ $laporan->kategori }}</td>
+                        <td>
+                            {{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') : '-' }}
+                        </td>
+                    </tr>
+                @endforeach
+            @endif
         </tbody>
     </table>
 </body>

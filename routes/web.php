@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
     Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.exportExcel');
     Route::get('/laporan/preview-excel', [LaporanController::class, 'previewExcel'])->name('laporan.previewExcel');
+    Route::get('/laporan/filter', [App\Http\Controllers\LaporanController::class, 'filter'])
+        ->name('laporan.filter');
 
 
     /** FITUR MANAJEMEN PENGGUNA */

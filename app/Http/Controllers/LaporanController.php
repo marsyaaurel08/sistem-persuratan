@@ -53,8 +53,14 @@ class LaporanController extends Controller
     {
         $laporans = $this->getFilteredData($request);
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('laporan.pdf', compact('laporans', 'request'))
-            ->setPaper('a4', 'portrait');
+        // Cek apakah data kosong
+        $isEmpty = $laporans->isEmpty();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('laporan.pdf', [
+            'laporans' => $laporans,
+            'request' => $request,
+            'isEmpty' => $isEmpty, // kirim status kosong
+        ])->setPaper('a4', 'portrait');
 
         if ($request->filled('start') && $request->filled('end')) {
             $start = \Carbon\Carbon::parse($request->start)->format('d-m-Y');

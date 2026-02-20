@@ -18,12 +18,20 @@
             <div class="page-header-right-items">
                 <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                    <form method="GET" action="{{ route('laporan.index') }}" id="searchForm">
+                    <form method="GET" action="{{ route('laporan.index') }}" id="searchForm" class="m-0 p-0">
                         <input type="hidden" name="start" value="{{ request('start') }}">
                         <input type="hidden" name="end" value="{{ request('end') }}">
-                        <div class="input-group" style="max-width: 250px;">
-                            <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari..."
-                                value="{{ request('search') }}">
+
+                        <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                            style="width: 220px; height: 38px; overflow: hidden; font-size: small;">
+                            <span
+                                class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
+                                <i class="feather-search"></i>
+                            </span>
+                            <input type="text" name="search" id="searchInput"
+                                class="form-control border-0 px-2 h-100 d-flex align-items-center" placeholder="Cari..."
+                                value="{{ request('search') }}"
+                                style="cursor: text; font-size: small; background-color: white; line-height: normal;">
                         </div>
                     </form>
 

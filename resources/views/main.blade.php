@@ -14,22 +14,25 @@
             <div class="page-header-right-items">
                 <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                    <!-- Filter tanggal -->
-                    <div class="input-group align-items-center border border-secondary-subtle rounded-pill"
-                        style="width: 220px; height: 38px; overflow: hidden; font-size: small; background-color: white;">
+                    <!-- Filter tanggal FIX -->
+                    <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                        style="width: 220px; height: 40px; overflow: hidden; font-size: small;">
+
                         <span
-                            class="input-group-text bg-white border-0 px-2 d-flex align-items-center justify-content-center">
+                            class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
                             <i class="feather-calendar"></i>
                         </span>
-                        <input type="text" id="dateRange" class="form-control border-0 bg-white px-2 h-100"
+
+                        <input type="text" id="dateRange" class="form-control border-0 px-2 h-100"
                             placeholder="Pilih Tanggal" readonly
-                            style="cursor: pointer; font-size: small; line-height: normal;">
-                        <button class="btn border-0 bg-white d-flex align-items-center justify-content-center px-2 h-100"
+                            style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
+
+                        <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
                             type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
                             <i class="feather-x"></i>
                         </button>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
@@ -112,13 +115,19 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fs-14 fw-semibold mb-0">Aktivitas Terbaru</h5>
-                        <div class="input-group" style="max-width: 250px;">
-                            <span class="input-group-text bg-white border-end-0 rounded-start-pill py-2 ps-3">
+
+                        <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                            style="max-width: 250px; height: 40px; overflow: hidden; font-size: small;">
+
+                            <span
+                                class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
                                 <i class="feather-search text-muted"></i>
                             </span>
-                            <input type="text" id="searchTable"
-                                class="form-control border-start-0 rounded-end-pill py-2 shadow-none"
-                                placeholder="Cari aktivitas..." style="font-size: 13px;">
+
+                            <input type="text" id="searchTable" class="form-control border-0 px-2 h-100"
+                                placeholder="Cari aktivitas..."
+                                style="font-size: small; background-color: white; line-height: normal;">
+
                         </div>
                     </div>
 
@@ -135,7 +144,8 @@
                             </thead>
                             <tbody class="small">
                                 @foreach ($aktivitas as $item)
-                                    <tr data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
+                                    <tr class="data-row"
+                                        data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
                                         <td class="text-nowrap">
                                             <span class="badge bg-light text-dark border">
                                                 {{ $item['kode_arsip'] }}
@@ -157,6 +167,12 @@
                                         </td>
                                     </tr>
                                 @endforeach
+
+                                <tr id="noDataRow" style="display: none;">
+                                    <td colspan="100%" class="text-center text-muted py-3">
+                                        Tidak ada data yang sesuai dengan filter atau pencarian.
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -205,6 +221,44 @@
         .dashboard-wrapper {
             padding: 10px 15px;
         }
+
+        .input-group-text,
+        .input-group .form-control {
+            border: 1px solid #ced4da;
+        }
+
+        .input-group .form-control:focus {
+            box-shadow: none;
+        }
+
+        .input-group {
+            border-radius: 50px;
+            overflow: hidden;
+        }
+
+        .input-group-text {
+            background-color: #fff;
+            /* samakan dengan input */
+            border-right: none;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+        }
+
+        /* Focus effect satu kesatuan */
+        .input-group:focus-within {
+            border-color: #3473d8;
+            box-shadow: 0 0 0 2px rgba(10, 59, 139, 0.514);
+        }
+
+        #clearDateRange:hover,
+        #clearDateRange:focus,
+        #clearDateRange:active {
+            background-color: #f8f9fa !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
     </style>
 @endpush
 
@@ -220,7 +274,24 @@
         const downloadBase = "{{ url('arsip/download') }}";
     </script>
     <script>
-        $(function () {
+        function filterSearch() {
+            const keyword = $('#searchTable').val().toLowerCase();
+            let visibleCount = 0;
+
+            $('#aktivitasTable tbody tr.data-row').each(function() {
+                const rowText = $(this).text().toLowerCase();
+                const match = rowText.includes(keyword);
+
+                $(this).toggle(match);
+
+                if (match) visibleCount++;
+            });
+
+            $('#noDataRow').toggle(visibleCount === 0);
+        }
+    </script>
+    <script>
+        $(function() {
             const $dateInput = $('#dateRange');
             const $clearBtn = $('#clearDateRange');
             const $tableBody = $('#aktivitasTable tbody');
@@ -235,7 +306,7 @@
                     mode: "range",
                     locale: "id",
                     dateFormat: "d M Y",
-                    onChange: function (selectedDates) {
+                    onChange: function(selectedDates) {
                         if (selectedDates.length === 2) {
                             const start = formatDate(selectedDates[0]);
                             const end = formatDate(selectedDates[1]);
@@ -248,12 +319,8 @@
             }
             initFlatpickr();
 
-            $('#searchTable').on('keyup', function () {
-                const keyword = $(this).val().toLowerCase();
-                $('#aktivitasTable tbody tr').each(function () {
-                    const rowText = $(this).text().toLowerCase();
-                    $(this).toggle(rowText.includes(keyword));
-                });
+            $('#searchTable').on('keyup', function() {
+                filterSearch();
             });
 
             // Format tanggal YYYY-MM-DD
@@ -265,7 +332,7 @@
             }
 
             // === PERBAIKAN: Tombol Reset Tanggal ===
-            $clearBtn.on('click', function () {
+            $clearBtn.on('click', function() {
                 // Hapus input dan sembunyikan tombol X
                 $dateInput.val('');
                 $(this).hide();
@@ -282,7 +349,7 @@
                     url: "{{ route('dashboard.filter') }}",
                     type: 'GET',
                     data: {}, // kosong total, jangan kirim tanggal
-                    success: function (res) {
+                    success: function(res) {
                         // Update statistik dan grafik
                         $('#totalMasuk').text(res.totalMasuk);
                         $('#totalKeluar').text(res.totalKeluar);
@@ -295,7 +362,7 @@
                         if (res.aktivitas && res.aktivitas.length) {
                             res.aktivitas.forEach(a => {
                                 $tableBody.append(`
-                                    <tr data-date="${a.tanggal_arsip}">
+                                    <tr class="data-row" data-date="${a.tanggal_arsip}">
                                         <td class="text-nowrap">
                                             <span class="badge bg-light text-dark border">${a.kode_arsip}</span>
                                         </td>
@@ -307,8 +374,42 @@
                                 `);
                             });
                         } else {
-                            $tableBody.html('<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>');
+                            // $tableBody.html(
+                            //     '<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>'
+                            // );
+                            $tableBody.empty();
+
+                            if (res.aktivitas && res.aktivitas.length) {
+                                res.aktivitas.forEach(a => {
+                                    $tableBody.append(`
+            <tr class="data-row" data-date="${a.tanggal_arsip}">
+                <td class="text-nowrap">
+                    <span class="badge bg-light text-dark border">
+                        ${a.kode_arsip}
+                    </span>
+                </td>
+                <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                <td>${a.perihal ?? '-'}</td>
+                <td>${a.tanggal_view ?? '-'}</td>
+                <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+            </tr>
+        `);
+                                });
+                            }
+
+                            // 🔥 Tambahkan kembali noDataRow setelah append
+                            $tableBody.append(`
+    <tr id="noDataRow" style="display: none;">
+        <td colspan="100%" class="text-center text-muted py-3">
+            Tidak ada data yang sesuai dengan filter atau pencarian.
+        </td>
+    </tr>
+`);
+
+                            // filterSearch();
                         }
+
+                        filterSearch();
 
                         // Update chart
                         if (window.lineChart) window.lineChart.destroy();
@@ -334,12 +435,20 @@
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
-                                scales: { y: { beginAtZero: true } }
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
@@ -350,8 +459,10 @@
                 $.ajax({
                     url: "{{ route('dashboard.filter') }}",
                     type: 'GET',
-                    data: selectedTanggal.length ? { tanggal: selectedTanggal } : {},
-                    success: function (res) {
+                    data: selectedTanggal.length ? {
+                        tanggal: selectedTanggal
+                    } : {},
+                    success: function(res) {
                         // 🔹 Update KPI
                         $('#totalMasuk').text(res.totalMasuk);
                         $('#totalKeluar').text(res.totalKeluar);
@@ -369,7 +480,7 @@
                                 }
 
                                 $tableBody.append(`
-                                    <tr data-date="${a.tanggal_arsip}">
+                                    <tr class="data-row" data-date="${a.tanggal_arsip}">
                                         <td class="text-nowrap">
                                             <span class="badge bg-light text-dark border">
                                                 ${a.kode_arsip}
@@ -384,8 +495,42 @@
                                 `);
                             });
                         } else {
-                            $tableBody.html('<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>');
+                            $tableBody.empty();
+
+                            if (res.aktivitas && res.aktivitas.length) {
+                                res.aktivitas.forEach(a => {
+                                    $tableBody.append(`
+            <tr class="data-row" data-date="${a.tanggal_arsip}">
+                <td class="text-nowrap">
+                    <span class="badge bg-light text-dark border">
+                        ${a.kode_arsip}
+                    </span>
+                </td>
+                <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                <td>${a.perihal ?? '-'}</td>
+                <td>${a.tanggal_view ?? '-'}</td>
+                <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+            </tr>
+        `);
+                                });
+                            }
+
+                            // 🔥 Tambahkan kembali noDataRow setelah append
+                            $tableBody.append(`
+    <tr id="noDataRow" style="display: none;">
+        <td colspan="100%" class="text-center text-muted py-3">
+            Tidak ada data yang sesuai dengan filter atau pencarian.
+        </td>
+    </tr>
+`);
+
+                            // filterSearch();
+                            // $tableBody.html(
+                            //     '<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data</td></tr>'
+                            // );
                         }
+
+                        filterSearch();
 
                         // 🔹 Update Grafik
                         if (window.lineChart) window.lineChart.destroy();
@@ -410,12 +555,20 @@
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
-                                scales: { y: { beginAtZero: true } }
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
@@ -443,8 +596,16 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true } }
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
                     }
                 });
 
@@ -455,8 +616,8 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.addEventListener('click', function (e) {
+        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(e) {
                 const btn = e.target.closest('.preview-btn');
                 if (!btn) return;
 
@@ -465,7 +626,7 @@
             });
 
             const modal = document.getElementById('previewModal');
-            modal.addEventListener('hidden.bs.modal', function () {
+            modal.addEventListener('hidden.bs.modal', function() {
                 document.getElementById('previewFrame').src = '';
             });
 
@@ -473,7 +634,7 @@
             // const iframe = document.getElementById('previewFrame');
 
             previewButtons.forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function() {
                     const fileUrl = this.dataset.file;
                     console.log('Preview file URL:', fileUrl); // cek di console
                     iframe.src = fileUrl;
@@ -482,7 +643,7 @@
 
             // Clear iframe saat modal ditutup
             const modal = document.getElementById('previewModal');
-            modal.addEventListener('hidden.bs.modal', function () {
+            modal.addEventListener('hidden.bs.modal', function() {
                 iframe.src = '';
             });
         });

@@ -21,15 +21,16 @@
                 <div class="card my-4 overflow-hidden" style="z-index: 1">
                     <div class="row flex-1 g-0">
                         <div class="col-lg-6 h-100 my-auto order-1 order-lg-0">
-                            {{-- <div class="bg-white shadow-lg position-absolute translate-middle top-50 start-50 d-none d-lg-flex align-items-center justify-content-center rounded-circle"
+                            {{-- <div
+                                class="bg-white shadow-lg position-absolute translate-middle top-50 start-50 d-none d-lg-flex align-items-center justify-content-center rounded-circle"
                                 style="width: 80px; height: 80px; z-index: 10; padding: 10px;">
                                 <img src="https://eproc.jasatirta1.co.id/assets/images/logo-jasatirta-crop.png" alt=""
                                     class="img-fluid">
                             </div> --}}
                             <div class="creative-card-body card-body p-sm-5">
                                 <div class="mb-4 text-center">
-                                    <img src="{{ asset('assets/images/logo-login.png') }}" alt="Logo"
-                                        class="img-fluid" style="width: 180px;">
+                                    <img src="{{ asset('assets/images/logo-login.png') }}" alt="Logo" class="img-fluid"
+                                        style="width: 180px;">
                                 </div>
 
                                 <h2 class="fs-20 fw-bolder mb-1">Masuk ke akun Anda</h2>
@@ -47,7 +48,10 @@
                                             placeholder="Password" required>
                                     </div>
                                     <div class="mt-5">
-                                        <button type="submit" class="btn btn-lg btn-primary w-100">Login</button>
+                                        <button type="submit" class="btn btn-lg w-100 text-white"
+                                            style="background-color: #000B58; border-color: #000B58;">
+                                            Login
+                                        </button>
                                     </div>
                                 </form>
 
@@ -59,16 +63,16 @@
                         </div>
 
                         {{-- <div class="col-lg-6 bg-primary order-0 order-lg-1 d-none d-lg-flex"> --}}
-                        <div class="col-lg-6 bg-primary order-0 order-lg-1">
-                            <div class="h-100 d-flex align-items-center justify-content-center">
-                                <img src="https://i.pinimg.com/736x/d0/e3/45/d0e345fee5e315782ba616f8aca45d2c.jpg"
-                                    alt="" class="img-fluid">
+                            <div class="col-lg-6 bg-primary order-0 order-lg-1">
+                                <div class="h-100 d-flex align-items-center justify-content-center">
+                                    <img src="https://i.pinimg.com/736x/d0/e3/45/d0e345fee5e315782ba616f8aca45d2c.jpg"
+                                        alt="" class="img-fluid">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     </main>
 
     {{-- ✅ Toast container --}}
@@ -181,7 +185,7 @@
         }
 
         // === Tampilkan toast berdasarkan session Laravel ===
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             @if (session('success'))
                 showToast(@json(session('success')), 'success');
             @endif

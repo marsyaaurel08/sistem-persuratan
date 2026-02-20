@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
+    <div class="page-header rounded d-flex align-items-center justify-content-between mb-4">
         <div class="page-header-left">
             <div class="page-header-title">
                 <h5 class="m-b-10">Laporan</h5>

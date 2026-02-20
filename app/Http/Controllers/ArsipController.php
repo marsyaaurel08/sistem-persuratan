@@ -47,39 +47,6 @@ class ArsipController extends Controller
             'countLaporan'  => Arsip::where('kategori', 'Laporan')->count(),
         ]);
     }
-    
-    //-- JANGAN DI HAPUS DULU --
-    // public function index(Request $request)
-    // {
-    //     $kategori = $request->get('kategori'); // Masuk | Keluar | Laporan | null
-
-    //     $arsips = Arsip::with(['files', 'pengarsip'])
-    //         ->when($kategori, function ($query) use ($kategori) {
-    //             $query->where('kategori', $kategori);
-    //         })
-    //         ->latest()
-    //         ->paginate(10)
-    //         ->appends($request->query());
-
-    //     return view('arsip.index', [
-    //         'arsips'        => $arsips,
-    //         'kategoriAktif'    => $kategori ?? 'semua',
-
-    //         'countSemua'   => Arsip::count(),
-    //         'countMasuk'   => Arsip::where('kategori', 'Masuk')->count(),
-    //         'countKeluar'  => Arsip::where('kategori', 'Keluar')->count(),
-    //         'countLaporan' => Arsip::where('kategori', 'Laporan')->count(),
-    //     ]);
-    // }
-
-
-    /**
-     * Form upload arsip
-     */
-    public function create()
-    {
-        return view('arsip.upload_berkas');
-    }
 
     /**
      * Simpan arsip baru
@@ -92,7 +59,7 @@ class ArsipController extends Controller
             'tanggal_arsip'  => 'required|date',
 
             'files'          => 'required',
-            'files.*'        => 'file|max:51200|mimes:pdf,doc,docx,jpg,jpeg,png,tiff',
+            'files.*'        => 'file|max:20480|mimes:pdf,doc,docx,jpg,jpeg,png,tiff',
         ];
 
         // Validasi nomor_surat berdasarkan kategori
@@ -102,7 +69,29 @@ class ArsipController extends Controller
             $rules['nomor_surat'] = 'nullable|string|max:100|unique:arsip,nomor_surat';
         }
 
-        $request->validate($rules);
+        // $request->validate($rules);
+
+        $request->validate($rules, [
+
+            'kategori.required' => 'Kategori wajib dipilih.',
+            'kategori.in' => 'Kategori tidak valid.',
+
+            'perihal.required' => 'Perihal wajib diisi.',
+            'perihal.max' => 'Perihal maksimal 255 karakter.',
+
+            'tanggal_arsip.required' => 'Tanggal arsip wajib diisi.',
+            'tanggal_arsip.date' => 'Format tanggal tidak valid.',
+
+            'nomor_surat.required' => 'Nomor surat wajib diisi.',
+            'nomor_surat.unique' => 'Nomor surat sudah digunakan.',
+            'nomor_surat.max' => 'Nomor surat maksimal 100 karakter.',
+
+            'files.required' => 'Dokumen wajib diunggah.',
+            'files.*.file' => 'File tidak valid.',
+            'files.*.max' => 'Ukuran file maksimal 20MB.',
+            'files.*.mimes' => 'Dokumen tidak didukung. Silakan unggah file PDF, DOC, DOCX, JPG, JPEG, PNG, atau TIFF.',
+
+        ]);
 
         // Simpan arsip
         $arsip = Arsip::create([
@@ -130,10 +119,19 @@ class ArsipController extends Controller
             ->with('success', 'Arsip berhasil disimpan dengan kode: ' . $arsip->kode_arsip);
     }
 
+    
+    /**
+     * Form upload arsip
+     */
+    public function create()
+    {
+        return view('arsip.upload_berkas');
+    }
+
+ 
     /**
      * Download file arsip
      */
-
     public function download($id)
     {
         $file = ArsipFile::findOrFail($id);

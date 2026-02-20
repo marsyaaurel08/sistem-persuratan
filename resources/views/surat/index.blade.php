@@ -4,13 +4,20 @@
 
 @section('content')
     <div class="container">
-        <h4 class="mb-4">Buat Surat</h4>
+        {{-- Page Header --}}
+    <div class="page-header rounded">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Buat Surat</h5>
+            </div>
+        </div>
+    </div>
 
         <form action="{{ route('surat.preview') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             {{-- ================= KOP SURAT ================= --}}
-            <div class="card mb-4">
+            <div class="card mb-4 mt-4">
                 <div class="card-header fw-bold">
                     KOP SURAT
                 </div>

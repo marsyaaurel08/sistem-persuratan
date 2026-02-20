@@ -46,6 +46,7 @@
                             <div class="border-dashed border-2 p-5 text-center rounded-4 position-relative mb-4"
                                 style="border-style: dashed; border-color: #d1d5db; background-color: #f8fafc; cursor: pointer;"
                                 id="dropZone">
+                                <div id="fileError" class="text-danger fw-semibold mb-3"></div>
 
                                 <input type="file" name="files[]" id="fileInput"
                                     class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor: pointer;"
@@ -55,9 +56,10 @@
                                     <div class="bg-primary bg-opacity-10 p-3 rounded-circle mb-3">
                                         <i class="feather-upload-cloud" style="color: white"></i>
                                     </div>
-                                    <h5 class="fw-bold text-dark">Pilih file atau drag and drop di sini</h5>
+                                    <h5 class="fw-bold text-dark">Pilih
+                                        file atau drag and drop di sini</h5>
                                     <p class="text-muted small">
-                                        Format: PDF, DOCX, JPG, TIFF (Maks 50MB per file)
+                                        Format: PDF, DOC, DOCX, JPG, JPEG, PNG, TIFF (Maks 20MB per file)
                                     </p>
                                     <button type="button" class="btn btn-primary px-4 fw-bold"
                                         onclick="document.getElementById('fileInput').click()">
@@ -113,49 +115,13 @@
                                     Wajib untuk Surat Masuk & Keluar, opsional untuk Laporan
                                 </small>
                             </div>
-                            
+
                             <!-- PERIHAL -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold small">Perihal<span class="text-danger">*</span></label>
                                 <input type="text" name="perihal" class="form-control"
                                     placeholder="Contoh: Undangan Rapat Koordinasi" value="{{ old('perihal') }}" required>
                             </div>
-
-
-                            {{-- <!-- DIVISI (FILTER) -->
-                            <div class="mb-3 d-none" id="divisiWrapper">
-                                <label class="form-label fw-bold small">Divisi *</label>
-                                <select id="divisiSelect" class="form-select">
-                                    <option value="">-- Pilih Divisi --</option>
-                                </select>
-                                <input type="hidden" name="divisi" id="divisiValue" />
-                            </div>
-
-                            <!-- SURAT MASUK -->
-                            <div class="mb-3 d-none" id="suratMasukWrapper">
-                                <label class="form-label fw-bold small">Surat Masuk *</label>
-                                <select name="surat_masuk_id" id="suratMasukSelect" class="form-select">
-                                    <option value="">-- Pilih Surat Masuk --</option>
-                                    @foreach ($suratMasuk as $sm)
-                                    <option value="{{ $sm->id }}" data-divisi="{{ $sm->penerima_divisi }}">
-                                        {{ $sm->nomor_surat }} - {{ $sm->penerima_divisi }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- SURAT KELUAR -->
-                            <div class="mb-3 d-none" id="suratKeluarWrapper">
-                                <label class="form-label fw-bold small">Surat Keluar *</label>
-                                <select name="surat_keluar_id" id="suratKeluarSelect" class="form-select">
-                                    <option value="">-- Pilih Surat Keluar --</option>
-                                    @foreach ($suratKeluar as $sk)
-                                    <option value="{{ $sk->id }}" data-divisi="{{ $sk->pengirim_divisi }}">
-                                        {{ $sk->nomor_surat }} - {{ $sk->pengirim_divisi }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
 
                             <div class="row g-3 mb-3">
                                 <div class="col-12">
@@ -164,23 +130,9 @@
                                     <input type="date" name="tanggal_arsip" class="form-control bg-light border-0 py-2"
                                         value="{{ old('tanggal_arsip', date('Y-m-d')) }}" required>
                                 </div>
-
-                                {{-- <div class="col-12">
-                                    <label class="form-label fw-bold small">Nama Pengarsip</label>
-                                    <input type="text" name="diarsipkan_nama" class="form-control bg-light border-0 py-2"
-                                        placeholder="Nama pengarsip" value="{{ old('diarsipkan_nama') }}">
-                                    <small class="text-muted">Opsional: Nama orang yang mengarsipkan</small>
-                                </div> --}}
-
-                                {{-- <div class="col-12">
-                                    <label class="form-label fw-bold small">Lokasi Fisik</label>
-                                    <input type="text" name="lokasi_fisik" class="form-control bg-light border-0 py-2"
-                                        placeholder="Contoh: Lemari A / Rak 2 / Box 5" value="{{ old('lokasi_fisik') }}">
-                                    <small class="text-muted">Opsional: Lokasi penyimpanan fisik dokumen</small>
-                                </div> --}}
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mb-2" id="submitBtn" disabled>
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mb-2" id="submitBtn">
                                 <i class="feather-archive me-2"></i> Arsipkan Sekarang
                             </button>
                             <button type="reset" class="btn btn-light w-100 py-2 fw-bold text-muted"
@@ -227,6 +179,7 @@
             const tanggal = document.querySelector('input[name="tanggal_arsip"]');
 
             const fileInput = document.getElementById('fileInput');
+            const fileError = document.getElementById('fileError');
             const dropZone = document.getElementById('dropZone');
             const fileList = document.getElementById('fileList');
             const fileListContainer = document.getElementById('fileListContainer');

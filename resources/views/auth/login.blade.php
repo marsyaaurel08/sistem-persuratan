@@ -28,8 +28,8 @@
                             </div> --}}
                             <div class="creative-card-body card-body p-sm-5">
                                 <div class="mb-4 text-center">
-                                    <img src="{{ asset('assets/images/logo-login.png') }}" alt="Logo" class="img-fluid"
-                                        style="width: 180px;">
+                                    <img src="{{ asset('assets/images/logo-login.png') }}" alt="Logo"
+                                        class="img-fluid" style="width: 180px;">
                                 </div>
 
                                 <h2 class="fs-20 fw-bolder mb-1">Masuk ke akun Anda</h2>
@@ -58,6 +58,7 @@
                             </div>
                         </div>
 
+                        {{-- <div class="col-lg-6 bg-primary order-0 order-lg-1 d-none d-lg-flex"> --}}
                         <div class="col-lg-6 bg-primary order-0 order-lg-1">
                             <div class="h-100 d-flex align-items-center justify-content-center">
                                 <img src="https://i.pinimg.com/736x/d0/e3/45/d0e345fee5e315782ba616f8aca45d2c.jpg"
@@ -84,6 +85,16 @@
 
     {{-- ✅ Toast Styles & Script --}}
     <style>
+        /* @media (max-width: 991.98px) {
+            .creative-card-body {
+                padding: 30px 20px !important;
+            }
+
+            .card {
+                margin: 20px !important;
+            }
+        } */
+
         .toast-notif {
             position: fixed;
             top: 20px;
@@ -170,11 +181,11 @@
         }
 
         // === Tampilkan toast berdasarkan session Laravel ===
-        document.addEventListener('DOMContentLoaded', function () {
-            @if(session('success'))
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
                 showToast(@json(session('success')), 'success');
             @endif
-            @if($errors->any())
+            @if ($errors->any())
                 showToast(@json($errors->first()), 'error');
             @endif
         });

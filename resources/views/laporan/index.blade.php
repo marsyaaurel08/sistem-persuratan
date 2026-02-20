@@ -145,21 +145,6 @@
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <style>
-            .pagination {
-                color: #000 !important;
-            }
-
-            .pagination .page-item .page-link {
-                color: #000;
-                border: 1px solid #dee2e6;
-            }
-
-            .pagination .page-item.active .page-link {
-                background-color: #f8f9fa;
-                border-color: #dee2e6;
-                color: #000;
-            }
-
             .btn-outline-danger {
                 color: #dc3545 !important;
                 border-color: #dc3545 !important;

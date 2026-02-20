@@ -120,25 +120,25 @@
 
                             <a href="{{ route('arsip.index') }}"
                                 class="badge rounded-pill px-3 py-2
-                                                                                               {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                                   {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Semua ({{ $countSemua }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                                                               {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                                   {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Masuk ({{ $countMasuk }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                                                               {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                                   {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Surat Keluar ({{ $countKeluar }})
                             </a>
 
                             <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}"
                                 class="badge rounded-pill px-3 py-2
-                                                                                               {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                                   {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
                                 Laporan ({{ $countLaporan }})
                             </a>
                         </div>
@@ -456,8 +456,10 @@
                     allowInput: false,
                     onClose: function (selectedDates) {
                         if (selectedDates.length === 2) {
-                            const start = selectedDates[0].toISOString().split('T')[0];
-                            const end = selectedDates[1].toISOString().split('T')[0];
+                            //  Perbaikan timezone: gunakan formatDate, bukan toISOString
+                            const start = fp.formatDate(selectedDates[0], "Y-m-d");
+                            const end = fp.formatDate(selectedDates[1], "Y-m-d");
+
                             const url = new URL(window.location.href);
                             url.searchParams.set('start_date', start);
                             url.searchParams.set('end_date', end);
@@ -483,6 +485,7 @@
                     window.location.href = url.toString();
                 });
             });
+                
         </script>
 
 
@@ -540,7 +543,7 @@
                     updateCount();
                 });
 
-                // ❌ tombol silang
+                //  tombol silang
                 closeBulkBtn.addEventListener('click', function () {
                     getRowCheckboxes().forEach(cb => cb.checked = false);
 
@@ -565,7 +568,7 @@
 
                 const checkboxes = document.querySelectorAll('.row-checkbox');
 
-                // 🔄 fungsi enable / disable tombol
+                //  fungsi enable / disable tombol
                 function updateDownloadButton() {
                     const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
                     downloadBtn.disabled = checkedCount === 0;
@@ -586,7 +589,7 @@
 
                     if (ids.length === 0) return; // safety
 
-                    // 🔒 AKTIFKAN LOADING
+                    //  AKTIFKAN LOADING
                     downloadBtn.disabled = true;
                     btnText.textContent = 'Menyiapkan file...';
                     spinner.classList.remove('d-none');
@@ -633,7 +636,7 @@
                             alert(err.message);
                         })
                         .finally(() => {
-                            // 🔓 KEMBALIKAN KE NORMAL
+                            //  KEMBALIKAN KE NORMAL
                             btnText.textContent = 'Unduh';
                             spinner.classList.add('d-none');
                             updateDownloadButton(); // cek ulang checkbox
@@ -692,7 +695,7 @@
 
                     if (ids.length === 0) return;
 
-                    // ✅ SweetAlert hanya untuk KONFIRMASI
+                    //  SweetAlert hanya untuk KONFIRMASI
                     Swal.fire({
                         title: 'Yakin ingin menghapus?',
                         text: `${ids.length} arsip akan dihapus permanen.`,
@@ -754,7 +757,7 @@
                 document.querySelectorAll('.clickable-row').forEach(row => {
                     row.addEventListener('click', function (e) {
 
-                        // 🚫 cegah redirect jika klik elemen interaktif
+                        //  cegah redirect jika klik elemen interaktif
                         if (
                             e.target.closest('a') ||
                             e.target.closest('button') ||
@@ -764,7 +767,7 @@
                             return;
                         }
 
-                        // ✅ redirect ke detail
+                        //  redirect ke detail
                         window.location.href = this.dataset.href;
                     });
                 });

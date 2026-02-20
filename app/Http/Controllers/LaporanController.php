@@ -42,9 +42,8 @@ class LaporanController extends Controller
             ]);
         }
 
-        $laporans = $query
-            ->orderBy('tanggal_arsip', 'desc')
-            ->paginate(10);
+        $laporans = $query->latest()->paginate(10)
+            ->appends($request->only(['search', 'start', 'end']));
 
         return view('laporan.index', compact('laporans'));
     }

@@ -19,19 +19,12 @@
                 <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
                     <form method="GET" action="{{ route('laporan.index') }}" id="searchForm">
-
-                        <div class="input-group" style="max-width: 250px; height: 40px; margin-top: 2px;">
-
-                            <span class="input-group-text bg-white border-end-0 rounded-start-pill">
-                                <i class="feather-search"></i>
-                            </span>
-
-                            <input type="text" name="search" id="searchInput"
-                                class="form-control border-start-0 rounded-end-pill" placeholder="Cari..."
-                                value="{{ request('search') }}" style="height: 100%;">
-
+                        <input type="hidden" name="start" value="{{ request('start') }}">
+                        <input type="hidden" name="end" value="{{ request('end') }}">
+                        <div class="input-group" style="max-width: 250px;">
+                            <input type="text" name="search" id="searchInput" class="form-control" placeholder="Cari..."
+                                value="{{ request('search') }}">
                         </div>
-
                     </form>
 
                     <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
@@ -111,10 +104,10 @@
                                         <td>{{ $laporan->perihal }}</td>
                                         <td>
                                             <span class="badge-custom 
-                                            @if ($laporan->kategori == 'Masuk') badge-success
-                                            @elseif($laporan->kategori == 'Keluar') badge-warning
-                                            @elseif($laporan->kategori == 'Laporan') badge-info
-                                            @else badge-secondary @endif">
+                                                                            @if ($laporan->kategori == 'Masuk') badge-success
+                                                                            @elseif($laporan->kategori == 'Keluar') badge-warning
+                                                                            @elseif($laporan->kategori == 'Laporan') badge-info
+                                                                            @else badge-secondary @endif">
                                                 {{ $laporan->kategori }}
                                             </span>
                                         </td>
@@ -239,114 +232,59 @@
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const dateInput = document.getElementById('dateRange');
-                const clearBtn = document.getElementById('clearDateRange');
-                const rows = document.querySelectorAll('#laporanTable tbody tr');
-                const pagination = document.querySelector('.pagination'); // pagination container
-                const searchInput = document.getElementById('searchLaporan');
-                const noDataRow = document.getElementById('noDataRow');
+                // ========== SEARCH (auto submit, debounce 500ms) ==========
+                let timer;
+                const input = document.getElementById('searchInput');
+                const form = document.getElementById('searchForm');
 
-                const fp = flatpickr(dateInput, {
-                    mode: 'range',
-                    dateFormat: 'd M Y',
-                    locale: 'id',
-                    onChange: function (selectedDates) {
-                        if (selectedDates.length === 2) {
-                            const start = selectedDates[0];
-                            const end = selectedDates[1];
-                            filterByDateRange(start, end);
-                            clearBtn.style.display = 'inline-flex';
-                            pagination?.classList.add('d-none');
-
-
-                            function formatDateLocal(date) {
-                                const year = date.getFullYear();
-                                const month = String(date.getMonth() + 1).padStart(2, '0');
-                                const day = String(date.getDate()).padStart(2, '0');
-                                return `${year}-${month}-${day}`;
-                            }
-
-                            document.getElementById('pdfStart').value = formatDateLocal(start);
-                            document.getElementById('pdfEnd').value = formatDateLocal(end);
-                            document.getElementById('excelStart').value = formatDateLocal(start);
-                            document.getElementById('excelEnd').value = formatDateLocal(end);
-                        }
-                    }
-                });
-
-                function filterByDateRange(start, end) {
-                    let visibleCount = 0;
-
-                    rows.forEach(row => {
-                        if (row.id === 'noDataRow') return;
-
-                        const rowDateStr = row.getAttribute('data-date');
-                        if (!rowDateStr) {
-                            row.style.display = 'none';
-                            return;
-                        }
-
-                        const rowDate = new Date(rowDateStr);
-                        const match = (rowDate >= start && rowDate <= end);
-                        row.style.display = match ? '' : 'none';
-
-                        if (match) visibleCount++;
+                if (input && form) {
+                    input.addEventListener('keyup', function () {
+                        clearTimeout(timer);
+                        timer = setTimeout(() => form.submit(), 500);
                     });
-
-                    noDataRow.style.display = visibleCount === 0 ? '' : 'none';
                 }
 
-                clearBtn.addEventListener('click', function () {
-                    fp.clear();
-                    dateInput.value = '';
-                    clearBtn.style.display = 'none';
+                // ========== DATE RANGE FILTER (flatpickr) ==========
+                const dateInput = document.getElementById('dateRange');
+                const clearBtn = document.getElementById('clearDateRange');
 
-                    rows.forEach(row => {
-                        if (row.id === 'noDataRow') {
-                            row.style.display = 'none'; // pastikan pesan disembunyikan
-                        } else {
-                            row.style.display = '';
+                if (dateInput) {
+                    const fp = flatpickr(dateInput, {
+                        mode: 'range',
+                        dateFormat: 'd M Y',
+                        locale: 'id',
+                        onClose: function (selectedDates) {
+                            if (selectedDates.length === 2) {
+                                
+                                const start = fp.formatDate(selectedDates[0], "Y-m-d");
+                                const end = fp.formatDate(selectedDates[1], "Y-m-d");
+
+                                const url = new URL(window.location.href);
+                                url.searchParams.set('start', start);
+                                url.searchParams.set('end', end);
+                                window.location.href = url.toString(); // reload halaman
+                            }
                         }
                     });
 
-                    pagination?.classList.remove('d-none');
+                    // tampilkan tanggal aktif dari query URL
+                    const params = new URLSearchParams(window.location.search);
+                    const start = params.get('start');
+                    const end = params.get('end');
+                    if (start && end) {
+                        dateInput.value =
+                            `${fp.formatDate(new Date(start), "d M Y")} - ${fp.formatDate(new Date(end), "d M Y")}`;
+                        clearBtn.style.display = "flex";
+                    }
 
-                    document.getElementById('pdfStart').value = '';
-                    document.getElementById('pdfEnd').value = '';
-                    document.getElementById('excelStart').value = '';
-                    document.getElementById('excelEnd').value = '';
-                });
-
-                // searchInput.addEventListener('keyup', function () {
-                //     const filter = this.value.toLowerCase();
-                //     let hasFilter = filter.length > 0;
-                //     let visibleCount = 0;
-
-                //     rows.forEach(row => {
-                //         // Jangan ikutkan baris noDataRow dalam filtering
-                //         if (row.id === 'noDataRow') return;
-
-                //         const text = row.textContent.toLowerCase();
-                //         const match = text.includes(filter);
-                //         row.style.display = match ? '' : 'none';
-
-                //         if (match) visibleCount++;
-                //     });
-
-                //     // Tampilkan pesan jika tidak ada hasil
-                //     if (visibleCount === 0 && hasFilter) {
-                //         noDataRow.style.display = '';
-                //     } else {
-                //         noDataRow.style.display = 'none';
-                //     }
-
-                //     // Atur pagination
-                //     if (hasFilter) {
-                //         pagination?.classList.add('d-none');
-                //     } else if (!dateInput.value) {
-                //         pagination?.classList.remove('d-none');
-                //     }
-                // });
+                    // tombol reset tanggal
+                    clearBtn.addEventListener('click', function () {
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('start');
+                        url.searchParams.delete('end');
+                        window.location.href = url.toString();
+                    });
+                }
             });
         </script>
         <script>

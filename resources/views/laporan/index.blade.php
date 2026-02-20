@@ -104,10 +104,10 @@
                                         <td>{{ $laporan->perihal }}</td>
                                         <td>
                                             <span class="badge-custom 
-                                                                            @if ($laporan->kategori == 'Masuk') badge-success
-                                                                            @elseif($laporan->kategori == 'Keluar') badge-warning
-                                                                            @elseif($laporan->kategori == 'Laporan') badge-info
-                                                                            @else badge-secondary @endif">
+                                                                                    @if ($laporan->kategori == 'Masuk') badge-success
+                                                                                    @elseif($laporan->kategori == 'Keluar') badge-warning
+                                                                                    @elseif($laporan->kategori == 'Laporan') badge-info
+                                                                                    @else badge-secondary @endif">
                                                 {{ $laporan->kategori }}
                                             </span>
                                         </td>
@@ -137,21 +137,6 @@
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <style>
-            .pagination {
-                color: #000 !important;
-            }
-
-            .pagination .page-item .page-link {
-                color: #000;
-                border: 1px solid #dee2e6;
-            }
-
-            .pagination .page-item.active .page-link {
-                background-color: #f8f9fa;
-                border-color: #dee2e6;
-                color: #000;
-            }
-
             .btn-outline-danger {
                 color: #dc3545 !important;
                 border-color: #dc3545 !important;
@@ -255,7 +240,7 @@
                         locale: 'id',
                         onClose: function (selectedDates) {
                             if (selectedDates.length === 2) {
-                                
+
                                 const start = fp.formatDate(selectedDates[0], "Y-m-d");
                                 const end = fp.formatDate(selectedDates[1], "Y-m-d");
 

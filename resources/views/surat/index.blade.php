@@ -3,7 +3,7 @@
 @section('title', 'Buat Surat')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         {{-- Page Header --}}
     <div class="page-header rounded">
         <div class="page-header-left d-flex align-items-center">

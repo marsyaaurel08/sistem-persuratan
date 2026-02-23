@@ -4,305 +4,317 @@
 
 @section('content')
 
-    {{-- Page Header --}}
-    <div class="page-header rounded">
-        <div class="page-header-left d-flex align-items-center">
-            <div class="page-header-title">
-                <h5 class="m-b-10">Arsip</h5>
+    <div class="container-fluid">
+
+        {{-- Page Header --}}
+        <div class="page-header rounded">
+            <div class="page-header-left d-flex align-items-center">
+                <div class="page-header-title">
+                    <h5 class="m-b-10">Arsip</h5>
+                </div>
             </div>
-        </div>
 
 
-        {{-- Search --}}
-        <div class="page-header-right ms-auto">
-            <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
+            {{-- Search --}}
+            <div class="page-header-right ms-auto">
+                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                <form method="GET" action="{{ route('arsip.index') }}" id="searchForm">
+                    <form method="GET" action="{{ route('arsip.index') }}" id="searchForm">
 
-                    <div class="input-group" style="max-width: 250px; height: 40px; margin-top: 14px;">
+                        <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                            style="max-width: 250px; height: 40px; margin-top: 14px;">
 
-                        <span class="input-group-text bg-white border-end-0 rounded-start-pill">
-                            <i class="feather-search"></i>
+                            <span class="input-group-text bg-white border-0">
+                                <i class="feather-search"></i>
+                            </span>
+
+                            <input type="text" name="search" id="searchInput" class="form-control border-0"
+                                placeholder="Cari surat..." value="{{ request('search') }}" style="height: 100%;">
+
+                            <button
+                                class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
+                                type="button" id="clearSearch" title="Reset pencarian" style="display: none;">
+                                <i class="feather-x"></i>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+
+
+                    {{-- Date Range --}}
+                    <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                        style="width: 220px; height: 40px; overflow: hidden; font-size: small;">
+                        <span
+                            class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
+                            <i class="feather-calendar"></i>
                         </span>
-
-                        <input type="text" name="search" id="searchInput"
-                            class="form-control border-start-0 rounded-end-pill" placeholder="Cari surat..."
-                            value="{{ request('search') }}" style="height: 100%;">
-
+                        <input type="text" id="dateRange" class="form-control border-0 px-2 h-100 d-flex align-items-center"
+                            placeholder="Pilih Tanggal" readonly
+                            style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
+                        <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
+                            type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
+                            <i class="feather-x"></i>
+                        </button>
                     </div>
 
-                </form>
+                    {{-- Upload --}}
+                    <a href="{{ route('arsip.create') }}"
+                        class="btn btn-primary d-flex align-items-center justify-content-center gap-1 rounded-pill"
+                        style="width: 95px; height: 35px;">
+                        <i class="feather-upload"></i>
+                        <span>Upload</span>
+                    </a>
 
-
-
-                {{-- Date Range --}}
-                <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
-                    style="width: 220px; height: 40px; overflow: hidden; font-size: small;">
-                    <span
-                        class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
-                        <i class="feather-calendar"></i>
-                    </span>
-                    <input type="text" id="dateRange" class="form-control border-0 px-2 h-100 d-flex align-items-center"
-                        placeholder="Pilih Tanggal" readonly
-                        style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
-                    <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
-                        type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
-                        <i class="feather-x"></i>
-                    </button>
-                </div>
-
-                {{-- Upload --}}
-                <a href="{{ route('arsip.create') }}"
-                    class="btn btn-primary d-flex align-items-center justify-content-center gap-1 rounded-pill"
-                    style="width: 95px; height: 35px;">
-                    <i class="feather-upload"></i>
-                    <span>Upload</span>
-                </a>
-
-            </div>
-        </div>
-    </div>
-
-    {{-- Alert --}}
-
-
-    {{-- @if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show">
-        <strong>Berhasil!</strong> {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    @endif --}}
-
-    {{-- Division Folder Cards --}}
-    {{-- <div class="row g-3 mb-4">
-        @if ($folders && count($folders) > 0)
-        @foreach ($folders as $folder)
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
-                data-divisi="{{ $folder['name'] }}" style="cursor: pointer; transition: transform 0.2s;"
-                onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between mb-3">
-                        <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
-                            <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 28px;"></i>
-                        </div>
-                    </div>
-                    <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
-                    <small class="text-muted">{{ $folder['count'] }}</small>
                 </div>
             </div>
         </div>
-        @endforeach
-        @else
-        <div class="col-12">
-            <div class="alert alert-info text-center">
-                <i class="feather-info me-2"></i> Belum ada arsip
-            </div>
+
+        {{-- Alert --}}
+
+
+        {{-- @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            <strong>Berhasil!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        @endif
-    </div> --}}
+        @endif --}}
 
-    {{-- Table Arsip --}}
-    <div class="row g-2 mt-4">
-        <div class="col-12">
-            <div class="card p-2">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        {{-- Division Folder Cards --}}
+        {{-- <div class="row g-3 mb-4">
+            @if ($folders && count($folders) > 0)
+            @foreach ($folders as $folder)
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm stretch stretch-full h-100 mb-0 folder-card"
+                    data-divisi="{{ $folder['name'] }}" style="cursor: pointer; transition: transform 0.2s;"
+                    onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="p-2 rounded" style="background-color: {{ $folder['color'] }}20;">
+                                <i class="feather-folder" style="color: {{ $folder['color'] }}; font-size: 28px;"></i>
+                            </div>
+                        </div>
+                        <h6 class="fw-bold mb-1 text-dark">{{ $folder['name'] }}</h6>
+                        <small class="text-muted">{{ $folder['count'] }}</small>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            @else
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="feather-info me-2"></i> Belum ada arsip
+                </div>
+            </div>
+            @endif
+        </div> --}}
 
-                        <!-- JUDUL KIRI -->
-                        <h5 class="fs-14 fw-semibold mb-0">
-                            <i class="feather-file-text me-2 text-primary"></i> Data Arsip
-                        </h5>
+        {{-- Table Arsip --}}
+        <div class="row g-2 mt-4">
+            <div class="col-12">
+                <div class="card p-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
 
-                        <!-- TAB KANAN -->
-                        <div class="d-flex flex-wrap gap-2 align-items-center" id="arsipTab">
-                            <span class="fw-semibold me-2">Jenis Arsip :</span>
+                            <!-- JUDUL KIRI -->
+                            <h5 class="fs-14 fw-semibold mb-0">
+                                <i class="feather-file-text me-2 text-primary"></i> Data Arsip
+                            </h5>
 
-                            <a href="{{ route('arsip.index') }}"
-                                class="badge rounded-pill px-3 py-2
-                                                                                                   {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
-                                Semua ({{ $countSemua }})
-                            </a>
+                            <!-- TAB KANAN -->
+                            <div class="d-flex flex-wrap gap-2 align-items-center" id="arsipTab">
+                                <span class="fw-semibold me-2">Jenis Arsip :</span>
 
-                            <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}"
-                                class="badge rounded-pill px-3 py-2
-                                                                                                   {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
-                                Surat Masuk ({{ $countMasuk }})
-                            </a>
+                                <a href="{{ route('arsip.index') }}"
+                                    class="badge rounded-pill px-3 py-2
+                                                                                                                           {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                    Semua ({{ $countSemua }})
+                                </a>
 
-                            <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}"
-                                class="badge rounded-pill px-3 py-2
-                                                                                                   {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
-                                Surat Keluar ({{ $countKeluar }})
-                            </a>
+                                <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}"
+                                    class="badge rounded-pill px-3 py-2
+                                                                                                                           {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                    Surat Masuk ({{ $countMasuk }})
+                                </a>
 
-                            <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}"
-                                class="badge rounded-pill px-3 py-2
-                                                                                                   {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
-                                Laporan ({{ $countLaporan }})
-                            </a>
+                                <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}"
+                                    class="badge rounded-pill px-3 py-2
+                                                                                                                           {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                    Surat Keluar ({{ $countKeluar }})
+                                </a>
+
+                                <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}"
+                                    class="badge rounded-pill px-3 py-2
+                                                                                                                           {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                    Laporan ({{ $countLaporan }})
+                                </a>
+                            </div>
+                        </div>
+
+                        {{-- Bulk Action --}}
+                        <div id="bulkActionBar"
+                            class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3 fade d-none">
+
+                            {{-- <div id="bulkActionBar"
+                                class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
+                                style="display: none;"> --}}
+                                <input type="checkbox" id="selectAll">
+                                <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
+                                <div class="vr"></div>
+                                <button id="downloadSelected" class="btn btn-sm btn-light" disabled>
+                                    <i class="feather-download"></i>
+                                    <span class="btn-text">Unduh</span>
+                                    <span class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
+                                </button>
+                                {{-- <button id="downloadSelected" class="btn btn-sm btn-light"><i
+                                        class="feather-download"></i>
+                                    Unduh</button> --}}
+                                {{-- <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i>
+                                    Pulihkan</button>
+                                --}}
+                                <button id="deleteSelected" class="btn btn-sm btn-danger" disabled>
+                                    <i class="feather-trash"></i> Hapus
+                                </button>
+
+                                <button type="button" id="closeBulkBar" class="btn-close ms-auto"></button>
+                            </div>
+
+                            {{-- Table --}}
+                            <div class="table-responsive">
+                                <table class="table table-hover table-sm align-middle small" id="arsipTable">
+                                    <thead class="text-uppercase text-muted small">
+                                        <tr>
+                                            <th width="40"></th>
+                                            <th>Kode Arsip</th>
+                                            <th>No. Surat</th>
+                                            <th>Perihal</th>
+                                            {{-- <th>Divisi</th> --}}
+                                            <th>Tanggal</th>
+                                            <th>Pengarsip</th>
+                                            {{-- <th>File</th> --}}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($arsips as $item)
+                                            @php
+                                                $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
+                                                $pengarsip = $item->pengarsip->name ?? '-';
+                                            @endphp
+
+                                            <tr class="clickable-row" data-href="{{ route('arsip.arsip_detail', $item->id) }}"
+                                                data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
+                                                data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
+                                                data-tanggal="{{ $tanggalDisplay }}"
+                                                data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
+                                                data-pengarsip="{{ $pengarsip }}" data-files='@json(
+                                                    $item->files->map(fn($f) => [
+                                                        'id' => $f->id,
+                                                        'nama_file' => $f->nama_file,
+                                                    ])
+                                                )'>
+                                                <td>
+                                                    <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
+                                                </td>
+
+                                                <td class="text-nowrap">
+                                                    <span class="badge bg-light text-dark border">
+                                                        {{ $item->kode_arsip }}
+                                                    </span>
+                                                </td>
+
+                                                <td class="fw-bold">
+                                                    {{ $item->nomor_surat ?? '-' }}
+                                                </td>
+
+                                                <td>
+                                                    {{ $item->perihal ?? '-' }}
+                                                </td>
+
+                                                <td>
+                                                    {{ $tanggalDisplay ?? '-' }}
+                                                </td>
+
+                                                <td>
+                                                    <small class="text-muted">
+                                                        {{ $item->pengarsip->name ?? '-' }}
+                                                    </small>
+                                                </td>
+                                                {{-- <td>
+                                                    @if ($item->files->count())
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        <!-- Tombol Download -->
+                                                        @foreach ($item->files as $file)
+                                                        <a href="{{ route('arsip.download', $file->id) }}"
+                                                            class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
+                                                            title="Download">
+                                                            <i class="feather-download me-1" style="font-size: 14px;"></i>
+                                                            <span style="font-size: 12px;">Unduh</span>
+                                                        </a>
+
+                                                        <!-- Tombol Preview -->
+                                                        <button type="button"
+                                                            class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#previewModal"
+                                                            data-file="{{ asset('storage/' . $file->path_file) }}"
+                                                            title="Preview">
+                                                            <i class="feather-eye me-1" style="font-size: 14px;"></i>
+                                                            <span style="font-size: 12px;">Preview</span>
+                                                        </button>
+                                                        @endforeach
+                                                    </div>
+                                                    @else
+                                                    <span class="text-muted">-</span>
+                                                    @endif
+                                                </td> --}}
+                                            </tr>
+                                            <tr id="noDataRow" style="display: none;">
+                                                <td colspan="100%" class="text-center text-muted py-3">
+                                                    {{-- Data tidak ditemukan --}}
+                                                    Tidak ada arsip yang sesuai dengan pencarian.
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+
+                                </table>
+                            </div>
+
+                            {{-- Pagination --}}
+                            {{-- Pagination --}}
+                            <div class="mt-2 d-flex justify-content-center">
+                                {{ $arsips->links() }}
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+@endsection
 
-                    {{-- Bulk Action --}}
-                    <div id="bulkActionBar"
-                        class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3 fade d-none">
-
-                        {{-- <div id="bulkActionBar"
-                            class="alert alert-light border-primary d-flex align-items-center gap-3 mb-3"
-                            style="display: none;"> --}}
-                            <input type="checkbox" id="selectAll">
-                            <strong><span id="selectedCount">0</span> Dokumen Dipilih</strong>
-                            <div class="vr"></div>
-                            <button id="downloadSelected" class="btn btn-sm btn-light" disabled>
-                                <i class="feather-download"></i>
-                                <span class="btn-text">Unduh</span>
-                                <span class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
-                            </button>
-                            {{-- <button id="downloadSelected" class="btn btn-sm btn-light"><i class="feather-download"></i>
-                                Unduh</button> --}}
-                            {{-- <button class="btn btn-sm btn-light"><i class="feather-rotate-ccw"></i> Pulihkan</button>
-                            --}}
-                            <button id="deleteSelected" class="btn btn-sm btn-danger" disabled>
-                                <i class="feather-trash"></i> Hapus
-                            </button>
-
-                            <button type="button" id="closeBulkBar" class="btn-close ms-auto"></button>
-                        </div>
-
-                        {{-- Table --}}
+        {{-- Modal Detail --}}
+        <div class="modal fade" id="folderModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">Dokumen Divisi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm align-middle small" id="arsipTable">
-                                <thead class="text-uppercase text-muted small">
+                            <table class="table table-hover table-sm small">
+                                <thead class="table-light">
                                     <tr>
-                                        <th width="40"></th>
                                         <th>Kode Arsip</th>
                                         <th>No. Surat</th>
                                         <th>Perihal</th>
-                                        {{-- <th>Divisi</th> --}}
                                         <th>Tanggal</th>
-                                        <th>Pengarsip</th>
-                                        {{-- <th>File</th> --}}
+                                        <th>File</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach ($arsips as $item)
-                                        @php
-                                            $tanggalDisplay = $item->tanggal_arsip?->format('d M Y');
-                                            $pengarsip = $item->pengarsip->name ?? '-';
-                                        @endphp
-
-                                        <tr class="clickable-row" data-href="{{ route('arsip.arsip_detail', $item->id) }}"
-                                            data-kode="{{ $item->kode_arsip }}" data-no="{{ $item->nomor_surat }}"
-                                            data-perihal="{{ $item->perihal }}" data-divisi="{{ $item->divisi }}"
-                                            data-tanggal="{{ $tanggalDisplay }}"
-                                            data-date="{{ $item->tanggal_arsip?->format('Y-m-d') }}"
-                                            data-pengarsip="{{ $pengarsip }}" data-files='@json(
-                                                $item->files->map(fn($f) => [
-                                                    'id' => $f->id,
-                                                    'nama_file' => $f->nama_file,
-                                                ])
-                                            )'>
-                                            <td>
-                                                <input type="checkbox" class="row-checkbox" value="{{ $item->id }}">
-                                            </td>
-
-                                            <td class="text-nowrap">
-                                                <span class="badge bg-light text-dark border">
-                                                    {{ $item->kode_arsip }}
-                                                </span>
-                                            </td>
-
-                                            <td class="fw-bold">
-                                                {{ $item->nomor_surat ?? '-' }}
-                                            </td>
-
-                                            <td>
-                                                {{ $item->perihal ?? '-' }}
-                                            </td>
-
-                                            <td>
-                                                {{ $tanggalDisplay ?? '-' }}
-                                            </td>
-
-                                            <td>
-                                                <small class="text-muted">
-                                                    {{ $item->pengarsip->name ?? '-' }}
-                                                </small>
-                                            </td>
-                                            {{-- <td>
-                                                @if ($item->files->count())
-                                                <div class="d-flex flex-wrap gap-1">
-                                                    <!-- Tombol Download -->
-                                                    @foreach ($item->files as $file)
-                                                    <a href="{{ route('arsip.download', $file->id) }}"
-                                                        class="badge bg-light text-primary border d-inline-flex align-items-center p-2"
-                                                        title="Download">
-                                                        <i class="feather-download me-1" style="font-size: 14px;"></i>
-                                                        <span style="font-size: 12px;">Unduh</span>
-                                                    </a>
-
-                                                    <!-- Tombol Preview -->
-                                                    <button type="button"
-                                                        class="badge bg-light text-success border d-inline-flex align-items-center p-2 preview-btn"
-                                                        data-bs-toggle="modal" data-bs-target="#previewModal"
-                                                        data-file="{{ asset('storage/' . $file->path_file) }}" title="Preview">
-                                                        <i class="feather-eye me-1" style="font-size: 14px;"></i>
-                                                        <span style="font-size: 12px;">Preview</span>
-                                                    </button>
-                                                    @endforeach
-                                                </div>
-                                                @else
-                                                <span class="text-muted">-</span>
-                                                @endif
-                                            </td> --}}
-                                        </tr>
-                                        <tr id="noDataRow" style="display: none;">
-                                            <td colspan="100%" class="text-center text-muted py-3">
-                                                {{-- Data tidak ditemukan --}}
-                                                Tidak ada arsip yang sesuai dengan pencarian.
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                <tbody id="modalTableBody">
                                 </tbody>
-
                             </table>
                         </div>
-
-                        {{-- Pagination --}}
-                        {{-- Pagination --}}
-                        <div class="mt-2 d-flex justify-content-center">
-                            {{ $arsips->links() }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-@endsection
-
-    {{-- Modal Detail --}}
-    <div class="modal fade" id="folderModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Dokumen Divisi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm small">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Kode Arsip</th>
-                                    <th>No. Surat</th>
-                                    <th>Perihal</th>
-                                    <th>Tanggal</th>
-                                    <th>File</th>
-                                </tr>
-                            </thead>
-                            <tbody id="modalTableBody">
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -391,7 +403,10 @@
 
                 const input = document.getElementById('searchInput');
                 const form = document.getElementById('searchForm');
+                const clearBtn = document.getElementById('clearSearch');
 
+
+                // auto submit search
                 input.addEventListener('keyup', function () {
 
                     clearTimeout(timer);
@@ -403,6 +418,42 @@
                     }, 500);
 
                 });
+
+
+                // tampilkan tombol X
+                function toggleClearButton() {
+
+                    if (input.value.length > 0) {
+
+                        clearBtn.style.display = 'flex';
+
+                    } else {
+
+                        clearBtn.style.display = 'none';
+
+                    }
+
+                }
+
+
+                // tombol X diklik
+                clearBtn.addEventListener('click', function () {
+
+                    input.value = '';
+
+                    toggleClearButton();
+
+                    form.submit();
+
+                });
+
+
+                // saat mengetik
+                input.addEventListener('input', toggleClearButton);
+
+
+                // pertama load
+                toggleClearButton();
 
             });
 
@@ -485,7 +536,7 @@
                     window.location.href = url.toString();
                 });
             });
-                
+
         </script>
 
 

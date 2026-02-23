@@ -43,7 +43,7 @@
 
         <div class="dashboard-wrapper">
             <!-- Row Statistik -->
-            <div class="row g-3 mt-3">
+            <div class="row g-3 mt-2">
                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
                     <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
                         <div class="card-body p-4 text-center">
@@ -98,7 +98,7 @@
         </div>
 
         <!-- Grafik -->
-        <div class="row g-2 mt-3">
+        <div class="row g-2 mt-1">
             <div class="col-12">
                 <div class="card p-3" style="height: 420px;">
                     <div class="card-body d-flex flex-column h-100">
@@ -112,7 +112,7 @@
         </div>
 
         <!-- Aktivitas Terbaru -->
-        <div class="row g-2 mt-3">
+        <div class="row g-2 mt-1">
             <div class="col-12">
                 <div class="card stretch stretch-full p-2">
                     <div class="card-body">
@@ -223,7 +223,7 @@
         }
 
         .dashboard-wrapper {
-            padding: 10px 15px;
+            padding: 10px -0px;
         }
 
         .input-group-text,
@@ -366,16 +366,16 @@
                         if (res.aktivitas && res.aktivitas.length) {
                             res.aktivitas.forEach(a => {
                                 $tableBody.append(`
-                                        <tr class="data-row" data-date="${a.tanggal_arsip}">
-                                            <td class="text-nowrap">
-                                                <span class="badge bg-light text-dark border">${a.kode_arsip}</span>
-                                            </td>
-                                            <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
-                                            <td>${a.perihal ?? '-'}</td>
-                                            <td>${a.tanggal_view ?? '-'}</td>
-                                            <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
-                                        </tr>
-                                    `);
+                                            <tr class="data-row" data-date="${a.tanggal_arsip}">
+                                                <td class="text-nowrap">
+                                                    <span class="badge bg-light text-dark border">${a.kode_arsip}</span>
+                                                </td>
+                                                <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                                                <td>${a.perihal ?? '-'}</td>
+                                                <td>${a.tanggal_view ?? '-'}</td>
+                                                <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                                            </tr>
+                                        `);
                             });
                         } else {
                             // $tableBody.html(
@@ -386,29 +386,29 @@
                             if (res.aktivitas && res.aktivitas.length) {
                                 res.aktivitas.forEach(a => {
                                     $tableBody.append(`
-                <tr class="data-row" data-date="${a.tanggal_arsip}">
-                    <td class="text-nowrap">
-                        <span class="badge bg-light text-dark border">
-                            ${a.kode_arsip}
-                        </span>
-                    </td>
-                    <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
-                    <td>${a.perihal ?? '-'}</td>
-                    <td>${a.tanggal_view ?? '-'}</td>
-                    <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
-                </tr>
-            `);
+                    <tr class="data-row" data-date="${a.tanggal_arsip}">
+                        <td class="text-nowrap">
+                            <span class="badge bg-light text-dark border">
+                                ${a.kode_arsip}
+                            </span>
+                        </td>
+                        <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                        <td>${a.perihal ?? '-'}</td>
+                        <td>${a.tanggal_view ?? '-'}</td>
+                        <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                    </tr>
+                `);
                                 });
                             }
 
                             // 🔥 Tambahkan kembali noDataRow setelah append
                             $tableBody.append(`
-        <tr id="noDataRow" style="display: none;">
-            <td colspan="100%" class="text-center text-muted py-3">
-                Tidak ada data yang sesuai dengan filter atau pencarian.
-            </td>
-        </tr>
-    `);
+            <tr id="noDataRow" style="display: none;">
+                <td colspan="100%" class="text-center text-muted py-3">
+                    Tidak ada data yang sesuai dengan filter atau pencarian.
+                </td>
+            </tr>
+        `);
 
                             // filterSearch();
                         }
@@ -484,19 +484,19 @@
                                 }
 
                                 $tableBody.append(`
-                                        <tr class="data-row" data-date="${a.tanggal_arsip}">
-                                            <td class="text-nowrap">
-                                                <span class="badge bg-light text-dark border">
-                                                    ${a.kode_arsip}
-                                                </span>
-                                            </td>
-                                            <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
-                                            <td>${a.perihal ?? '-'}</td>
-                                            <td>${a.tanggal_view ?? '-'}</td>
-                                            <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
-                                            <td>${filesHtml}</td>
-                                        </tr>
-                                    `);
+                                            <tr class="data-row" data-date="${a.tanggal_arsip}">
+                                                <td class="text-nowrap">
+                                                    <span class="badge bg-light text-dark border">
+                                                        ${a.kode_arsip}
+                                                    </span>
+                                                </td>
+                                                <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                                                <td>${a.perihal ?? '-'}</td>
+                                                <td>${a.tanggal_view ?? '-'}</td>
+                                                <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                                                <td>${filesHtml}</td>
+                                            </tr>
+                                        `);
                             });
                         } else {
                             $tableBody.empty();
@@ -504,29 +504,29 @@
                             if (res.aktivitas && res.aktivitas.length) {
                                 res.aktivitas.forEach(a => {
                                     $tableBody.append(`
-                <tr class="data-row" data-date="${a.tanggal_arsip}">
-                    <td class="text-nowrap">
-                        <span class="badge bg-light text-dark border">
-                            ${a.kode_arsip}
-                        </span>
-                    </td>
-                    <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
-                    <td>${a.perihal ?? '-'}</td>
-                    <td>${a.tanggal_view ?? '-'}</td>
-                    <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
-                </tr>
-            `);
+                    <tr class="data-row" data-date="${a.tanggal_arsip}">
+                        <td class="text-nowrap">
+                            <span class="badge bg-light text-dark border">
+                                ${a.kode_arsip}
+                            </span>
+                        </td>
+                        <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                        <td>${a.perihal ?? '-'}</td>
+                        <td>${a.tanggal_view ?? '-'}</td>
+                        <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                    </tr>
+                `);
                                 });
                             }
 
                             // 🔥 Tambahkan kembali noDataRow setelah append
                             $tableBody.append(`
-        <tr id="noDataRow" style="display: none;">
-            <td colspan="100%" class="text-center text-muted py-3">
-                Tidak ada data yang sesuai dengan filter atau pencarian.
-            </td>
-        </tr>
-    `);
+            <tr id="noDataRow" style="display: none;">
+                <td colspan="100%" class="text-center text-muted py-3">
+                    Tidak ada data yang sesuai dengan filter atau pencarian.
+                </td>
+            </tr>
+        `);
 
                             // filterSearch();
                             // $tableBody.html(

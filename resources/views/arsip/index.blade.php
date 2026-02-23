@@ -19,17 +19,17 @@
             <div class="page-header-right ms-auto">
                 <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                    <form method="GET" action="{{ route('arsip.index') }}" id="searchForm">
+                    <form method="GET" action="{{ route('arsip.index') }}" id="searchForm" class="m-0 p-0">
 
                         <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
-                            style="max-width: 250px; height: 40px; margin-top: 14px;">
+                            style="width: 220px; height: 38px; overflow: hidden;">
 
                             <span class="input-group-text bg-white border-0">
                                 <i class="feather-search"></i>
                             </span>
 
-                            <input type="text" name="search" id="searchInput" class="form-control border-0"
-                                placeholder="Cari surat..." value="{{ request('search') }}" style="height: 100%;">
+                            <input type="text" name="search" id="searchInput" class="form-control border-0 px-2 h-100"
+                                placeholder="Cari..." value="{{ request('search') }}" style="height: 100%; font-size: small;">
 
                             <button
                                 class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
@@ -45,7 +45,7 @@
 
                     {{-- Date Range --}}
                     <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
-                        style="width: 220px; height: 40px; overflow: hidden; font-size: small;">
+                        style="width: 220px; height: 38px; overflow: hidden; font-size: small;">
                         <span
                             class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
                             <i class="feather-calendar"></i>
@@ -111,7 +111,7 @@
         </div> --}}
 
         {{-- Table Arsip --}}
-        <div class="row g-2 mt-4">
+        <div class="row g-2 mt-3">
             <div class="col-12">
                 <div class="card p-2">
                     <div class="card-body">
@@ -128,25 +128,25 @@
 
                                 <a href="{{ route('arsip.index') }}"
                                     class="badge rounded-pill px-3 py-2
-                                                                                                                           {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                                                               {{ $kategoriAktif == 'semua' ? 'bg-primary' : 'bg-light text-dark' }}">
                                     Semua ({{ $countSemua }})
                                 </a>
 
                                 <a href="{{ route('arsip.index', ['kategori' => 'Masuk']) }}"
                                     class="badge rounded-pill px-3 py-2
-                                                                                                                           {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                                                               {{ $kategoriAktif == 'Masuk' ? 'bg-primary' : 'bg-light text-dark' }}">
                                     Surat Masuk ({{ $countMasuk }})
                                 </a>
 
                                 <a href="{{ route('arsip.index', ['kategori' => 'Keluar']) }}"
                                     class="badge rounded-pill px-3 py-2
-                                                                                                                           {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                                                               {{ $kategoriAktif == 'Keluar' ? 'bg-primary' : 'bg-light text-dark' }}">
                                     Surat Keluar ({{ $countKeluar }})
                                 </a>
 
                                 <a href="{{ route('arsip.index', ['kategori' => 'Laporan']) }}"
                                     class="badge rounded-pill px-3 py-2
-                                                                                                                           {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
+                                                                                                                               {{ $kategoriAktif == 'Laporan' ? 'bg-primary' : 'bg-light text-dark' }}">
                                     Laporan ({{ $countLaporan }})
                                 </a>
                             </div>

@@ -5,13 +5,13 @@
 @section('content')
     <div class="container-fluid">
         {{-- Page Header --}}
-    <div class="page-header rounded">
-        <div class="page-header-left d-flex align-items-center">
-            <div class="page-header-title">
-                <h5 class="m-b-10">Buat Surat</h5>
+        <div class="page-header rounded">
+            <div class="page-header-left d-flex align-items-center">
+                <div class="page-header-title">
+                    <h5 class="m-b-10">Buat Surat</h5>
+                </div>
             </div>
         </div>
-    </div>
 
         <form action="{{ route('surat.preview') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -53,8 +53,7 @@
                     {{-- Alamat --}}
                     <div class="mb-3">
                         <label class="form-label">Alamat Lengkap</label>
-                        <textarea name="kop_alamat"
-                            class="form-control @error('kop_alamat') is-invalid @enderror">{{ old('kop_alamat') }}</textarea>
+                        <textarea name="kop_alamat" class="form-control @error('kop_alamat') is-invalid @enderror">{{ old('kop_alamat') }}</textarea>
                         @error('kop_alamat')
                             <div class="invalid-feedback d-block">
                                 {{ $message }}
@@ -68,8 +67,8 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label class="form-label">No. Telepon</label>
-                            <input type="text" name="kop_telp" class="form-control @error('kop_telp') is-invalid @enderror"
-                                value="{{ old('kop_telp') }}">
+                            <input type="text" name="kop_telp"
+                                class="form-control @error('kop_telp') is-invalid @enderror" value="{{ old('kop_telp') }}">
 
                             @error('kop_telp')
                                 <div class="invalid-feedback d-block">
@@ -148,8 +147,9 @@
                     Reset
                 </button>
                 <span class="mx-2"></span>
-                <button type="submit" class="btn btn-primary btn-custom">
-                    Berikutnya (Preview)
+                <button type="submit" id="btnPreview" class="btn btn-primary btn-custom">
+                    <span class="btn-text">Berikutnya (Preview)</span>
+                    <span class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
                 </button>
             </div>
 
@@ -211,12 +211,12 @@
 
     </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
 
             const inputs = document.querySelectorAll("input, textarea");
 
-            inputs.forEach(function (input) {
-                input.addEventListener("input", function () {
+            inputs.forEach(function(input) {
+                input.addEventListener("input", function() {
 
                     // Hapus class is-invalid
                     this.classList.remove("is-invalid");
@@ -233,7 +233,7 @@
         });
     </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
 
             const telp = document.querySelector("input[name='kop_telp']");
             const email = document.querySelector("input[name='kop_email']");
@@ -253,7 +253,7 @@
             }
 
             contactFields.forEach(field => {
-                field.addEventListener("input", function () {
+                field.addEventListener("input", function() {
 
                     if (telp.value.trim() !== "" ||
                         email.value.trim() !== "" ||
@@ -269,12 +269,12 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
 
             const resetButton = document.getElementById("btnReset");
             const form = document.querySelector("form");
 
-            resetButton.addEventListener("click", function () {
+            resetButton.addEventListener("click", function() {
 
                 // Reset isi form
                 form.reset();
@@ -291,6 +291,26 @@
 
             });
 
+        });
+    </script>
+
+    <script>
+        const form = document.querySelector("form");
+        const btnPreview = document.getElementById("btnPreview");
+        const spinner = btnPreview.querySelector(".spinner-border");
+        const text = btnPreview.querySelector(".btn-text");
+        const btnReset = document.getElementById("btnReset");
+
+        // Loading saat preview
+        form.addEventListener("submit", function() {
+            spinner.classList.remove("d-none");
+            text.textContent = "Membuat Preview...";
+            btnPreview.disabled = true;
+        });
+
+        // Reset form
+        btnReset.addEventListener("click", function() {
+            form.reset();
         });
     </script>
     <style>

@@ -7,141 +7,148 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
-    <div class="page-header rounded d-flex align-items-center justify-content-between mb-4">
-        <div class="page-header-left">
-            <div class="page-header-title">
-                <h5 class="m-b-10">Laporan</h5>
+    <div class="container-fluid">
+        <div class="page-header rounded d-flex align-items-center justify-content-between mb-2">
+            <div class="page-header-left">
+                <div class="page-header-title">
+                    <h5 class="m-b-10">Laporan</h5>
+                </div>
             </div>
-        </div>
 
-        <div class="page-header-right ms-auto">
-            <div class="page-header-right-items">
-                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
+            <div class="page-header-right ms-auto">
+                <div class="page-header-right-items">
+                    <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-                    <form method="GET" action="{{ route('laporan.index') }}" id="searchForm" class="m-0 p-0">
-                        <input type="hidden" name="start" value="{{ request('start') }}">
-                        <input type="hidden" name="end" value="{{ request('end') }}">
+                        <form method="GET" action="{{ route('laporan.index') }}" id="searchForm" class="m-0 p-0">
+                            <input type="hidden" name="start" value="{{ request('start') }}">
+                            <input type="hidden" name="end" value="{{ request('end') }}">
+
+                            <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                                style="width: 220px; height: 38px; overflow: hidden; font-size: small;">
+                                <span
+                                    class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
+                                    <i class="feather-search"></i>
+                                </span>
+                                <input type="text" name="search" id="searchInput"
+                                    class="form-control border-0 px-2 h-100 d-flex align-items-center" placeholder="Cari..."
+                                    value="{{ request('search') }}"
+                                    style="cursor: text; font-size: small; background-color: white; line-height: normal;">
+                            </div>
+                        </form>
 
                         <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
                             style="width: 220px; height: 38px; overflow: hidden; font-size: small;">
                             <span
                                 class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
-                                <i class="feather-search"></i>
+                                <i class="feather-calendar"></i>
                             </span>
-                            <input type="text" name="search" id="searchInput"
-                                class="form-control border-0 px-2 h-100 d-flex align-items-center" placeholder="Cari..."
-                                value="{{ request('search') }}"
-                                style="cursor: text; font-size: small; background-color: white; line-height: normal;">
+                            <input type="text" id="dateRange"
+                                class="form-control border-0 px-2 h-100 d-flex align-items-center"
+                                placeholder="Pilih Tanggal" readonly
+                                style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
+                            <button
+                                class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
+                                type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
+                                <i class="feather-x"></i>
+                            </button>
                         </div>
-                    </form>
 
-                    <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
-                        style="width: 220px; height: 38px; overflow: hidden; font-size: small;">
-                        <span
-                            class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
-                            <i class="feather-calendar"></i>
-                        </span>
-                        <input type="text" id="dateRange" class="form-control border-0 px-2 h-100 d-flex align-items-center"
-                            placeholder="Pilih Tanggal" readonly
-                            style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
-                        <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
-                            type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
-                            <i class="feather-x"></i>
-                        </button>
+                        <form id="pdfForm" action="{{ route('laporan.exportPdf') }}" method="GET" target="_blank">
+                            <input type="hidden" name="start" id="pdfStart">
+                            <input type="hidden" name="end" id="pdfEnd">
+                            <button type="submit"
+                                class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                                style="width: 70px; height: 35px;">
+                                <i class="feather-file-text"></i>
+                                <span>PDF</span>
+                            </button>
+                        </form>
+
+                        <form id="excelForm" action="{{ route('laporan.previewExcel') }}" method="GET" target="_blank">
+                            <input type="hidden" name="start" id="excelStart">
+                            <input type="hidden" name="end" id="excelEnd">
+                            <button type="submit"
+                                class="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
+                                style="width: 70px; height: 35px;">
+                                <i class="feather-file"></i>
+                                <span>Excel</span>
+                            </button>
+                        </form>
+
+
                     </div>
-
-                    <form id="pdfForm" action="{{ route('laporan.exportPdf') }}" method="GET" target="_blank">
-                        <input type="hidden" name="start" id="pdfStart">
-                        <input type="hidden" name="end" id="pdfEnd">
-                        <button type="submit"
-                            class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
-                            style="width: 70px; height: 35px;">
-                            <i class="feather-file-text"></i>
-                            <span>PDF</span>
-                        </button>
-                    </form>
-
-                    <form id="excelForm" action="{{ route('laporan.previewExcel') }}" method="GET" target="_blank">
-                        <input type="hidden" name="start" id="excelStart">
-                        <input type="hidden" name="end" id="excelEnd">
-                        <button type="submit"
-                            class="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center gap-1 px-2 rounded-pill"
-                            style="width: 70px; height: 35px;">
-                            <i class="feather-file"></i>
-                            <span>Excel</span>
-                        </button>
-                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row g-2 mt-3">
+            <div class="col-12">
+                <div class="card stretch stretch-full p-2">
+                    <div class="card-body">
+                        <h5 class="fs-14 fw-semibold mb-3">Data Laporan</h5>
 
 
+
+
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm align-middle" id="laporanTable">
+                                <thead>
+                                    <tr>
+                                        <th>Kode Arsip</th>
+                                        <th>No. Surat</th>
+                                        <th>Perihal</th>
+                                        <th>Kategori</th>
+                                        <th>Tanggal Arsip</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($laporans as $laporan)
+                                        <tr
+                                            data-date="{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('Y-m-d') : '' }}">
+                                            <td>{{ $laporan->kode_arsip }}</td>
+                                            <td>{{ $laporan->nomor_surat }}</td>
+                                            <td>{{ $laporan->perihal }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge-custom 
+                                                                                                    @if ($laporan->kategori == 'Masuk') badge-success
+                                                                                                    @elseif($laporan->kategori == 'Keluar') badge-warning
+                                                                                                    @elseif($laporan->kategori == 'Laporan') badge-info
+                                                                                                    @else badge-secondary @endif">
+                                                    {{ $laporan->kategori }}
+                                                </span>
+                                            </td>
+                                            <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
+                                        </tr>
+                                        <tr id="noDataRow" style="display: none;">
+                                            <td colspan="100%" class="text-center text-muted py-3">
+                                                {{-- Data tidak ditemukan --}}
+                                                Tidak ada data laporan yang sesuai dengan pencarian.
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            @if ($laporans instanceof \Illuminate\Pagination\AbstractPaginator)
+                                <div class="mt-2 d-flex justify-content-center">
+                                    {{ $laporans->links() }}
+                                </div>
+                            @endif
+
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 
 
 
 
 
     <!-- Card Tabel Laporan -->
-    <div class="row g-2 mt-3">
-        <div class="col-12">
-            <div class="card stretch stretch-full p-2">
-                <div class="card-body">
-                    <h5 class="fs-14 fw-semibold mb-3">Data Laporan</h5>
 
-
-
-
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm align-middle" id="laporanTable">
-                            <thead>
-                                <tr>
-                                    <th>Kode Arsip</th>
-                                    <th>No. Surat</th>
-                                    <th>Perihal</th>
-                                    <th>Kategori</th>
-                                    <th>Tanggal Arsip</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($laporans as $laporan)
-                                    <tr
-                                        data-date="{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('Y-m-d') : '' }}">
-                                        <td>{{ $laporan->kode_arsip }}</td>
-                                        <td>{{ $laporan->nomor_surat }}</td>
-                                        <td>{{ $laporan->perihal }}</td>
-                                        <td>
-                                            <span class="badge-custom 
-                                                                                    @if ($laporan->kategori == 'Masuk') badge-success
-                                                                                    @elseif($laporan->kategori == 'Keluar') badge-warning
-                                                                                    @elseif($laporan->kategori == 'Laporan') badge-info
-                                                                                    @else badge-secondary @endif">
-                                                {{ $laporan->kategori }}
-                                            </span>
-                                        </td>
-                                        <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
-                                    </tr>
-                                    <tr id="noDataRow" style="display: none;">
-                                        <td colspan="100%" class="text-center text-muted py-3">
-                                            {{-- Data tidak ditemukan --}}
-                                            Tidak ada data laporan yang sesuai dengan pencarian.
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        @if ($laporans instanceof \Illuminate\Pagination\AbstractPaginator)
-                            <div class="mt-2 d-flex justify-content-center">
-                                {{ $laporans->links() }}
-                            </div>
-                        @endif
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <style>

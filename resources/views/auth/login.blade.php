@@ -43,9 +43,13 @@
                                         <input type="email" name="email" class="form-control" placeholder="Email"
                                             required>
                                     </div>
-                                    <div class="mb-3">
-                                        <input type="password" name="password" class="form-control"
+                                    <div class="mb-3 position-relative">
+                                        <input type="password" name="password" id="password" class="form-control pe-5"
                                             placeholder="Password" required>
+
+                                        <span class="toggle-password">
+                                            <i class="bi bi-eye"></i>
+                                        </span>
                                     </div>
                                     <div class="mt-5">
                                         <button type="submit" class="btn btn-lg w-100 text-white btn-login">
@@ -90,21 +94,17 @@
         .btn-login {
             background-color: #000B58;
             border: none;
-            transition: all 0.3s ease;
-        }
-    
-        /* Hover */
-        .btn-login:hover {
-            background-color: #000842;
-            /* lebih gelap */
-            transform: scale(1.05);
-            /* membesar 5% */
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
         }
 
-        /* Saat ditekan */
+        .btn-login:hover {
+            background-color: #000842;
+            transform: scale(1.02);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
         .btn-login:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
 
         @media (max-width: 991.98px) {
@@ -115,6 +115,20 @@
             .card {
                 margin: 20px !important;
             }
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .toggle-password:hover {
+            color: #000B58;
         }
 
         .toast-notif {
@@ -210,6 +224,25 @@
             @if ($errors->any())
                 showToast(@json($errors->first()), 'error');
             @endif
+        });
+
+        const toggle = document.querySelector(".toggle-password");
+        const password = document.querySelector("#password");
+        const icon = toggle.querySelector("i");
+
+        toggle.addEventListener("click", function() {
+
+            if (password.type === "password") {
+                password.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            } else {
+                password.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            }
+
+            password.focus();
         });
     </script>
 </body>

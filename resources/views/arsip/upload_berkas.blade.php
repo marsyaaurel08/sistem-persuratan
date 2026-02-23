@@ -35,7 +35,8 @@
             </div>
         @endif
 
-        <form action="{{ route('arsip.store') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+        <form id="arsipForm" action="{{ route('arsip.store') }}" method="POST" enctype="multipart/form-data"
+            id="uploadForm">
             @csrf
             <div class="row">
                 <div class="col-lg-7">
@@ -52,7 +53,8 @@
                                     multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tiff">
 
                                 <div class="d-flex flex-column align-items-center">
-                                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle mb-3" style="height: 50px; width: 50px;">
+                                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle mb-3"
+                                        style="height: 50px; width: 50px;">
                                         <i class="feather-upload-cloud" style="color: white"></i>
                                     </div>
                                     <h5 class="fw-bold text-dark">Pilih file atau drag and drop di sini</h5>
@@ -85,7 +87,8 @@
                                 <select name="kategori" id="kategori" class="form-select" required>
                                     <option value="">-- Pilih Kategori Arsip --</option>
                                     @foreach (\App\Models\Arsip::KATEGORI as $value => $label)
-                                        <option value="{{ $value }}" {{ old('kategori') == $value ? 'selected' : '' }}>
+                                        <option value="{{ $value }}"
+                                            {{ old('kategori') == $value ? 'selected' : '' }}>
                                             {{ $label }}
                                         </option>
                                     @endforeach
@@ -150,10 +153,26 @@
         <span class="toast-message"></span>
         <button class="toast-close">&times;</button>
     </div>
+
+    <div id="uploadOverlay" class="upload-overlay d-none">
+        <div class="upload-box text-center">
+            <div class="spinner-border text-light mb-3"></div>
+            <h6 class="text-white">Mengunggah Arsip...</h6>
+
+            <div class="progress mt-3" style="height: 8px;">
+                <div id="uploadProgress" class="progress-bar progress-bar-striped progress-bar-animated"
+                    style="width: 0%">
+                </div>
+            </div>
+
+            <small id="uploadPercent" class="text-white mt-2 d-block">
+                0%
+            </small>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
-
     <style>
         .toast-notif {
             position: fixed;
@@ -205,10 +224,25 @@
         .toast-close:hover {
             color: #000;
         }
+
+        .upload-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(1px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .upload-box {
+            width: 300px;
+        }
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             let selectedFiles = [];
             let nomorValid = false;
             let typingTimer;
@@ -250,7 +284,7 @@
                 submitBtn.disabled = !valid;
             }
 
-            nomorInput.addEventListener('input', function () {
+            nomorInput.addEventListener('input', function() {
                 clearTimeout(typingTimer);
                 const value = this.value.trim();
                 nomorInput.classList.remove('is-valid', 'is-invalid');
@@ -292,9 +326,16 @@
                 }, delay);
             });
 
-            dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-primary'); });
+            dropZone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropZone.classList.add('border-primary');
+            });
             dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-primary'));
-            dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('border-primary'); handleFiles(e.dataTransfer.files); });
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.classList.remove('border-primary');
+                handleFiles(e.dataTransfer.files);
+            });
             fileInput.addEventListener('change', e => handleFiles(e.target.files));
 
             function handleFiles(files) {
@@ -305,8 +346,16 @@
 
                 for (let file of files) {
                     const ext = (file.name.split('.').pop() || '').toLowerCase();
-                    if (!ALLOWED.includes(ext)) { showToast(`Format file ${file.name} tidak diizinkan.`, 'error'); hasError = true; continue; }
-                    if (file.size > MAX_SIZE) { showToast(`Ukuran file ${file.name} melebihi 20MB.`, 'error'); hasError = true; continue; }
+                    if (!ALLOWED.includes(ext)) {
+                        showToast(`Format file ${file.name} tidak diizinkan.`, 'error');
+                        hasError = true;
+                        continue;
+                    }
+                    if (file.size > MAX_SIZE) {
+                        showToast(`Ukuran file ${file.name} melebihi 20MB.`, 'error');
+                        hasError = true;
+                        continue;
+                    }
                     const exists = selectedFiles.some(f => f.name === file.name && f.size === file.size);
                     if (!exists) validFiles.push(file);
                 }
@@ -334,9 +383,9 @@
                 fileCount.textContent = selectedFiles.length;
                 fileListContainer.style.display = selectedFiles.length ? 'block' : 'none';
                 selectedFiles.forEach((file, index) => {
-                    const size = file.size > 1024 * 1024
-                        ? (file.size / 1024 / 1024).toFixed(2) + ' MB'
-                        : (file.size / 1024).toFixed(2) + ' KB';
+                    const size = file.size > 1024 * 1024 ?
+                        (file.size / 1024 / 1024).toFixed(2) + ' MB' :
+                        (file.size / 1024).toFixed(2) + ' KB';
                     fileList.innerHTML += `
                                 <div class="list-group-item rounded-3 border p-3">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -357,7 +406,10 @@
 
             window.removeFile = removeFile;
 
-            kategori.addEventListener('change', () => { toggleNomorSurat(); validateForm(); });
+            kategori.addEventListener('change', () => {
+                toggleNomorSurat();
+                validateForm();
+            });
             perihal.addEventListener('input', validateForm);
             tanggal.addEventListener('change', validateForm);
 
@@ -368,9 +420,9 @@
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('toastNotif');
             toast.querySelector('.toast-message').textContent = msg;
-            toast.querySelector('.toast-icon').innerHTML = type === 'error'
-                ? '<i class="feather-x-circle text-danger"></i>'
-                : '<i class="feather-check-circle text-success"></i>';
+            toast.querySelector('.toast-icon').innerHTML = type === 'error' ?
+                '<i class="feather-x-circle text-danger"></i>' :
+                '<i class="feather-check-circle text-success"></i>';
             toast.className = `toast-notif toast-${type} show`;
             clearTimeout(window.toastTimer);
             window.toastTimer = setTimeout(() => hideToast(), 3000);
@@ -379,5 +431,10 @@
         function hideToast() {
             document.getElementById('toastNotif').classList.remove('show');
         }
+    </script>
+    <script>
+        document.getElementById("arsipForm").addEventListener("submit", function() {
+            document.getElementById("uploadOverlay").classList.remove("d-none");
+        });
     </script>
 @endpush

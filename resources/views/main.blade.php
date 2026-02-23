@@ -3,178 +3,182 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="page-header rounded">
-        <div class="page-header-left d-flex align-items-center">
-            <div class="page-header-title">
-                <h5 class="m-b-10">Dashboard</h5>
-            </div>
-        </div>
 
-        <div class="page-header-right ms-auto">
-            <div class="page-header-right-items">
-                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
-
-                    <!-- Filter tanggal FIX -->
-                    <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
-                        style="width: 220px; height: 40px; overflow: hidden; font-size: small;">
-
-                        <span
-                            class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
-                            <i class="feather-calendar"></i>
-                        </span>
-
-                        <input type="text" id="dateRange" class="form-control border-0 px-2 h-100"
-                            placeholder="Pilih Tanggal" readonly
-                            style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
-
-                        <button class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
-                            type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
-                            <i class="feather-x"></i>
-                        </button>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="dashboard-wrapper">
-        <!-- Row Statistik -->
-        <div class="row g-3 mt-3">
-            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
-                    <div class="card-body p-4 text-center">
-                        <div class="d-flex align-items-center gap-3 mb-4">
-                            <div class="avatar-text avatar-lg rounded-3 border-0"
-                                style="background-color: #e0f7fa; color: #00bcd4; width: 60px; height: 60px; font-size: 28px;">
-                                <i class="feather-mail"></i>
-                            </div>
-                            <div class="text-start">
-                                <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Masuk</h3>
-                            </div>
-                        </div>
-                        <div class="display-5 fw-bold text-dark mt-2" id="totalMasuk">{{ $totalMasuk }}</div>
-                    </div>
+    <div class="container-fluid">
+        <div class="page-header rounded">
+            <div class="page-header-left d-flex align-items-center">
+                <div class="page-header-title">
+                    <h5 class="m-b-10">Dashboard</h5>
                 </div>
             </div>
 
-            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
-                    <div class="card-body p-4 text-center">
-                        <div class="d-flex align-items-center gap-3 mb-4">
-                            <div class="avatar-text avatar-lg rounded-3 border-0"
-                                style="background-color: #fff3e0; color: #ff9800; width: 60px; height: 60px; font-size: 28px;">
-                                <i class="feather-external-link"></i>
-                            </div>
-                            <div class="text-start">
-                                <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Keluar</h3>
-                            </div>
-                        </div>
-                        <div class="display-5 fw-bold text-dark mt-2" id="totalKeluar">{{ $totalKeluar }}</div>
-                    </div>
-                </div>
-            </div>
+            <div class="page-header-right ms-auto">
+                <div class="page-header-right-items">
+                    <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
 
-            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
-                    <div class="card-body p-4 text-center">
-                        <div class="d-flex align-items-center gap-3 mb-4">
-                            <div class="avatar-text avatar-lg rounded-3 border-0"
-                                style="background-color: #e8f5e9; color: #4caf50; width: 60px; height: 60px; font-size: 28px;">
-                                <i class="feather-file-text"></i>
-                            </div>
-                            <div class="text-start">
-                                <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Laporan</h3>
-                            </div>
-                        </div>
-                        <div class="display-5 fw-bold text-dark mt-2" id="totalLaporan">{{ $totalLaporan }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Grafik -->
-    <div class="row g-2 mt-3">
-        <div class="col-12">
-            <div class="card p-3" style="height: 420px;">
-                <div class="card-body d-flex flex-column h-100">
-                    <h5 class="fs-16 fw-semibold mb-3">Tren Persuratan Berdasarkan Waktu</h5>
-                    <div class="flex-grow-1">
-                        <canvas id="lineChart" style="width:100%; height:100%;"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Aktivitas Terbaru -->
-    <div class="row g-2 mt-3">
-        <div class="col-12">
-            <div class="card stretch stretch-full p-2">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fs-14 fw-semibold mb-0">Aktivitas Terbaru</h5>
-
+                        <!-- Filter tanggal FIX -->
                         <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
-                            style="max-width: 250px; height: 40px; overflow: hidden; font-size: small;">
+                            style="width: 220px; height: 40px; overflow: hidden; font-size: small;">
 
                             <span
                                 class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
-                                <i class="feather-search text-muted"></i>
+                                <i class="feather-calendar"></i>
                             </span>
 
-                            <input type="text" id="searchTable" class="form-control border-0 px-2 h-100"
-                                placeholder="Cari aktivitas..."
-                                style="font-size: small; background-color: white; line-height: normal;">
+                            <input type="text" id="dateRange" class="form-control border-0 px-2 h-100"
+                                placeholder="Pilih Tanggal" readonly
+                                style="cursor: pointer; font-size: small; background-color: white; line-height: normal;">
+
+                            <button
+                                class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
+                                type="button" id="clearDateRange" title="Reset tanggal" style="display: none;">
+                                <i class="feather-x"></i>
+                            </button>
 
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm align-middle" id="aktivitasTable">
-                            <thead class="small">
-                                <tr>
-                                    <th>Kode Arsip</th>
-                                    <th>No. Surat</th>
-                                    <th>Perihal</th>
-                                    <th>Tanggal</th>
-                                    <th>Pengarsip</th>
-                                </tr>
-                            </thead>
-                            <tbody class="small">
-                                @foreach ($aktivitas as $item)
-                                    <tr class="data-row"
-                                        data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
-                                        <td class="text-nowrap">
-                                            <span class="badge bg-light text-dark border">
-                                                {{ $item['kode_arsip'] }}
-                                            </span>
-                                        </td>
-                                        <td class="fw-bold">
-                                            {{ $item['nomor_surat'] ?? '-' }}
-                                        </td>
-                                        <td>
-                                            {{ $item['perihal'] ?? '-' }}
-                                        </td>
-                                        <td>
-                                            {{ $item['tanggal_view'] ?? '-' }}
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                {{ $item['pengarsip'] ?? '-' }}
-                                            </small>
+        <div class="dashboard-wrapper">
+            <!-- Row Statistik -->
+            <div class="row g-3 mt-3">
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
+                    <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 text-center">
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <div class="avatar-text avatar-lg rounded-3 border-0"
+                                    style="background-color: #e0f7fa; color: #00bcd4; width: 60px; height: 60px; font-size: 28px;">
+                                    <i class="feather-mail"></i>
+                                </div>
+                                <div class="text-start">
+                                    <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Masuk</h3>
+                                </div>
+                            </div>
+                            <div class="display-5 fw-bold text-dark mt-2" id="totalMasuk">{{ $totalMasuk }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
+                    <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 text-center">
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <div class="avatar-text avatar-lg rounded-3 border-0"
+                                    style="background-color: #fff3e0; color: #ff9800; width: 60px; height: 60px; font-size: 28px;">
+                                    <i class="feather-external-link"></i>
+                                </div>
+                                <div class="text-start">
+                                    <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Keluar</h3>
+                                </div>
+                            </div>
+                            <div class="display-5 fw-bold text-dark mt-2" id="totalKeluar">{{ $totalKeluar }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
+                    <div class="card stretch stretch-full border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 text-center">
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <div class="avatar-text avatar-lg rounded-3 border-0"
+                                    style="background-color: #e8f5e9; color: #4caf50; width: 60px; height: 60px; font-size: 28px;">
+                                    <i class="feather-file-text"></i>
+                                </div>
+                                <div class="text-start">
+                                    <h3 class="fs-13 fw-bold text-muted mb-0">Total Surat Laporan</h3>
+                                </div>
+                            </div>
+                            <div class="display-5 fw-bold text-dark mt-2" id="totalLaporan">{{ $totalLaporan }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafik -->
+        <div class="row g-2 mt-3">
+            <div class="col-12">
+                <div class="card p-3" style="height: 420px;">
+                    <div class="card-body d-flex flex-column h-100">
+                        <h5 class="fs-16 fw-semibold mb-3">Tren Persuratan Berdasarkan Waktu</h5>
+                        <div class="flex-grow-1">
+                            <canvas id="lineChart" style="width:100%; height:100%;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aktivitas Terbaru -->
+        <div class="row g-2 mt-3">
+            <div class="col-12">
+                <div class="card stretch stretch-full p-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fs-14 fw-semibold mb-0">Aktivitas Terbaru</h5>
+
+                            <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
+                                style="max-width: 250px; height: 40px; overflow: hidden; font-size: small;">
+
+                                <span
+                                    class="input-group-text bg-white border-0 d-flex align-items-center justify-content-center px-2 h-100">
+                                    <i class="feather-search text-muted"></i>
+                                </span>
+
+                                <input type="text" id="searchTable" class="form-control border-0 px-2 h-100"
+                                    placeholder="Cari aktivitas..."
+                                    style="font-size: small; background-color: white; line-height: normal;">
+
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm align-middle" id="aktivitasTable">
+                                <thead class="small">
+                                    <tr>
+                                        <th>Kode Arsip</th>
+                                        <th>No. Surat</th>
+                                        <th>Perihal</th>
+                                        <th>Tanggal</th>
+                                        <th>Pengarsip</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="small">
+                                    @foreach ($aktivitas as $item)
+                                        <tr class="data-row"
+                                            data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
+                                            <td class="text-nowrap">
+                                                <span class="badge bg-light text-dark border">
+                                                    {{ $item['kode_arsip'] }}
+                                                </span>
+                                            </td>
+                                            <td class="fw-bold">
+                                                {{ $item['nomor_surat'] ?? '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $item['perihal'] ?? '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $item['tanggal_view'] ?? '-' }}
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    {{ $item['pengarsip'] ?? '-' }}
+                                                </small>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+                                    <tr id="noDataRow" style="display: none;">
+                                        <td colspan="100%" class="text-center text-muted py-3">
+                                            Tidak ada data yang sesuai dengan filter atau pencarian.
                                         </td>
                                     </tr>
-                                @endforeach
-
-                                <tr id="noDataRow" style="display: none;">
-                                    <td colspan="100%" class="text-center text-muted py-3">
-                                        Tidak ada data yang sesuai dengan filter atau pencarian.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -278,7 +282,7 @@
             const keyword = $('#searchTable').val().toLowerCase();
             let visibleCount = 0;
 
-            $('#aktivitasTable tbody tr.data-row').each(function() {
+            $('#aktivitasTable tbody tr.data-row').each(function () {
                 const rowText = $(this).text().toLowerCase();
                 const match = rowText.includes(keyword);
 
@@ -291,7 +295,7 @@
         }
     </script>
     <script>
-        $(function() {
+        $(function () {
             const $dateInput = $('#dateRange');
             const $clearBtn = $('#clearDateRange');
             const $tableBody = $('#aktivitasTable tbody');
@@ -306,7 +310,7 @@
                     mode: "range",
                     locale: "id",
                     dateFormat: "d M Y",
-                    onChange: function(selectedDates) {
+                    onChange: function (selectedDates) {
                         if (selectedDates.length === 2) {
                             const start = formatDate(selectedDates[0]);
                             const end = formatDate(selectedDates[1]);
@@ -319,7 +323,7 @@
             }
             initFlatpickr();
 
-            $('#searchTable').on('keyup', function() {
+            $('#searchTable').on('keyup', function () {
                 filterSearch();
             });
 
@@ -332,7 +336,7 @@
             }
 
             // === PERBAIKAN: Tombol Reset Tanggal ===
-            $clearBtn.on('click', function() {
+            $clearBtn.on('click', function () {
                 // Hapus input dan sembunyikan tombol X
                 $dateInput.val('');
                 $(this).hide();
@@ -349,7 +353,7 @@
                     url: "{{ route('dashboard.filter') }}",
                     type: 'GET',
                     data: {}, // kosong total, jangan kirim tanggal
-                    success: function(res) {
+                    success: function (res) {
                         // Update statistik dan grafik
                         $('#totalMasuk').text(res.totalMasuk);
                         $('#totalKeluar').text(res.totalKeluar);
@@ -362,16 +366,16 @@
                         if (res.aktivitas && res.aktivitas.length) {
                             res.aktivitas.forEach(a => {
                                 $tableBody.append(`
-                                    <tr class="data-row" data-date="${a.tanggal_arsip}">
-                                        <td class="text-nowrap">
-                                            <span class="badge bg-light text-dark border">${a.kode_arsip}</span>
-                                        </td>
-                                        <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
-                                        <td>${a.perihal ?? '-'}</td>
-                                        <td>${a.tanggal_view ?? '-'}</td>
-                                        <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
-                                    </tr>
-                                `);
+                                        <tr class="data-row" data-date="${a.tanggal_arsip}">
+                                            <td class="text-nowrap">
+                                                <span class="badge bg-light text-dark border">${a.kode_arsip}</span>
+                                            </td>
+                                            <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                                            <td>${a.perihal ?? '-'}</td>
+                                            <td>${a.tanggal_view ?? '-'}</td>
+                                            <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                                        </tr>
+                                    `);
                             });
                         } else {
                             // $tableBody.html(
@@ -382,29 +386,29 @@
                             if (res.aktivitas && res.aktivitas.length) {
                                 res.aktivitas.forEach(a => {
                                     $tableBody.append(`
-            <tr class="data-row" data-date="${a.tanggal_arsip}">
-                <td class="text-nowrap">
-                    <span class="badge bg-light text-dark border">
-                        ${a.kode_arsip}
-                    </span>
-                </td>
-                <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
-                <td>${a.perihal ?? '-'}</td>
-                <td>${a.tanggal_view ?? '-'}</td>
-                <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
-            </tr>
-        `);
+                <tr class="data-row" data-date="${a.tanggal_arsip}">
+                    <td class="text-nowrap">
+                        <span class="badge bg-light text-dark border">
+                            ${a.kode_arsip}
+                        </span>
+                    </td>
+                    <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                    <td>${a.perihal ?? '-'}</td>
+                    <td>${a.tanggal_view ?? '-'}</td>
+                    <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                </tr>
+            `);
                                 });
                             }
 
                             // 🔥 Tambahkan kembali noDataRow setelah append
                             $tableBody.append(`
-    <tr id="noDataRow" style="display: none;">
-        <td colspan="100%" class="text-center text-muted py-3">
-            Tidak ada data yang sesuai dengan filter atau pencarian.
-        </td>
-    </tr>
-`);
+        <tr id="noDataRow" style="display: none;">
+            <td colspan="100%" class="text-center text-muted py-3">
+                Tidak ada data yang sesuai dengan filter atau pencarian.
+            </td>
+        </tr>
+    `);
 
                             // filterSearch();
                         }
@@ -448,7 +452,7 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
@@ -462,7 +466,7 @@
                     data: selectedTanggal.length ? {
                         tanggal: selectedTanggal
                     } : {},
-                    success: function(res) {
+                    success: function (res) {
                         // 🔹 Update KPI
                         $('#totalMasuk').text(res.totalMasuk);
                         $('#totalKeluar').text(res.totalKeluar);
@@ -480,19 +484,19 @@
                                 }
 
                                 $tableBody.append(`
-                                    <tr class="data-row" data-date="${a.tanggal_arsip}">
-                                        <td class="text-nowrap">
-                                            <span class="badge bg-light text-dark border">
-                                                ${a.kode_arsip}
-                                            </span>
-                                        </td>
-                                        <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
-                                        <td>${a.perihal ?? '-'}</td>
-                                        <td>${a.tanggal_view ?? '-'}</td>
-                                        <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
-                                        <td>${filesHtml}</td>
-                                    </tr>
-                                `);
+                                        <tr class="data-row" data-date="${a.tanggal_arsip}">
+                                            <td class="text-nowrap">
+                                                <span class="badge bg-light text-dark border">
+                                                    ${a.kode_arsip}
+                                                </span>
+                                            </td>
+                                            <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                                            <td>${a.perihal ?? '-'}</td>
+                                            <td>${a.tanggal_view ?? '-'}</td>
+                                            <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                                            <td>${filesHtml}</td>
+                                        </tr>
+                                    `);
                             });
                         } else {
                             $tableBody.empty();
@@ -500,29 +504,29 @@
                             if (res.aktivitas && res.aktivitas.length) {
                                 res.aktivitas.forEach(a => {
                                     $tableBody.append(`
-            <tr class="data-row" data-date="${a.tanggal_arsip}">
-                <td class="text-nowrap">
-                    <span class="badge bg-light text-dark border">
-                        ${a.kode_arsip}
-                    </span>
-                </td>
-                <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
-                <td>${a.perihal ?? '-'}</td>
-                <td>${a.tanggal_view ?? '-'}</td>
-                <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
-            </tr>
-        `);
+                <tr class="data-row" data-date="${a.tanggal_arsip}">
+                    <td class="text-nowrap">
+                        <span class="badge bg-light text-dark border">
+                            ${a.kode_arsip}
+                        </span>
+                    </td>
+                    <td class="fw-bold">${a.nomor_surat ?? '-'}</td>
+                    <td>${a.perihal ?? '-'}</td>
+                    <td>${a.tanggal_view ?? '-'}</td>
+                    <td><small class="text-muted">${a.pengarsip ?? '-'}</small></td>
+                </tr>
+            `);
                                 });
                             }
 
                             // 🔥 Tambahkan kembali noDataRow setelah append
                             $tableBody.append(`
-    <tr id="noDataRow" style="display: none;">
-        <td colspan="100%" class="text-center text-muted py-3">
-            Tidak ada data yang sesuai dengan filter atau pencarian.
-        </td>
-    </tr>
-`);
+        <tr id="noDataRow" style="display: none;">
+            <td colspan="100%" class="text-center text-muted py-3">
+                Tidak ada data yang sesuai dengan filter atau pencarian.
+            </td>
+        </tr>
+    `);
 
                             // filterSearch();
                             // $tableBody.html(
@@ -568,7 +572,7 @@
                             }
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
@@ -616,8 +620,8 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.addEventListener('click', function(e) {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('click', function (e) {
                 const btn = e.target.closest('.preview-btn');
                 if (!btn) return;
 
@@ -626,7 +630,7 @@
             });
 
             const modal = document.getElementById('previewModal');
-            modal.addEventListener('hidden.bs.modal', function() {
+            modal.addEventListener('hidden.bs.modal', function () {
                 document.getElementById('previewFrame').src = '';
             });
 
@@ -634,7 +638,7 @@
             // const iframe = document.getElementById('previewFrame');
 
             previewButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     const fileUrl = this.dataset.file;
                     console.log('Preview file URL:', fileUrl); // cek di console
                     iframe.src = fileUrl;
@@ -643,7 +647,7 @@
 
             // Clear iframe saat modal ditutup
             const modal = document.getElementById('previewModal');
-            modal.addEventListener('hidden.bs.modal', function() {
+            modal.addEventListener('hidden.bs.modal', function () {
                 iframe.src = '';
             });
         });

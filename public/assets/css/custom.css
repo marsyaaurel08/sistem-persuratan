@@ -49,3 +49,6 @@
         background-color: #001566;
         color: white;
     }
+    .modal-backdrop.show {
+    background-color: rgba(45, 47, 58, 0.099) !important;
+}

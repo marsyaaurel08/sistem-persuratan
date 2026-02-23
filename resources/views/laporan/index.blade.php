@@ -33,6 +33,13 @@
                                     class="form-control border-0 px-2 h-100 d-flex align-items-center" placeholder="Cari..."
                                     value="{{ request('search') }}"
                                     style="cursor: text; font-size: small; background-color: white; line-height: normal;">
+
+                                <button
+                                    class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
+                                    type="button" id="clearSearch" title="Reset pencarian" style="display: none;">
+                                    <i class="feather-x"></i>
+                                </button>
+
                             </div>
                         </form>
 
@@ -110,10 +117,10 @@
                                             <td>
                                                 <span
                                                     class="badge-custom 
-                                                                                                    @if ($laporan->kategori == 'Masuk') badge-success
-                                                                                                    @elseif($laporan->kategori == 'Keluar') badge-warning
-                                                                                                    @elseif($laporan->kategori == 'Laporan') badge-info
-                                                                                                    @else badge-secondary @endif">
+                                                                                                                    @if ($laporan->kategori == 'Masuk') badge-success
+                                                                                                                    @elseif($laporan->kategori == 'Keluar') badge-warning
+                                                                                                                    @elseif($laporan->kategori == 'Laporan') badge-info
+                                                                                                                    @else badge-secondary @endif">
                                                     {{ $laporan->kategori }}
                                                 </span>
                                             </td>
@@ -236,12 +243,48 @@
                 let timer;
                 const input = document.getElementById('searchInput');
                 const form = document.getElementById('searchForm');
+                const clearSearchBtn = document.getElementById('clearSearch');
 
-                if (input && form) {
+                if (input && form && clearSearchBtn) {
                     input.addEventListener('keyup', function () {
                         clearTimeout(timer);
                         timer = setTimeout(() => form.submit(), 500);
                     });
+
+                    // tampilkan tombol X
+                    function toggleClearButton() {
+
+                        if (input.value.length > 0) {
+
+                            clearSearchBtn.style.display = 'flex';
+
+                        } else {
+
+                            clearSearchBtn.style.display = 'none';
+
+                        }
+
+                    }
+
+
+                    // tombol X diklik
+                    clearSearchBtn.addEventListener('click', function () {
+
+                        input.value = '';
+
+                        toggleClearButton();
+
+                        form.submit();
+
+                    });
+
+
+                    // saat mengetik
+                    input.addEventListener('input', toggleClearButton);
+
+
+                    // pertama load
+                    toggleClearButton();
                 }
 
                 // ========== DATE RANGE FILTER (flatpickr) ==========

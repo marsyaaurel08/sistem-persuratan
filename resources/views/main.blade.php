@@ -118,7 +118,6 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="fs-14 fw-semibold mb-0">Aktivitas Terbaru</h5>
-
                             <div class="input-group rounded-pill border border-secondary-subtle align-items-center"
                                 style="max-width: 250px; height: 40px; overflow: hidden; font-size: small;">
 
@@ -130,6 +129,12 @@
                                 <input type="text" id="searchTable" class="form-control border-0 px-2 h-100"
                                     placeholder="Cari aktivitas..."
                                     style="font-size: small; background-color: white; line-height: normal;">
+
+                                <button
+                                    class="btn btn-light border-0 d-flex align-items-center justify-content-center px-2 h-100"
+                                    type="button" id="clearSearchTable" title="Reset pencarian" style="display: none;">
+                                    <i class="feather-x"></i>
+                                </button>
 
                             </div>
                         </div>
@@ -284,7 +289,7 @@
             const keyword = $('#searchTable').val().toLowerCase();
             let visibleCount = 0;
 
-            $('#aktivitasTable tbody tr.data-row').each(function () {
+            $('#aktivitasTable tbody tr.data-row').each(function() {
                 const rowText = $(this).text().toLowerCase();
                 const match = rowText.includes(keyword);
 
@@ -297,7 +302,7 @@
         }
     </script>
     <script>
-        $(function () {
+        $(function() {
             const $dateInput = $('#dateRange');
             const $clearBtn = $('#clearDateRange');
             const $tableBody = $('#aktivitasTable tbody');
@@ -312,7 +317,7 @@
                     mode: "range",
                     locale: "id",
                     dateFormat: "d M Y",
-                    onChange: function (selectedDates) {
+                    onChange: function(selectedDates) {
                         if (selectedDates.length === 2) {
                             const start = formatDate(selectedDates[0]);
                             const end = formatDate(selectedDates[1]);
@@ -325,9 +330,44 @@
             }
             initFlatpickr();
 
-            $('#searchTable').on('keyup', function () {
+            // $('#searchTable').on('keyup', function() {
+            //     filterSearch();
+            // });
+
+            // ========= SEARCH TABLE (Dashboard) =========
+            let searchTimer;
+            const $searchInput = $('#searchTable');
+            const $clearSearchBtn = $('#clearSearchTable');
+
+            function toggleSearchClear() {
+                if ($searchInput.val().length > 0) {
+                    $clearSearchBtn.css('display', 'flex');
+                } else {
+                    $clearSearchBtn.hide();
+                }
+            }
+
+            // debounce + filter
+            $searchInput.on('keyup', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function() {
+                    filterSearch();
+                }, 300);
+            });
+
+            // tampilkan tombol X saat input berubah
+            $searchInput.on('input', toggleSearchClear);
+
+            // klik tombol X
+            $clearSearchBtn.on('click', function() {
+                $searchInput.val('');
+                toggleSearchClear();
                 filterSearch();
             });
+
+            // pertama kali load
+            toggleSearchClear();
+
 
             // Format tanggal YYYY-MM-DD
             function formatDate(date) {
@@ -338,7 +378,7 @@
             }
 
             // === PERBAIKAN: Tombol Reset Tanggal ===
-            $clearBtn.on('click', function () {
+            $clearBtn.on('click', function() {
                 // Hapus input dan sembunyikan tombol X
                 $dateInput.val('');
                 $(this).hide();
@@ -355,7 +395,7 @@
                     url: "{{ route('dashboard.filter') }}",
                     type: 'GET',
                     data: {}, // kosong total, jangan kirim tanggal
-                    success: function (res) {
+                    success: function(res) {
                         // Update statistik dan grafik
                         $('#totalMasuk').text(res.totalMasuk);
                         $('#totalKeluar').text(res.totalKeluar);
@@ -454,7 +494,7 @@
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
@@ -468,7 +508,7 @@
                     data: selectedTanggal.length ? {
                         tanggal: selectedTanggal
                     } : {},
-                    success: function (res) {
+                    success: function(res) {
                         // 🔹 Update KPI
                         $('#totalMasuk').text(res.totalMasuk);
                         $('#totalKeluar').text(res.totalKeluar);
@@ -574,7 +614,7 @@
                             }
                         });
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
@@ -622,8 +662,8 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.addEventListener('click', function (e) {
+        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(e) {
                 const btn = e.target.closest('.preview-btn');
                 if (!btn) return;
 
@@ -632,26 +672,13 @@
             });
 
             const modal = document.getElementById('previewModal');
-            modal.addEventListener('hidden.bs.modal', function () {
-                document.getElementById('previewFrame').src = '';
-            });
+            const iframe = document.getElementById('previewFrame');
 
-            // const previewButtons = document.querySelectorAll('.preview-btn');
-            // const iframe = document.getElementById('previewFrame');
-
-            previewButtons.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const fileUrl = this.dataset.file;
-                    console.log('Preview file URL:', fileUrl); // cek di console
-                    iframe.src = fileUrl;
+            if (modal) {
+                modal.addEventListener('hidden.bs.modal', function() {
+                    iframe.src = '';
                 });
-            });
-
-            // Clear iframe saat modal ditutup
-            const modal = document.getElementById('previewModal');
-            modal.addEventListener('hidden.bs.modal', function () {
-                iframe.src = '';
-            });
+            }
         });
     </script>
 @endpush

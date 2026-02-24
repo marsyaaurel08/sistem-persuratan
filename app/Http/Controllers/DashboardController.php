@@ -55,6 +55,7 @@ class DashboardController extends Controller
             ->get()
             ->map(function ($a) {
                 return [
+                    'id'            => $a->id,
                     'kode_arsip'    => $a->kode_arsip,
                     'nomor_surat'   => $a->nomor_surat ?? '-',
                     // 'nomor_surat'   => $a->nomor_surat,

@@ -21,16 +21,10 @@
                 <div class="card my-4 overflow-hidden" style="z-index: 1">
                     <div class="row flex-1 g-0">
                         <div class="col-lg-6 h-100 my-auto order-1 order-lg-0">
-                            {{-- <div
-                                class="bg-white shadow-lg position-absolute translate-middle top-50 start-50 d-none d-lg-flex align-items-center justify-content-center rounded-circle"
-                                style="width: 80px; height: 80px; z-index: 10; padding: 10px;">
-                                <img src="https://eproc.jasatirta1.co.id/assets/images/logo-jasatirta-crop.png" alt=""
-                                    class="img-fluid">
-                            </div> --}}
                             <div class="creative-card-body card-body p-sm-5">
                                 <div class="mb-4 text-center">
-                                    <img src="{{ asset('assets/images/logo-login.png') }}" alt="Logo" class="img-fluid"
-                                        style="width: 180px;">
+                                    <img src="{{ asset('assets/images/logo-login.png') }}" alt="Logo"
+                                        class="img-fluid" style="width: 180px;">
                                 </div>
 
                                 <h2 class="fs-20 fw-bolder mb-1">Masuk ke akun Anda</h2>
@@ -43,13 +37,16 @@
                                         <input type="email" name="email" class="form-control" placeholder="Email"
                                             required>
                                     </div>
-                                    <div class="mb-3">
-                                        <input type="password" name="password" class="form-control"
+                                    <div class="mb-3 position-relative">
+                                        <input type="password" name="password" id="password" class="form-control pe-5"
                                             placeholder="Password" required>
+
+                                        <span class="toggle-password">
+                                            <i class="bi bi-eye"></i>
+                                        </span>
                                     </div>
                                     <div class="mt-5">
-                                        <button type="submit" class="btn btn-lg w-100 text-white"
-                                            style="background-color: #000B58; border-color: #000B58;">
+                                        <button type="submit" class="btn btn-lg w-100 text-white btn-login">
                                             Login
                                         </button>
                                     </div>
@@ -62,17 +59,16 @@
                             </div>
                         </div>
 
-                        {{-- <div class="col-lg-6 bg-primary order-0 order-lg-1 d-none d-lg-flex"> --}}
-                            <div class="col-lg-6 bg-primary order-0 order-lg-1">
-                                <div class="h-100 d-flex align-items-center justify-content-center">
-                                    <img src="https://i.pinimg.com/736x/d0/e3/45/d0e345fee5e315782ba616f8aca45d2c.jpg"
-                                        alt="" class="img-fluid">
-                                </div>
+                        <div class="col-lg-6 bg-primary order-0 order-lg-1 d-none d-lg-flex">
+                            <div class="h-100 d-flex align-items-center justify-content-center">
+                                <img src="https://i.pinimg.com/736x/d0/e3/45/d0e345fee5e315782ba616f8aca45d2c.jpg"
+                                    alt="" class="img-fluid">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
     </main>
 
     {{-- ✅ Toast container --}}
@@ -89,7 +85,23 @@
 
     {{-- ✅ Toast Styles & Script --}}
     <style>
-        /* @media (max-width: 991.98px) {
+        .btn-login {
+            background-color: #000B58;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-login:hover {
+            background-color: #000842;
+            transform: scale(1.02);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-login:active {
+            transform: scale(0.97);
+        }
+
+        @media (max-width: 991.98px) {
             .creative-card-body {
                 padding: 30px 20px !important;
             }
@@ -97,7 +109,21 @@
             .card {
                 margin: 20px !important;
             }
-        } */
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .toggle-password:hover {
+            color: #000B58;
+        }
 
         .toast-notif {
             position: fixed;
@@ -185,13 +211,32 @@
         }
 
         // === Tampilkan toast berdasarkan session Laravel ===
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
                 showToast(@json(session('success')), 'success');
             @endif
             @if ($errors->any())
                 showToast(@json($errors->first()), 'error');
             @endif
+        });
+
+        const toggle = document.querySelector(".toggle-password");
+        const password = document.querySelector("#password");
+        const icon = toggle.querySelector("i");
+
+        toggle.addEventListener("click", function() {
+
+            if (password.type === "password") {
+                password.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            } else {
+                password.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            }
+
+            password.focus();
         });
     </script>
 </body>

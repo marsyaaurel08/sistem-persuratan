@@ -1,15 +1,14 @@
-<footer class="footer">
-            <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright">
-                <span>Copyright ©</span>
-                <script>
-                    document.write(new Date().getFullYear());
-                </script>
-            </p>
-            <p><span> <a target="_blank" href="https://wrapbootstrap.com/user/theme_ocean"
-                        target="_blank">Perum Jasa Tirta</a></span> • <span>Develop by: Bella, Marsya, Keysha</span></p>
-            <div class="d-flex align-items-center gap-4">
-                <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Help</a>
-                <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Terms</a>
-                <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Privacy</a>
-            </div>
-        </footer>
+<footer class="border-top py-4">
+    <div class="container text-center small text-muted">
+        <p class="mb-0">
+            <span class="fw-semibold">Perum Jasa Tirta</span>
+            • SIP Klinik ©
+            <script>
+                document.write(new Date().getFullYear());
+            </script>
+        </p>
+        <p class="mb-0 small">
+            Developed by: Keysha, Marsya, Rizkya
+        </p>
+    </div>
+</footer>

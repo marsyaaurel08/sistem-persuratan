@@ -10,7 +10,7 @@
     <meta name="author" content="flexilecode" />
     <!--! The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags !-->
     <!--! BEGIN: Apps Title-->
-    <title>Sistem Persuratan || @yield('title')</title>
+    <title>@yield('title') || SIP-Klinik</title>
 
     <!--! END:  Apps Title-->
     <!--! BEGIN: Favicon-->

@@ -6,7 +6,7 @@
     <div class="main-content">
         <div class="page-header d-flex align-items-center justify-content-between mb-4 pb-2 rounded">
             <div class="page-header-left">
-                <a href="{{ route('arsip.index') }}"
+                <a href="{{ url()->previous() }}"
                     class="d-flex align-items-center text-dark fw-bold text-decoration-none">
                     <div class="bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center me-3"
                         style="width:35px;height:35px;border:1px solid #eee;">

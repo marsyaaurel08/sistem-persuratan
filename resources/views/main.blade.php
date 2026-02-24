@@ -147,7 +147,9 @@
                                 </thead>
                                 <tbody class="small">
                                     @foreach ($aktivitas as $item)
-                                        <tr class="data-row"
+                                        <tr class="data-row clickable-row"
+                                            onclick="window.location='{{ route('arsip.arsip_detail', $item['id']) }}'"
+                                            style="cursor: pointer;"
                                             data-date="{{ \Carbon\Carbon::parse($item['tanggal_arsip'])->format('Y-m-d') }}">
                                             <td class="text-nowrap">
                                                 <span class="badge bg-light text-dark border">

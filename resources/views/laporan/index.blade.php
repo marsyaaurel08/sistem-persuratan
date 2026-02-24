@@ -11,7 +11,7 @@
         <div class="page-header rounded d-flex align-items-center justify-content-between mb-2">
             <div class="page-header-left">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">Laporan</h5>
+                    <h5 class="m-b-10">Rekap</h5>
                 </div>
             </div>
 
@@ -91,15 +91,26 @@
             <div class="col-12">
                 <div class="card stretch stretch-full p-2">
                     <div class="card-body">
-                        <h5 class="fs-14 fw-semibold mb-3">Data Laporan</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fs-14 fw-semibold mb-0">Rekap Arsip</h5>
 
-
-
+                            <span class="text-muted small">
+                                Total Data Saat Ini:
+                                <strong>
+                                    @if ($laporans instanceof \Illuminate\Pagination\AbstractPaginator)
+                                        {{ $laporans->total() }}
+                                    @else
+                                        {{ $laporans->total() }}
+                                    @endif
+                                </strong>
+                            </span>
+                        </div>
 
                         <div class="table-responsive">
                             <table class="table table-hover table-sm align-middle" id="laporanTable">
                                 <thead>
                                     <tr>
+                                        <th>No</th>
                                         <th>Kode Arsip</th>
                                         <th>No. Surat</th>
                                         <th>Perihal</th>
@@ -111,37 +122,47 @@
                                     @foreach ($laporans as $laporan)
                                         <tr
                                             data-date="{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('Y-m-d') : '' }}">
+
+                                            <td>
+                                                @if ($laporans instanceof \Illuminate\Pagination\AbstractPaginator)
+                                                    {{ $laporans->firstItem() + $loop->index }}
+                                                @else
+                                                    {{ $loop->iteration }}
+                                                @endif
+                                            </td>
+
                                             <td>{{ $laporan->kode_arsip }}</td>
                                             <td>{{ $laporan->nomor_surat }}</td>
                                             <td>{{ $laporan->perihal }}</td>
                                             <td>
-                                                <span
-                                                    class="badge-custom 
-                                                                                                                    @if ($laporan->kategori == 'Masuk') badge-success
-                                                                                                                    @elseif($laporan->kategori == 'Keluar') badge-warning
-                                                                                                                    @elseif($laporan->kategori == 'Laporan') badge-info
-                                                                                                                    @else badge-secondary @endif">
+                                                <span class="badge-custom 
+                                                        @if ($laporan->kategori == 'Masuk') badge-success
+                                                        @elseif($laporan->kategori == 'Keluar') badge-warning
+                                                        @elseif($laporan->kategori == 'Laporan') badge-info
+                                                        @else badge-secondary 
+                                                        @endif">
                                                     {{ $laporan->kategori }}
                                                 </span>
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') }}</td>
                                         </tr>
-                                        <tr id="noDataRow" style="display: none;">
-                                            <td colspan="100%" class="text-center text-muted py-3">
-                                                {{-- Data tidak ditemukan --}}
-                                                Tidak ada data laporan yang sesuai dengan pencarian.
-                                            </td>
-                                        </tr>
                                     @endforeach
+
+                                    <tr id="noDataRow" style="display: none;">
+                                        <td colspan="100%" class="text-center text-muted py-3">
+                                            Tidak ada data laporan yang sesuai dengan pencarian.
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
+
                             @if ($laporans instanceof \Illuminate\Pagination\AbstractPaginator)
                                 <div class="mt-2 d-flex justify-content-center">
                                     {{ $laporans->links() }}
                                 </div>
                             @endif
-
                         </div>
+
 
                     </div>
                 </div>

@@ -104,6 +104,7 @@
     <table border="1" cellspacing="0" cellpadding="5">
         <thead>
             <tr>
+                <th>No</th>
                 <th>Kode Arsip</th>
                 <th>No Surat</th>
                 <th>Perihal</th>
@@ -114,7 +115,7 @@
         <tbody>
             @if ($isEmpty)
                 <tr>
-                    <td colspan="5" style="text-align:center; font-style:italic; padding:10px;">
+                    <td colspan="6" style="text-align:center; font-style:italic; padding:10px;">
                         @if ($request->filled('start') && $request->filled('end'))
                             Data laporan untuk periode
                             {{ \Carbon\Carbon::parse($request->start)->format('d M Y') }}
@@ -128,18 +129,25 @@
             @else
                 @foreach ($laporans as $laporan)
                     <tr>
+                        <td style="text-align:center;">
+                            {{ $loop->iteration }}
+                        </td>
                         <td>{{ $laporan->kode_arsip }}</td>
                         <td>{{ $laporan->nomor_surat }}</td>
                         <td>{{ $laporan->perihal }}</td>
                         <td>{{ $laporan->kategori }}</td>
                         <td>
-                            {{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') : '-' }}
+                            {{ $laporan->tanggal_arsip
+                    ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y')
+                    : '-' 
+                                }}
                         </td>
                     </tr>
                 @endforeach
             @endif
         </tbody>
     </table>
+
 </body>
 
 </html>

@@ -26,6 +26,7 @@
                 <table class="table table-bordered table-sm align-middle text-center">
                     <thead class="table-success">
                         <tr>
+                            <th>No</th>
                             @foreach ($headers as $header)
                                 <th>{{ $header }}</th>
                             @endforeach
@@ -33,17 +34,24 @@
                     </thead>
                     <tbody>
                         @forelse($laporans as $laporan)
-                            <tr>
-                                <td>{{ $laporan->kode_arsip }}</td>
-                                <td>{{ $laporan->nomor_surat }}</td>
-                                <td>{{ $laporan->perihal }}</td>
-                                <td>{{ $laporan->kategori }}</td>
-                                <td>{{ $laporan->tanggal_arsip ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y') : '-' }}
-                                </td>
-                            </tr>
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $laporan->kode_arsip }}</td>
+                                            <td>{{ $laporan->nomor_surat }}</td>
+                                            <td>{{ $laporan->perihal }}</td>
+                                            <td>{{ $laporan->kategori }}</td>
+                                            <td>
+                                                {{ $laporan->tanggal_arsip
+                            ? \Carbon\Carbon::parse($laporan->tanggal_arsip)->format('d M Y')
+                            : '-' 
+                                                    }}
+                                            </td>
+                                        </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ count($headers) }}" class="text-muted">Tidak ada data untuk ditampilkan</td>
+                                <td colspan="{{ count($headers) + 1 }}" class="text-muted">
+                                    Tidak ada data untuk ditampilkan
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -51,4 +59,5 @@
             </div>
         </div>
     </div>
+
 @endsection
